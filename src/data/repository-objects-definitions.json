@@ -1,0 +1,14 @@
+[
+  {
+      "BaseFolder": "repository",
+      "ImportData": {
+          "SetModifiedStatus": false
+      },
+      "ExportData": {
+          "ProductCode": "APP",
+          "ResetModifiedStatus": true,
+          "ThrowOnError": true,
+          "ExportModifiedStatus": false
+      }
+  }
+]

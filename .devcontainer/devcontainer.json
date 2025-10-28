@@ -1,0 +1,71 @@
+{
+  "name": "Workspace",
+  "build": {
+    "context": ".",
+    "dockerfile": "Dockerfile"
+  },
+  "features": {
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "lts"
+    },
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {
+      "moby": true,
+      "azureDnsAutoDetection": true,
+      "installDockerBuildx": true,
+      "installDockerComposeSwitch": true,
+      "version": "latest",
+      "dockerDashComposeVersion": "latest"
+    },
+    "ghcr.io/devcontainers-extra/features/typescript": {
+      "version": "5.6"
+    }
+  },
+  "onCreateCommand": "./.devcontainer/setup/prebuild.sh",
+  "postStartCommand": "./.devcontainer/setup/check_updates.sh",
+  "postAttachCommand": {
+    "Prebuild Check": [
+      ".devcontainer/setup/prebuild_check.sh"
+    ],
+    "Stack Startup": [
+      ".devcontainer/setup/run_task.sh",
+      "start_stack"
+    ],
+    "Data Import": [
+      ".devcontainer/setup/run_task.sh",
+      "import_data"
+    ],
+    "Extensions Install": [
+      ".devcontainer/setup/run_task.sh",
+      "install_extensions"
+    ],
+    "Appserver": [
+      ".devcontainer/setup/run_task.sh",
+      "watch_app_server_ts"
+    ],
+    "Web App": [
+      ".devcontainer/setup/run_task.sh",
+      "watch_web_app"
+    ]
+  },
+  "forwardPorts": [
+    8080,
+    8081
+  ],
+  "portsAttributes": {
+    "8080": {
+      "label": "Main Application",
+      "onAutoForward": "notify"
+    },
+    "8081": {
+      "label": "Designer",
+      "onAutoForward": "notify"
+    }
+  },
+  "remoteEnv": {
+    "NODE_OPTIONS": "--max-old-space-size=8192",
+    "WORKSPACE_ROOT": "/workspaces/${localWorkspaceFolderBasename}",
+    "PATH": "/workspaces/${localWorkspaceFolderBasename}/node_modules/.bin:src/cli/bin:${containerEnv:PATH}"
+  },
+  "workspaceFolder": "/workspaces/starter",
+  "workspaceMount": "source=${localWorkspaceFolder},target=/workspaces/starter,type=bind,consistency=cached"
+}

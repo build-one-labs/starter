@@ -1,0 +1,10 @@
+{
+  "extends": "swat/data/data-definitions.json",
+  "definitions": {
+      "APP": {
+          "base": "base-data-definitions.json",
+          "menu": "menu-data-definitions.json",
+          "repository-objects": "repository-objects-definitions.json"
+      }
+  }
+}

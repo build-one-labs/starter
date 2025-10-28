@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<dsProduct xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <eSmartProduct>
+    <ProductGuid>cc213040-26d6-a98a-8214-36a020223ad5</ProductGuid>
+    <ProductCode>APP</ProductCode>
+    <ProductName>Build.One App</ProductName>
+    <ProductDescription xsi:nil="true"/>
+    <ProductInstalled>true</ProductInstalled>
+    <SystemOwned>false</SystemOwned>
+  </eSmartProduct>
+</dsProduct>

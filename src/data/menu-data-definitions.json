@@ -1,0 +1,13 @@
+[
+  {
+      "Path": "menu",
+      "ImportData": {
+          "OverwriteExisting": true,
+          "DeleteNonExistingChilds": true
+      },
+      "ExportData": {
+          "MenuStructureCode": "buildoneapplication",
+          "DeleteExisting": true
+      }
+  }
+]

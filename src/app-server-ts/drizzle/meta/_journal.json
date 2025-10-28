@@ -1,0 +1,48 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1749816830492,
+      "tag": "0000_13229_init_schema",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1749816876341,
+      "tag": "0001_13229_init_data",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1749817625813,
+      "tag": "0002_13229_update_product",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1750863473863,
+      "tag": "0003_addedFieldsClients",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1750864905838,
+      "tag": "0004_fillClientsData",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1751625560866,
+      "tag": "0005_updateOffersAndInvoices",
+      "breakpoints": true
+    }
+  ]
+}

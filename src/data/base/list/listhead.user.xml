@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<dsGenericListHead xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <eGenericListHead>
+    <SelfKey>uiThemes</SelfKey>
+    <SelfDesc>UI Themes</SelfDesc>
+    <flag>U</flag>
+    <ListType/>
+    <ClientHdl>040:000:000000100001</ClientHdl>
+    <SelfHdl>017:b4ce80472bba39a55d149ee363eacdee</SelfHdl>
+    <akRowSec/>
+    <akUiActions/>
+    <akUiOptions>{}</akUiOptions>
+    <UserChangedHdl/>
+    <UserCreatedHdl/>
+    <akTimeCreated>2019-11-12T09:45:03.682+01:00</akTimeCreated>
+    <akTimeChanged>2019-11-12T09:45:25.117+01:00</akTimeChanged>
+    <akImageFilename/>
+    <akTextHtml xsi:nil="true"/>
+    <akTextAscii/>
+    <SmartCopiedFrom/>
+  </eGenericListHead>
+</dsGenericListHead>

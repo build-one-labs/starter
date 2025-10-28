@@ -1,0 +1,9 @@
+{
+  "name": "circleci",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "devDependencies": {
+    "@buildone/swat-circleci": "25.17.0-PVG.20"
+  }
+}

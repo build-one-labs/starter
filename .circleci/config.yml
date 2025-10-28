@@ -1,0 +1,94 @@
+version: 2.1
+
+setup: true
+
+orbs:
+  continuation: circleci/continuation@2.0.1
+
+parameters:
+  pipeline-type:
+    type: enum
+    enum: [build, tag, deploy, data-import, update-nightly]
+    default: build
+  base-revision:
+    type: string
+    default: origin/develop
+  build-all:
+    type: boolean
+    default: false
+  version:
+    type: string
+    default: 'auto'
+  label:
+    type: string
+    default: ''
+  stack-id:
+    type: string
+    default: ''
+  deployment-config:
+    type: string
+    default: 'portainer.deployment.docker-compose.yml'
+  url:
+    type: string
+    default: ''
+  app-username:
+    type: string
+    default: '$DEFAULT_APP_USER'
+  app-password:
+    type: string
+    default: '$DEFAULT_APP_PASS'
+  source-env:
+    type: string
+    default: 'development'
+  target-env:
+    type: string
+    default: 'production'
+
+jobs:
+  start-partial-build:
+    docker:
+      - image: cimg/node:20.15.0
+    steps:
+      - checkout
+      - run:
+          name: Install CircleCI pacakges
+          command: yarn workspaces focus circleci
+      - run:
+          name: Prepare execution pipeline
+          command: |
+            chmod +x node_modules/@buildone/swat-circleci/scripts/prepare_execution_pipeline.sh
+            node_modules/@buildone/swat-circleci/scripts/prepare_execution_pipeline.sh "<< pipeline.parameters.pipeline-type >>"
+      - when:
+          condition:
+            equal: [ build, << pipeline.parameters.pipeline-type >> ]
+          steps:
+            - run:
+                name: Calculate base revision
+                command: echo "export BASE_REVISION=`git merge-base HEAD << pipeline.parameters.base-revision >>`" >> $BASH_ENV
+            - run:
+                name: Detect git changes
+                environment:
+                  BASE_REVISION: $BASE_REVISION
+                  MAPPING: |
+                    src/app-server-ts/.* build-app-server-ts true
+                    src/web-app/.* build-web-app true
+                    yarn.lock build-cache true
+                  OUTPUT_PATH: /tmp/pipeline/pipeline-parameters.json
+                command: python3 node_modules/@buildone/swat-circleci/scripts/detect_git_changes.py
+      - store_artifacts:
+          path: /tmp/pipeline
+      - continuation/continue:
+          configuration_path: "/tmp/pipeline/config.yml"
+          parameters: /tmp/pipeline/pipeline-parameters.json
+
+workflows:
+  setup-workflow:
+    jobs:
+      - start-partial-build:
+          name: main-pipeline-setup
+          context: build-defaults
+          filters:
+            branches:
+              only: /.*/
+            tags:
+              only: /.*/
