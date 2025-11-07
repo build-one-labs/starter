@@ -19,7 +19,7 @@ module.exports = [
   },
   eslintPluginPrettierRecommended,
   { rules: gts.rules },
-  { ignores: ['dist'] },
+  { ignores: ['dist', '.devcontainer'] },
   { rules: { '@typescript-eslint/no-require-imports': 'off' } },
   {
     files: ['**/*.json'],

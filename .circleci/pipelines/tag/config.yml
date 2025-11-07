@@ -1,0 +1,32 @@
+version: 2.1
+
+setup: true
+
+orbs:
+  continuation: circleci/continuation@2.0.1
+
+parameters:
+  version:
+    type: string
+    default: 'auto'
+
+jobs:
+  tag:
+    docker:
+      - image: cimg/node:24.10
+    resource_class: small
+    steps:
+      - checkout
+      - run:
+          name: Install CircleCI pacakges
+          command: yarn workspaces focus circleci
+      - continuation/continue:
+          configuration_path: node_modules/@buildone/swat-circleci/defaults/tag/config.yml
+          parameters: '{"app-name":"starter"}'
+
+workflows:
+  tag-setup-workflow:
+    jobs:
+      - tag:
+          context: 
+            - build-defaults

@@ -1,0 +1,27 @@
+version: 2.1
+
+setup: true
+
+orbs:
+  continuation: circleci/continuation@2.0.1
+
+jobs:
+  audit:
+    docker:
+      - image: cimg/node:24.10
+    resource_class: small
+    steps:
+      - checkout
+      - run:
+          name: Install CircleCI pacakges
+          command: yarn workspaces focus circleci
+      - continuation/continue:
+          configuration_path: node_modules/@buildone/swat-circleci/defaults/audit/config.yml
+          parameters: '{"app-name":"starter"}'
+
+workflows:
+  audit-setup-workflow:
+    jobs:
+      - audit:
+          context: 
+            - build-defaults
