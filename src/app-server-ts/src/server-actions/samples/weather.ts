@@ -1,6 +1,6 @@
 import { B1Action, B1ActionPayload, B1Service } from '@buildone/app-server-tslib';
+import { handleExternalHttpRequest } from '@buildone/app-server-tslib/utils';
 import { HttpService } from '@nestjs/axios';
-import { handleExternalHttpRequest } from '@/utils/http';
 
 class WeatherInfoPayload {
   lat: string;

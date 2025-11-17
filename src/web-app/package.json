@@ -11,9 +11,9 @@
     "lint:fix": "nuxt prepare && eslint . --fix"
   },
   "dependencies": {
-    "@buildone/web-core": "24.3.0-VG.1",
-    "@buildone/web-framework": "24.3.0-VG.1",
-    "@buildone/web-framework-layer": "24.3.0-VG.1",
+    "@buildone/web-core": "24.3.0-VG.21",
+    "@buildone/web-framework": "24.3.0-VG.21",
+    "@buildone/web-framework-layer": "24.3.0-VG.21",
     "@nuxt/image": "1.10.0",
     "@pinia/nuxt": "^0.11.1",
     "@primevue/forms": "^4.3.6",
@@ -25,10 +25,10 @@
   },
   "devDependencies": {
     "@nuxt/eslint": "^1.3.0",
-    "eslint": "^9.0.0",
+    "eslint": "^9.19.0",
     "nuxt": "^3.16.2",
     "sass-embedded": "^1.90.0",
-    "typescript": "^5.6.3",
+    "typescript": "^5.7.3",
     "vue-tsc": "^3.0.1"
   }
 }

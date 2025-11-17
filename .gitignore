@@ -16,6 +16,7 @@ node_modules
 *.log
 *.dfw
 /.vscode/*.code-snippets
+/src/data/n8n/credentials/auth.json
 
 # Yarn
 .pnp.*
@@ -25,3 +26,6 @@ node_modules
 !.yarn/releases
 !.yarn/sdks
 !.yarn/versions
+
+# Claude Code local settings
+.claude/settings.local.json

@@ -1,19 +1,28 @@
+import { B1AuthGuard } from '@buildone/app-server-tslib/auth';
+import { DrizzleModule } from '@buildone/app-server-tslib/drizzle';
+import { RequestContextModule } from '@buildone/app-server-tslib/modules';
 import { HttpModule } from '@nestjs/axios';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { APP_GUARD, DiscoveryModule } from '@nestjs/core';
-import { DrizzleModule } from './drizzle/drizzle.module';
-import { EventsModule } from './events/events.module';
-import { B1AuthGuard } from './auth/guard';
+
 import { ApiModule } from './api/api.module';
+import * as schema from './drizzle/schema';
+import { EventsModule } from './events/events.module';
 import { ServerActionsModule } from './server-actions/server-actions.module';
-import { RequestContextModule } from './modules/request-context/request-context.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
+    DrizzleModule.forRoot({
+      global: true,
+      schema,
+      database: {
+        configKey: 'APP_DATABASE_URL',
+        ssl: true
+      }
+    }),
     RequestContextModule,
-    DrizzleModule,
     HttpModule,
     EventsModule,
     DiscoveryModule,

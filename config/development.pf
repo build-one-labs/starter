@@ -1,2 +1,0 @@
--db smartdb  -H localhost -S 20001 -ld SmartDB 
--db it4main  -H localhost -S 20000 -ld it4main 

@@ -8,11 +8,9 @@
       "address": "localhost",
       "port": 3011,
       "restart": true,
-      "localRoot": "${workspaceFolder}/src/app-server-ts",
-      "remoteRoot": "/app",
-      "skipFiles": [
-        "<node_internals>/**"
-      ]
+      "localRoot": "${workspaceFolder}",
+      "remoteRoot": "/workspace",
+      "skipFiles": ["<node_internals>/**"]
     }
   ]
 }
