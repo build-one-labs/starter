@@ -200,7 +200,7 @@ services:
     volumes:
       - ${BUILDONE_CLI_WORKSPACE}/pgadmin.servers.json:/pgadmin4/servers.json
   web-docs:
-    image: docker.cloudsmith.io/buildone/repository/buildone-web-docs:24.3.0-VG.14
+    image: docker.cloudsmith.io/buildone/repository/buildone-web-docs:24.3.0-VG.15
     restart: unless-stopped
     ports:
       - '5173:80'
