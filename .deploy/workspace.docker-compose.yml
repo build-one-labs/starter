@@ -122,7 +122,7 @@ services:
     volumes:
       - ${WORKSPACE_ROOT}:/workspace
   n8n_db_server:
-    image: docker.cloudsmith.io/buildone/repository/automation-hub-db:1.10.0
+    image: docker.cloudsmith.io/buildone/repository/automation-hub-db:1.11.0
     restart: unless-stopped
     healthcheck:
       test:
@@ -136,7 +136,7 @@ services:
     volumes:
       - ah_db_storage:/var/lib/postgresql/data
   n8n:
-    image: docker.cloudsmith.io/buildone/repository/automation-hub-1-114-3-2:1.10.0
+    image: docker.cloudsmith.io/buildone/repository/automation-hub-1-114-3-2:1.11.0
     restart: unless-stopped
     environment:
       - AUTHENTICATION_URI=http://swat_app_server_ts:3000
@@ -193,7 +193,7 @@ services:
     volumes:
       - ${BUILDONE_CLI_WORKSPACE}/pgadmin.servers.json:/pgadmin4/servers.json
   web-docs:
-    image: docker.cloudsmith.io/buildone/repository/buildone-web-docs:24.3.0-VG.17
+    image: docker.cloudsmith.io/buildone/repository/buildone-web-docs:24.3.0-VG.18
     restart: unless-stopped
     ports:
       - '5173:80'

@@ -16,6 +16,7 @@ node_modules
 *.log
 *.dfw
 /.vscode/*.code-snippets
+/src/data/n8n/credentials/auth.json
 
 # Yarn
 .pnp.*
