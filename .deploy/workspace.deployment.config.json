@@ -4,8 +4,8 @@
     "appUrl": "${APP_URL:-}",
     "authenticationTrustedOrigins": "${APP_URL},${DESIGNER_URL},http://localhost:8080,http://localhost:8081,https://localhost:8080,https://localhost:8081",
     "authenticationURI": "http://swat_app_server_ts:3000",
-    "automationHubImage": "docker.cloudsmith.io/buildone/repository/automation-hub-1-114-3:1.9.8",
-    "automationHubDBImage": "docker.cloudsmith.io/buildone/repository/automation-hub-db:1.9.8",
+    "automationHubImage": "docker.cloudsmith.io/buildone/repository/automation-hub-1-114-3-2:1.10.0",
+    "automationHubDBImage": "docker.cloudsmith.io/buildone/repository/automation-hub-db:1.10.0",
     "postgresDbImage": "docker.cloudsmith.io/buildone/repository/build-one-postgres-db:17-2",
     "caddyImage": "docker.cloudsmith.io/buildone/repository/buildone-caddy:${BUILDONE_VERSION}",
     "swatAppServerTsImage": "docker.cloudsmith.io/buildone/repository/buildone-swat-app-server-ts:${BUILDONE_VERSION}",
@@ -70,14 +70,13 @@
       "image": "#globals.swatAppServerTsImage",
       "restart": "unless-stopped",
       "environment": {
-        "INIT_CREDENTIALS": "${CREDENTIALS:-}",
+        "AH_CREDENTIALS": "${AH_CREDENTIALS:-}",
         "IMPORT_DATA": "false",
         "PORT": "3000",
         "UPLOAD_DIR": "/app-data/uploads",
         "MICROSOFT_CLIENT_ID": "${MICROSOFT_CLIENT_ID:-}",
         "MICROSOFT_CLIENT_SECRET": "${MICROSOFT_CLIENT_SECRET:-}",
         "MICROSOFT_TENANT_ID": "${MICROSOFT_TENANT_ID:-}",
-        "BETTER_AUTH_URL": "https://${STACK}.${DOMAIN}",
         "B1_DATA_FOLDER": "/data/b1",
         "APP_DATA_FOLDER": "/data/app",
         "B1_DATABASE_URL": "${B1_DATABASE_URL:-postgres://${B1_DATABASE_CREDENTIALS:-}@b1_db_server:5432/b1?sslmode=disable}",
@@ -214,13 +213,7 @@
         "5678": "5678"
       },
       "volumes": {
-        "/workspace/logs": "${WORKSPACE_ROOT}/logs/n8n",
-        "/workspace/src": "${WORKSPACE_ROOT}/src",
-        "/workspace/data": "${WORKSPACE_ROOT}/data",
-        "/workspace/app/data": "/workspace/n8n",
-        "/workspace/app/data/automation-hub": "${WORKSPACE_ROOT}/src/data/n8n",
-        "/workspace/app/repository": "${WORKSPACE_ROOT}/src/data/repository",
-        "/workspace/app/workspace": "${WORKSPACE_ROOT}"
+        "/workspace": "${WORKSPACE_ROOT}"
       }
     },
     "web-app": {
@@ -273,7 +266,7 @@
       }
     },
     "web-docs": {
-      "image": "docker.cloudsmith.io/buildone/repository/buildone-web-docs:24.3.0-VG.15",
+      "image": "docker.cloudsmith.io/buildone/repository/buildone-web-docs:24.3.0-VG.17",
       "restart": "unless-stopped",
       "ports": {
         "80": "5173"

@@ -4,8 +4,8 @@
     "appUrl": "${APP_URL:-${STACK}.${DOMAIN:-demo.build.one}}",
     "authenticationTrustedOrigins": "https://${APP_URL:-${STACK}.${DOMAIN:-demo.build.one}}",
     "authenticationURI": "http://swat_app_server_ts:3000",
-    "automationHubImage": "docker.cloudsmith.io/buildone/repository/automation-hub-1-114-3:1.9.8",
-    "automationHubDBImage": "docker.cloudsmith.io/buildone/repository/automation-hub-db:1.9.8",
+    "automationHubImage": "docker.cloudsmith.io/buildone/repository/automation-hub-1-114-3-2:1.10.0",
+    "automationHubDBImage": "docker.cloudsmith.io/buildone/repository/automation-hub-db:1.10.0",
     "postgresDbImage": "docker.cloudsmith.io/buildone/repository/build-one-postgres-db:17-2",
     "caddyImage": "docker.cloudsmith.io/buildone/repository/buildone-caddy:${BUILDONE_VERSION}",
     "swatAppServerTsImage": "docker.cloudsmith.io/buildone/repository/buildone-swat-app-server-ts:${BUILDONE_VERSION}",
@@ -85,14 +85,13 @@
       "image": "#globals.swatAppServerTsImage",
       "restart": "unless-stopped",
       "environment": {
-        "INIT_CREDENTIALS": "${CREDENTIALS:-}",
+        "AH_CREDENTIALS": "${AH_CREDENTIALS:-}",
         "IMPORT_DATA": "true",
         "PORT": "3000",
         "UPLOAD_DIR": "/app-data/uploads",
         "MICROSOFT_CLIENT_ID": "${MICROSOFT_CLIENT_ID:-}",
         "MICROSOFT_CLIENT_SECRET": "${MICROSOFT_CLIENT_SECRET:-}",
         "MICROSOFT_TENANT_ID": "${MICROSOFT_TENANT_ID:-}",
-        "BETTER_AUTH_URL": "https://${STACK}.${DOMAIN}",
         "B1_DATA_FOLDER": "/data/b1",
         "APP_DATA_FOLDER": "/data/app",
         "B1_DATABASE_URL": "${B1_DATABASE_URL:-postgres://${B1_DATABASE_CREDENTIALS:-}@b1_db_server:5432/b1?sslmode=disable}",
@@ -208,8 +207,8 @@
         }
       },
       "volumes": {
-        "/workspace/data/": "app-data",
-        "/workspace/app/data": "n8n-data"
+        "/workspace/data": "app-data",
+        "/workspace/src/data/n8n": "n8n-data"
       }
     },
     "web-app": {

@@ -44,14 +44,13 @@ services:
     image: docker.cloudsmith.io/buildone/repository/buildone-swat-app-server-ts:${BUILDONE_VERSION}
     restart: unless-stopped
     environment:
-      - INIT_CREDENTIALS=${CREDENTIALS:-}
+      - AH_CREDENTIALS=${AH_CREDENTIALS:-}
       - IMPORT_DATA=false
       - PORT=3000
       - UPLOAD_DIR=/app-data/uploads
       - MICROSOFT_CLIENT_ID=${MICROSOFT_CLIENT_ID:-}
       - MICROSOFT_CLIENT_SECRET=${MICROSOFT_CLIENT_SECRET:-}
       - MICROSOFT_TENANT_ID=${MICROSOFT_TENANT_ID:-}
-      - BETTER_AUTH_URL=https://${STACK}.${DOMAIN}
       - B1_DATA_FOLDER=/data/b1
       - APP_DATA_FOLDER=/data/app
       - B1_DATABASE_URL=${B1_DATABASE_URL:-postgres://${B1_DATABASE_CREDENTIALS:-}@b1_db_server:5432/b1?sslmode=disable}
@@ -123,7 +122,7 @@ services:
     volumes:
       - ${WORKSPACE_ROOT}:/workspace
   n8n_db_server:
-    image: docker.cloudsmith.io/buildone/repository/automation-hub-db:1.9.8
+    image: docker.cloudsmith.io/buildone/repository/automation-hub-db:1.10.0
     restart: unless-stopped
     healthcheck:
       test:
@@ -137,7 +136,7 @@ services:
     volumes:
       - ah_db_storage:/var/lib/postgresql/data
   n8n:
-    image: docker.cloudsmith.io/buildone/repository/automation-hub-1-114-3:1.9.8
+    image: docker.cloudsmith.io/buildone/repository/automation-hub-1-114-3-2:1.10.0
     restart: unless-stopped
     environment:
       - AUTHENTICATION_URI=http://swat_app_server_ts:3000
@@ -154,13 +153,7 @@ services:
     ports:
       - '5678:5678'
     volumes:
-      - ${WORKSPACE_ROOT}/logs/n8n:/workspace/logs
-      - ${WORKSPACE_ROOT}/src:/workspace/src
-      - ${WORKSPACE_ROOT}/data:/workspace/data
-      - /workspace/n8n:/workspace/app/data
-      - ${WORKSPACE_ROOT}/src/data/n8n:/workspace/app/data/automation-hub
-      - ${WORKSPACE_ROOT}/src/data/repository:/workspace/app/repository
-      - ${WORKSPACE_ROOT}:/workspace/app/workspace
+      - ${WORKSPACE_ROOT}:/workspace
   web-app:
     restart: unless-stopped
     environment:
@@ -200,7 +193,7 @@ services:
     volumes:
       - ${BUILDONE_CLI_WORKSPACE}/pgadmin.servers.json:/pgadmin4/servers.json
   web-docs:
-    image: docker.cloudsmith.io/buildone/repository/buildone-web-docs:24.3.0-VG.15
+    image: docker.cloudsmith.io/buildone/repository/buildone-web-docs:24.3.0-VG.17
     restart: unless-stopped
     ports:
       - '5173:80'
