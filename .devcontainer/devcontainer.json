@@ -61,8 +61,6 @@
   // postAttachCommand: Runs when you attach to the container (parallel background tasks)
   "postAttachCommand": {
     "Stack Startup": ["node_modules/@buildone/swat-cli/scripts/devcontainer/lib/task-runner.sh", "start_stack"],
-    "Data Import": ["node_modules/@buildone/swat-cli/scripts/devcontainer/lib/task-runner.sh", "import_data"],
-    "Prebuild Check": ["node_modules/@buildone/swat-cli/scripts/devcontainer/orchestrators/postattach.sh"],
     "Appserver": ["node_modules/@buildone/swat-cli/scripts/devcontainer/lib/task-runner.sh", "watch_app_server_ts"],
     "Web App": ["node_modules/@buildone/swat-cli/scripts/devcontainer/lib/task-runner.sh", "watch_web_app"],
     "Claude": ["node_modules/@buildone/swat-cli/scripts/devcontainer/lib/task-runner.sh", "start_claude"]

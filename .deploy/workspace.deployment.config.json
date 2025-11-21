@@ -139,7 +139,7 @@
       }
     },
     "app_server_ts": {
-      "image": "#skip",
+      "image": "nomad123/codespaces-nestjs-development:slim",
       "restart": "unless-stopped",
       "environment": {
         "PORT": "3000",
@@ -155,10 +155,6 @@
         "app_db_server": {
           "condition": "service_healthy"
         }
-      },
-      "build": {
-        "context": "${BUILDONE_CLI_WORKSPACE}/deploy",
-        "dockerfile": "dev.Dockerfile"
       },
       "init": true,
       "ports": {
@@ -217,7 +213,7 @@
       }
     },
     "web-app": {
-      "image": "#skip",
+      "image": "nomad123/codespaces-nestjs-development:slim",
       "restart": "unless-stopped",
       "environment": {
         "HOST": "0.0.0.0",
@@ -228,10 +224,6 @@
       "networks": [
         "app-network"
       ],
-      "build": {
-        "context": "${BUILDONE_CLI_WORKSPACE}/deploy",
-        "dockerfile": "dev.Dockerfile"
-      },
       "working_dir": "/workspace/src/web-app",
       "command": "npm run dev",
       "volumes": {
@@ -266,7 +258,7 @@
       }
     },
     "web-docs": {
-      "image": "docker.cloudsmith.io/buildone/repository/buildone-web-docs:24.3.0-VG.18",
+      "image": "docker.cloudsmith.io/buildone/repository/buildone-web-docs:24.3.0-VG.19",
       "restart": "unless-stopped",
       "ports": {
         "80": "5173"

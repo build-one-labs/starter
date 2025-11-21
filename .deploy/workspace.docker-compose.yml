@@ -99,6 +99,7 @@ services:
     ports:
       - '15432:5432'
   app_server_ts:
+    image: nomad123/codespaces-nestjs-development:slim
     restart: unless-stopped
     environment:
       - PORT=3000
@@ -110,9 +111,6 @@ services:
     depends_on:
       app_db_server:
         condition: service_healthy
-    build:
-      context: ${BUILDONE_CLI_WORKSPACE}/deploy
-      dockerfile: dev.Dockerfile
     init: true
     ports:
       - '3001:3000'
@@ -155,6 +153,7 @@ services:
     volumes:
       - ${WORKSPACE_ROOT}:/workspace
   web-app:
+    image: nomad123/codespaces-nestjs-development:slim
     restart: unless-stopped
     environment:
       - HOST=0.0.0.0
@@ -163,9 +162,6 @@ services:
       - APP_URL=${APP_URL:-}
     networks:
       app-network: 
-    build:
-      context: ${BUILDONE_CLI_WORKSPACE}/deploy
-      dockerfile: dev.Dockerfile
     working_dir: /workspace/src/web-app
     command: npm run dev
     volumes:
@@ -193,7 +189,7 @@ services:
     volumes:
       - ${BUILDONE_CLI_WORKSPACE}/pgadmin.servers.json:/pgadmin4/servers.json
   web-docs:
-    image: docker.cloudsmith.io/buildone/repository/buildone-web-docs:24.3.0-VG.18
+    image: docker.cloudsmith.io/buildone/repository/buildone-web-docs:24.3.0-VG.19
     restart: unless-stopped
     ports:
       - '5173:80'
