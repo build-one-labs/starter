@@ -92,7 +92,8 @@
         "LEGACY_AUTHENTICATION_AUTHENTICATIONOIDCROLEID": "#globals.authenticationOIDCRoleId",
         "LEGACY_ENVIRONMENT_URL": "#globals.appUrl",
         "LEGACY_INTEGRATION_GOOGLEAPIKEY": "${GOOGLEAPIKEY:-}",
-        "LEGACY_INTEGRATION_KENDOLICENSEKEY": "${KENDO_LICENSE_KEY:-}"
+        "LEGACY_INTEGRATION_KENDOLICENSEKEY": "${KENDO_LICENSE_KEY:-}",
+        "B1_FRAMEWORK_DEVELOPMENT": "false"
       },
       "networks": [
         "app-network"
@@ -258,7 +259,7 @@
       }
     },
     "web-docs": {
-      "image": "docker.cloudsmith.io/buildone/repository/buildone-web-docs:24.3.0-VG.19",
+      "image": "docker.cloudsmith.io/buildone/repository/buildone-web-docs:24.3.0-VG.21",
       "restart": "unless-stopped",
       "ports": {
         "80": "5173"

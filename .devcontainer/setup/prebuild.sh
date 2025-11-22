@@ -7,9 +7,13 @@ export WORKSPACE_ROOT
 # Ensure packages are installed before running prebuild
 # Skip install during prebuild check (triggered at stack startup) - will be installed by dedicated task
 if [[ "${PREBUILD_CHECK:-}" != "true" ]]; then
-    echo "[INFO] Installing packages..."
     cd "${WORKSPACE_ROOT}"
+    
+    echo "[INFO] Installing packages..."
     yarn install
+
+    echo "[INFO] Clearing yarn cache..."
+    yarn cache clear
 else
     echo "[INFO] Skipping package install during prebuild check"
 fi
