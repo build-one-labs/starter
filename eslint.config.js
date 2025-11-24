@@ -1,60 +1,121 @@
 const js = require('@eslint/js');
-const ts = require('typescript-eslint');
-const eslintPluginPrettierRecommended = require('eslint-plugin-prettier/recommended');
-const gts = require('gts');
-const vue = require('eslint-plugin-vue');
+const importPlugin = require('eslint-plugin-import');
 const json = require('eslint-plugin-json');
 const node = require('eslint-plugin-n');
+const eslintPluginPrettierRecommended = require('eslint-plugin-prettier/recommended');
+const securityPlugin = require('eslint-plugin-security');
+const sonarjsPlugin = require('eslint-plugin-sonarjs');
+const unicornPlugin = require('eslint-plugin-unicorn');
+const ts = require('typescript-eslint');
 
-/** @type { import("eslint").Linter.Config[] } */
+/**
+ * Root ESLint configuration
+ * This config is used for files in the root directory and as a base for other workspaces
+ * @type { import("eslint").Linter.Config[] }
+ */
 module.exports = [
+  // Base configurations
   js.configs.recommended,
   ...ts.configs.recommended,
-  node.configs['flat/recommended'],
+  importPlugin.flatConfigs.recommended,
+  importPlugin.flatConfigs.typescript,
+  securityPlugin.configs.recommended,
   {
-    rules: {
-      'n/no-extraneous-import': 'off',
-      'n/no-missing-import': 'off'
+    plugins: {
+      sonarjs: sonarjsPlugin,
+      unicorn: unicornPlugin
     }
   },
   eslintPluginPrettierRecommended,
-  { rules: gts.rules },
-  { ignores: ['dist', '.devcontainer'] },
-  { rules: { '@typescript-eslint/no-require-imports': 'off' } },
+  node.configs['flat/recommended'],
+
+  // Common rules
   {
-    files: ['**/*.json'],
-    ...json.configs['recommended']
-  },
-  ...vue.configs['flat/recommended'],
-  {
-    files: ['*.vue', '**/*.vue'],
-    languageOptions: {
-      parserOptions: {
-        parser: '@typescript-eslint/parser'
-      }
-    },
     rules: {
-      '@typescript-eslint/no-explicit-any': 'off',
-
-      'vue/valid-attribute-name': 'off',
-      'vue/no-v-html': 'off',
-      'vue/require-default-prop': 'off',
-
-      'vue/max-attributes-per-line': 'off',
-      'vue/singleline-html-element-content-newline': 'off',
-      'vue/multiline-html-element-content-newline': 'off',
-      'vue/html-self-closing': [
+      // TypeScript rules
+      '@typescript-eslint/no-explicit-any': 'warn',
+      '@typescript-eslint/no-unused-vars': [
         'error',
         {
-          html: {
-            void: 'always',
-            normal: 'always',
-            component: 'always'
-          },
-          svg: 'always',
-          math: 'always'
+          argsIgnorePattern: '^_',
+          varsIgnorePattern: '^_',
+          caughtErrorsIgnorePattern: '^_'
         }
-      ]
+      ],
+      '@typescript-eslint/explicit-function-return-type': 'off',
+      '@typescript-eslint/explicit-module-boundary-types': 'off',
+      '@typescript-eslint/no-non-null-assertion': 'warn',
+      '@typescript-eslint/no-unused-expressions': 'off', // Disable due to config issue
+      '@typescript-eslint/no-require-imports': 'off', // Allow require in config files
+
+      // Import rules
+      'import/order': [
+        'error',
+        {
+          groups: ['builtin', 'external', 'internal', 'parent', 'sibling', 'index', 'object', 'type'],
+          'newlines-between': 'always',
+          alphabetize: {
+            order: 'asc',
+            caseInsensitive: true
+          }
+        }
+      ],
+      'import/no-duplicates': 'error',
+      'import/no-unresolved': 'off', // TypeScript handles this
+      'import/named': 'off', // TypeScript handles this
+      'import/namespace': 'off', // TypeScript handles this
+      'import/default': 'off', // TypeScript handles this
+
+      // General rules
+      'no-console': ['warn', { allow: ['warn', 'error'] }],
+      'prefer-const': 'error',
+      'no-var': 'error',
+
+      // Node plugin rules - disable for monorepo compatibility
+      'n/no-extraneous-import': 'off',
+      'n/no-missing-import': 'off',
+      'n/no-unpublished-import': 'off',
+
+      // Unicorn rules (selective best practices)
+      'unicorn/better-regex': 'error',
+      'unicorn/catch-error-name': 'error',
+      'unicorn/consistent-function-scoping': 'error',
+      'unicorn/explicit-length-check': 'error',
+      'unicorn/filename-case': 'off', // Different conventions in different projects
+      'unicorn/no-array-for-each': 'off', // forEach is fine
+      'unicorn/no-null': 'off', // null is used in many APIs
+      'unicorn/prefer-module': 'off', // Using CommonJS in configs
+      'unicorn/prefer-top-level-await': 'off', // Not always appropriate
+      'unicorn/prevent-abbreviations': 'off', // Too strict
+
+      // SonarJS rules (selective code quality checks)
+      'sonarjs/cognitive-complexity': ['warn', 15],
+      'sonarjs/no-duplicate-string': ['warn', { threshold: 5 }],
+      'sonarjs/no-identical-functions': 'warn',
+      'sonarjs/no-redundant-boolean': 'error'
     }
+  },
+
+  // JSON file configuration
+  {
+    files: ['**/*.json'],
+    ignores: ['**/tsconfig*.json'], // tsconfig.json supports comments (JSONC)
+    ...json.configs['recommended']
+  },
+
+  // Ignore patterns
+  {
+    ignores: [
+      '**/node_modules/**',
+      '**/dist/**',
+      '**/.nuxt/**',
+      '**/coverage/**',
+      '**/.yarn/**',
+      '**/.pnp.*',
+      '**/build/**',
+      '**/out/**',
+      '**/.devcontainer/**',
+      '**/drizzle/**'
+    ]
   }
 ];

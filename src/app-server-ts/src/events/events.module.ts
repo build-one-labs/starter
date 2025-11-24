@@ -1,4 +1,5 @@
 import { Module, Global } from '@nestjs/common';
+
 import { InvoiceEvents } from './invoice.events';
 import { ProductEvents } from './products.events';
 

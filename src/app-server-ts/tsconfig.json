@@ -16,11 +16,19 @@
     "baseUrl": "./",
     "incremental": false,
     "skipLibCheck": true,
-    "strictNullChecks": false,
-    "noImplicitAny": false,
-    "strictBindCallApply": false,
-    "forceConsistentCasingInFileNames": false,
-    "noFallthroughCasesInSwitch": false,
+    // Type checking - gradually increasing strictness
+    "strictNullChecks": false, // TODO: Enable in future for better null safety
+    "noImplicitAny": false, // TODO: Enable gradually to catch type errors
+    "strictBindCallApply": true, // Enabled: Better function call safety
+    "strictPropertyInitialization": false, // NestJS DI makes this difficult
+    "noImplicitThis": true, // Enabled: Catch this binding issues
+    "alwaysStrict": true, // Enabled: Use strict mode
+    // Code quality checks - now enabled
+    "forceConsistentCasingInFileNames": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUnusedLocals": false, // Let ESLint handle this
+    "noUnusedParameters": false, // Let ESLint handle this
+    "noImplicitReturns": true, // Enabled: Catch missing return statements
     "paths": {
       "@/*": ["src/*"]
     }
