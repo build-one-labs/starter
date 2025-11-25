@@ -1,0 +1,185 @@
+{
+  "deploymentType": "",
+  "moduleGuid": "ba21da74-0ca7-fda3-8914-0f2ea05dd467",
+  "objectDescription": "Products form with organized fieldsets",
+  "objectExtension": "",
+  "objectMasterGuid": "854bfc55-0e5c-81a3-db14-ee53f8f2d549",
+  "objectName": "productsForm",
+  "objectPackage": "",
+  "objectTypeGuid": "8c27caef-9edb-f99a-3914-ef7cd4d6ff91",
+  "runnableFromMenu": false,
+  "staticObject": false,
+  "templateObject": false,
+  "attributes": {
+    "BorderTitle": ""
+  },
+  "instances": [
+    {
+      "containerObjectMasterGuid": "854bfc55-0e5c-81a3-db14-ee53f8f2d549",
+      "instanceName": "Fieldset_BasicInfo",
+      "objectInstanceGuid": "f1000001-0000-0000-0000-000000000001",
+      "objectMasterGuid": "96bf82d3-2794-2aad-3a14-0242d5a06df7",
+      "objectName": "SimpleSwatFieldset",
+      "attributes": {
+        "collapsed": false,
+        "COLUMN": 1,
+        "COLUMNS": 1,
+        "LABEL": "Basic Information",
+        "ROW": 1
+      },
+      "instances": [
+        {
+          "containerObjectMasterGuid": "854bfc55-0e5c-81a3-db14-ee53f8f2d549",
+          "instanceName": "productName",
+          "objectInstanceGuid": "854bfc55-0e5c-81a3-db14-ee53f075cf57",
+          "objectMasterGuid": "854bfc55-0e5c-81a3-db14-e55318a2d01a",
+          "objectName": "productsEntity.productName",
+          "parentInstanceGuid": "f1000001-0000-0000-0000-000000000001",
+          "parentInstanceName": "Fieldset_BasicInfo",
+          "attributes": {
+            "COLUMN": 1,
+            "LABEL": "Product Name",
+            "ROW": 1
+          },
+          "instances": []
+        },
+        {
+          "containerObjectMasterGuid": "854bfc55-0e5c-81a3-db14-ee53f8f2d549",
+          "instanceName": "description",
+          "objectInstanceGuid": "854bfc55-0e5c-81a3-db14-ee53b0cfcc59",
+          "objectMasterGuid": "854bfc55-0e5c-81a3-db14-e5535008e41d",
+          "objectName": "productsEntity.description",
+          "parentInstanceGuid": "f1000001-0000-0000-0000-000000000001",
+          "parentInstanceName": "Fieldset_BasicInfo",
+          "attributes": {
+            "COLUMN": 1,
+            "ROW": 2
+          },
+          "instances": []
+        },
+        {
+          "containerObjectMasterGuid": "854bfc55-0e5c-81a3-db14-ee53f8f2d549",
+          "instanceName": "image",
+          "objectInstanceGuid": "854bfc55-0e5c-81a3-db14-ee5318cb7b4c",
+          "objectMasterGuid": "854bfc55-0e5c-81a3-db14-e55340b54d21",
+          "objectName": "productsEntity.image",
+          "parentInstanceGuid": "f1000001-0000-0000-0000-000000000001",
+          "parentInstanceName": "Fieldset_BasicInfo",
+          "attributes": {
+            "COLUMN": 1,
+            "ROW": 3,
+            "validationSchema": "min(1, { message: 'Image is required.' })"
+          },
+          "instances": []
+        }
+      ]
+    },
+    {
+      "containerObjectMasterGuid": "854bfc55-0e5c-81a3-db14-ee53f8f2d549",
+      "instanceName": "Fieldset_PricingInventory",
+      "objectInstanceGuid": "f1000002-0000-0000-0000-000000000002",
+      "objectMasterGuid": "96bf82d3-2794-2aad-3a14-0242d5a06df7",
+      "objectName": "SimpleSwatFieldset",
+      "attributes": {
+        "collapsed": true,
+        "COLUMN": 1,
+        "COLUMNS": 1,
+        "LABEL": "Pricing & Inventory",
+        "ROW": 2
+      },
+      "instances": [
+        {
+          "containerObjectMasterGuid": "854bfc55-0e5c-81a3-db14-ee53f8f2d549",
+          "instanceName": "unitPrice",
+          "objectInstanceGuid": "854bfc55-0e5c-81a3-db14-ee5340befc55",
+          "objectMasterGuid": "854bfc55-0e5c-81a3-db14-e55380d2c325",
+          "objectName": "productsEntity.unitPrice",
+          "parentInstanceGuid": "f1000002-0000-0000-0000-000000000002",
+          "parentInstanceName": "Fieldset_PricingInventory",
+          "attributes": {
+            "COLUMN": 1,
+            "LABEL": "Unit Price",
+            "ROW": 1
+          },
+          "instances": []
+        },
+        {
+          "containerObjectMasterGuid": "854bfc55-0e5c-81a3-db14-ee53f8f2d549",
+          "instanceName": "quantity",
+          "objectInstanceGuid": "854bfc55-0e5c-81a3-db14-ee53983b3250",
+          "objectMasterGuid": "854bfc55-0e5c-81a3-db14-e5536838c328",
+          "objectName": "productsEntity.quantity",
+          "parentInstanceGuid": "f1000002-0000-0000-0000-000000000002",
+          "parentInstanceName": "Fieldset_PricingInventory",
+          "attributes": {
+            "COLUMN": 1,
+            "ROW": 2,
+            "validationSchema": "min(1, { message: 'Quantity should be at least 1.' })"
+          },
+          "instances": []
+        }
+      ]
+    },
+    {
+      "containerObjectMasterGuid": "854bfc55-0e5c-81a3-db14-ee53f8f2d549",
+      "instanceName": "Fieldset_Classification",
+      "objectInstanceGuid": "f1000003-0000-0000-0000-000000000003",
+      "objectMasterGuid": "96bf82d3-2794-2aad-3a14-0242d5a06df7",
+      "objectName": "SimpleSwatFieldset",
+      "attributes": {
+        "collapsed": true,
+        "COLUMN": 1,
+        "COLUMNS": 1,
+        "LABEL": "Classification & Status",
+        "ROW": 3
+      },
+      "instances": [
+        {
+          "containerObjectMasterGuid": "854bfc55-0e5c-81a3-db14-ee53f8f2d549",
+          "instanceName": "category",
+          "objectInstanceGuid": "854bfc55-0e5c-81a3-db14-ee53a06f1f54",
+          "objectMasterGuid": "854bfc55-0e5c-81a3-db14-e553788f8e23",
+          "objectName": "productsEntity.category",
+          "parentInstanceGuid": "f1000003-0000-0000-0000-000000000003",
+          "parentInstanceName": "Fieldset_Classification",
+          "attributes": {
+            "COLUMN": 1,
+            "ROW": 1
+          },
+          "instances": []
+        },
+        {
+          "containerObjectMasterGuid": "854bfc55-0e5c-81a3-db14-ee53f8f2d549",
+          "instanceName": "isActive",
+          "objectInstanceGuid": "854bfc55-0e5c-81a3-db14-ee53d0b1714e",
+          "objectMasterGuid": "854bfc55-0e5c-81a3-db14-e55348aa5a30",
+          "objectName": "productsEntity.isActive",
+          "parentInstanceGuid": "f1000003-0000-0000-0000-000000000003",
+          "parentInstanceName": "Fieldset_Classification",
+          "attributes": {
+            "COLUMN": 1,
+            "ROW": 2
+          },
+          "instances": []
+        },
+        {
+          "containerObjectMasterGuid": "854bfc55-0e5c-81a3-db14-ee53f8f2d549",
+          "instanceName": "rating",
+          "objectInstanceGuid": "854bfc55-0e5c-81a3-db14-ee5310272252",
+          "objectMasterGuid": "854bfc55-0e5c-81a3-db14-e553c04b782b",
+          "objectName": "productsEntity.rating",
+          "parentInstanceGuid": "f1000003-0000-0000-0000-000000000003",
+          "parentInstanceName": "Fieldset_Classification",
+          "attributes": {
+            "COLUMN": 1,
+            "ROW": 3,
+            "validationSchema": "gt(0, { message: 'Must be greater than 0.' }).lt(6, { message: 'Must be less than 6.' })"
+          },
+          "instances": []
+        }
+      ]
+    }
+  ],
+  "links": [],
+  "pages": []
+}

@@ -1,0 +1,144 @@
+{
+  "deploymentType": "",
+  "moduleGuid": "ba21da74-0ca7-fda3-8914-0f2ea05dd467",
+  "objectDescription": "Main menu for MikeTest application",
+  "objectExtension": "",
+  "objectMasterGuid": "6ad9447a-e540-460c-97be-35540ea82932",
+  "objectName": "MikeTestMainMenu",
+  "objectPackage": "",
+  "objectTypeGuid": "835a8a67-821c-e9ad-dc14-dbe638d78bfc",
+  "runnableFromMenu": false,
+  "staticObject": false,
+  "templateObject": false,
+  "attributes": {
+    "LABEL": "MikeTest App",
+    "smallImage": "fad fa-building"
+  },
+  "instances": [
+    {
+      "containerObjectMasterGuid": "6ad9447a-e540-460c-97be-35540ea82932",
+      "instanceName": "Home",
+      "objectInstanceGuid": "76847d17-d7d8-4758-b212-f36498b77b80",
+      "objectMasterGuid": "8fa9e83e-8645-1f95-df14-888c889d36fa",
+      "objectName": "SaaSOverview",
+      "objectSequence": 1,
+      "pageGuid": "",
+      "parentInstanceGuid": "",
+      "attributes": {
+        "actionParameter": "HomeWelcomeScreen",
+        "isDevelopment": true,
+        "LABEL": "Home",
+        "largeImage": "fal fa-house",
+        "smallImage": "fal fa-house"
+      },
+      "instances": []
+    },
+    {
+      "containerObjectMasterGuid": "6ad9447a-e540-460c-97be-35540ea82932",
+      "instanceName": "Module:1",
+      "layoutPosition": "",
+      "objectInstanceGuid": "dda54c20-c4a7-4081-ac69-4f3ad7dbd23b",
+      "objectMasterGuid": "a6fd5a80-fc47-5ab0-dd14-89950832f2f9",
+      "objectName": "SwatGroup",
+      "objectSequence": 3,
+      "pageGuid": "",
+      "parentInstanceGuid": "",
+      "attributes": {
+        "icon": "fad fa-folder",
+        "LABEL": "Module: 1"
+      },
+      "instances": [
+        {
+          "containerObjectMasterGuid": "",
+          "instanceName": "Customers",
+          "layoutPosition": "",
+          "objectInstanceGuid": "",
+          "objectMasterGuid": "ec324df4-6730-17bc-e014-376a50e6105a",
+          "objectName": "SwatAction",
+          "objectSequence": 9,
+          "pageGuid": "",
+          "parentInstanceGuid": "",
+          "attributes": {
+            "actionParameter": "clientsGridSample",
+            "actionType": "Launch",
+            "LABEL": "Customers",
+            "largeImage": "fad fa-cart-arrow-down",
+            "smallImage": "fad fa-cart-arrow-down"
+          },
+          "instances": []
+        }
+      ]
+    },
+    {
+      "containerObjectMasterGuid": "6ad9447a-e540-460c-97be-35540ea82932",
+      "instanceName": "Module:2",
+      "layoutPosition": "",
+      "objectInstanceGuid": "a126dd2c-2ead-4d3d-8305-6d82d32be393",
+      "objectMasterGuid": "a6fd5a80-fc47-5ab0-dd14-89950832f2f9",
+      "objectName": "SwatGroup",
+      "objectSequence": 4,
+      "pageGuid": "",
+      "parentInstanceGuid": "",
+      "attributes": {
+        "icon": "fad fa-folder",
+        "LABEL": "Module: 2"
+      },
+      "instances": [
+        {
+          "containerObjectMasterGuid": "",
+          "instanceName": "Products",
+          "layoutPosition": "",
+          "objectInstanceGuid": "",
+          "objectMasterGuid": "ec324df4-6730-17bc-e014-376a50e6105a",
+          "objectName": "SwatAction",
+          "objectSequence": 10,
+          "pageGuid": "",
+          "parentInstanceGuid": "",
+          "attributes": {
+            "actionParameter": "productsSearch",
+            "actionType": "Launch",
+            "LABEL": "Products",
+            "largeImage": "fad fa-barcode-alt",
+            "smallImage": "fad fa-barcode-alt"
+          },
+          "instances": []
+        }
+      ]
+    },
+    {
+      "containerObjectMasterGuid": "6ad9447a-e540-460c-97be-35540ea82932",
+      "instanceName": "SwatGroup",
+      "layoutPosition": "",
+      "objectInstanceGuid": "ac22ccb2-b953-448d-89ad-184016d6f8fd",
+      "objectMasterGuid": "a6fd5a80-fc47-5ab0-dd14-89950832f2f9",
+      "objectName": "SwatGroup",
+      "objectSequence": 5,
+      "pageGuid": "",
+      "parentInstanceGuid": "",
+      "attributes": {
+        "LABEL": "Module: 3"
+      },
+      "instances": [
+        {
+          "containerObjectMasterGuid": "",
+          "instanceName": "openInvoiceSearch",
+          "objectInstanceGuid": "",
+          "objectMasterGuid": "8fa9e83e-8645-1f95-df14-888c58640734",
+          "objectName": "openInvoiceSearch",
+          "objectSequence": 1,
+          "pageGuid": "",
+          "parentInstanceGuid": "",
+          "parentInstanceName": "Finance",
+          "attributes": {
+            "LABEL": "Invoices",
+            "largeImage": "fad fa-people-arrows",
+            "smallImage": "fad fa-people-arrows"
+          },
+          "instances": []
+        }
+      ]
+    }
+  ],
+  "links": [],
+  "pages": []
+}

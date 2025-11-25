@@ -1,0 +1,87 @@
+{
+  "deploymentType": "",
+  "moduleGuid": "ba21da74-0ca7-fda3-8914-0f2ea05dd467",
+  "objectDescription": "Products search screen with datalist - My first screen",
+  "objectExtension": "",
+  "objectMasterGuid": "b77b79d6-3564-4f7c-8540-86fc7decdeb5",
+  "objectName": "MyFirstScreen",
+  "objectPackage": "",
+  "objectTypeGuid": "8c27caef-9edb-f99a-3914-ec7c1c00decc",
+  "runnableFromMenu": false,
+  "staticObject": false,
+  "templateObject": false,
+  "attributes": {
+    "isModal": false,
+    "LayoutOptions": "2U",
+    "title": "My first screen"
+  },
+  "instances": [
+    {
+      "containerObjectMasterGuid": "b77b79d6-3564-4f7c-8540-86fc7decdeb5",
+      "instanceName": "productsDSO",
+      "objectInstanceGuid": "02e49368-a57a-4a87-aa9f-98d9f9e25295",
+      "objectMasterGuid": "854bfc55-0e5c-81a3-db14-e753b8f1fad0",
+      "objectName": "productsDSO",
+      "objectSequence": 1,
+      "attributes": {},
+      "instances": []
+    },
+    {
+      "containerObjectMasterGuid": "b77b79d6-3564-4f7c-8540-86fc7decdeb5",
+      "instanceName": "productsForm",
+      "layoutPosition": "b",
+      "objectInstanceGuid": "7850288a-c9c1-4a08-b756-5e74a095a124",
+      "objectMasterGuid": "854bfc55-0e5c-81a3-db14-ee53f8f2d549",
+      "objectName": "productsForm",
+      "objectSequence": 3,
+      "parentInstanceGuid": "",
+      "attributes": {},
+      "instances": []
+    },
+    {
+      "containerObjectMasterGuid": "b77b79d6-3564-4f7c-8540-86fc7decdeb5",
+      "instanceName": "productsDataList",
+      "layoutPosition": "a",
+      "objectInstanceGuid": "06cf5746-510a-4fd1-b99c-edb0cf10597a",
+      "objectMasterGuid": "abe574ad-8df4-ec9b-db14-0151880a96d1",
+      "objectName": "productsDataList",
+      "objectSequence": 4,
+      "parentInstanceGuid": "",
+      "attributes": {},
+      "instances": []
+    }
+  ],
+  "links": [
+    {
+      "containerObjectMasterGuid": "b77b79d6-3564-4f7c-8540-86fc7decdeb5",
+      "linkGuid": "3c2b3b18-24cc-4a9a-bcde-c259357eb50a",
+      "linkName": "PrimarySdo",
+      "linkTypeGuid": "f52235a4-c120-2490-3814-9c2915819244",
+      "sourceInstanceName": "",
+      "sourceObjectInstanceGuid": "",
+      "targetInstanceName": "productsDSO",
+      "targetObjectInstanceGuid": "02e49368-a57a-4a87-aa9f-98d9f9e25295"
+    },
+    {
+      "containerObjectMasterGuid": "b77b79d6-3564-4f7c-8540-86fc7decdeb5",
+      "linkGuid": "9fbd18e4-ae02-4cfa-b10a-a66fce55133a",
+      "linkName": "Data",
+      "linkTypeGuid": "d37727fb-24ff-7ea3-0e14-a5d9d8526f38",
+      "sourceInstanceName": "productsDSO",
+      "sourceObjectInstanceGuid": "02e49368-a57a-4a87-aa9f-98d9f9e25295",
+      "targetInstanceName": "productsForm",
+      "targetObjectInstanceGuid": "7850288a-c9c1-4a08-b756-5e74a095a124"
+    },
+    {
+      "containerObjectMasterGuid": "b77b79d6-3564-4f7c-8540-86fc7decdeb5",
+      "linkGuid": "7bd03fd7-cfce-4920-a551-17bbc87a5628",
+      "linkName": "Data",
+      "linkTypeGuid": "d37727fb-24ff-7ea3-0e14-a5d9d8526f38",
+      "sourceInstanceName": "productsDSO",
+      "sourceObjectInstanceGuid": "02e49368-a57a-4a87-aa9f-98d9f9e25295",
+      "targetInstanceName": "productsDataList",
+      "targetObjectInstanceGuid": "06cf5746-510a-4fd1-b99c-edb0cf10597a"
+    }
+  ],
+  "pages": []
+}

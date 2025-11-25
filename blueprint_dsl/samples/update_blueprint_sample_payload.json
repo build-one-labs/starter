@@ -1,0 +1,78 @@
+{ "deploymentType": "",
+  "moduleGuid": "ba21da74-0ca7-fda3-8914-0f2ea05dd467",
+  "objectDescription": "Products search screen",
+  "objectExtension": "",
+  "objectMasterGuid": "abe574ad-8df4-ec9b-db14-eb5078b89009",
+  "objectName": "productsSearch",
+  "objectPackage": "",
+  "objectTypeGuid": "8c27caef-9edb-f99a-3914-ec7c1c00decc",
+  "runnableFromMenu": false,
+  "staticObject": false,
+  "templateObject": false,
+  "attributes": {
+    "isModal": false,
+    "LayoutOptions": "2U",
+    "title": "List of available products"
+  },
+  "instances": [
+    {
+      "containerObjectMasterGuid": "abe574ad-8df4-ec9b-db14-eb5078b89009",
+      "instanceName": "productsDSO",
+      "objectInstanceGuid": "17aff416-790b-4c0a-95be-04ffd44a50a0",
+      "objectMasterGuid": "854bfc55-0e5c-81a3-db14-e753b8f1fad0",
+      "objectName": "productsDSO",
+      "objectSequence": 1,
+      "attributes": {},
+      "instances": []
+    },
+    {
+      "containerObjectMasterGuid": "abe574ad-8df4-ec9b-db14-eb5078b89009",
+      "instanceName": "productsForm",
+      "layoutPosition": "b",
+      "objectInstanceGuid": "faa85de0-07d2-4f64-a8ef-a53afce4dca0",
+      "objectMasterGuid": "854bfc55-0e5c-81a3-db14-ee53f8f2d549",
+      "objectName": "productsForm",
+      "objectSequence": 3,
+      "parentInstanceGuid": "",
+      "attributes": {},
+      "instances": []
+    }],
+  "links": [
+    {
+      "containerObjectMasterGuid": "abe574ad-8df4-ec9b-db14-eb5078b89009",
+      "linkGuid": "6becb10f-bf68-437c-adc6-f9115cef89c2",
+      "linkName": "PrimarySdo",
+      "linkTypeGuid": "f52235a4-c120-2490-3814-9c2915819244",
+      "sourceInstanceName": "",
+      "targetInstanceName": "productsDSO",
+      "targetObjectInstanceGuid": "17aff416-790b-4c0a-95be-04ffd44a50a0"
+    },
+    {
+      "containerObjectMasterGuid": "abe574ad-8df4-ec9b-db14-eb5078b89009",
+      "linkGuid": "f78eebaf-ac35-463a-b11f-6b1b9af42897",
+      "linkName": "Data",
+      "linkTypeGuid": "d37727fb-24ff-7ea3-0e14-a5d9d8526f38",
+      "sourceInstanceName": "productsDSO",
+      "sourceObjectInstanceGuid": "17aff416-790b-4c0a-95be-04ffd44a50a0",
+      "targetInstanceName": "productsForm",
+      "targetObjectInstanceGuid": "faa85de0-07d2-4f64-a8ef-a53afce4dca0"
+    }],
+  "pages": [
+    {
+      "containerObjectMasterGuid": "abe574ad-8df4-ec9b-db14-eb5078b89009",
+      "pageGuid": "a9c978f3-ae1d-4aa5-963d-96ef9faa7f39",
+      "pageIcon": "far fa-square-code",
+      "pageKey": "actionDetails",
+      "pageLabel": "Sample Page 1",
+      "pageSequence": "1"
+    },
+    {
+      "containerObjectMasterGuid": "abe574ad-8df4-ec9b-db14-eb5078b89009",
+      "pageGuid": "1273d93b-cd3b-485f-a73c-97aba254d026",
+      "pageIcon": "far fa-ellipsis-stroke",
+      "pageLabel": "Sample Page 2",
+      "pageSequence": "2"
+    }
+  ]  
+}
+

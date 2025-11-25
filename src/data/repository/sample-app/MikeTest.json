@@ -1,0 +1,25 @@
+{
+  "deploymentType": "",
+  "moduleGuid": "03f128d1-58d8-450f-a795-81c604a7645d",
+  "objectDescription": "MikeTest Application - SwatApp configuration",
+  "objectExtension": "",
+  "objectMasterGuid": "5e897a08-5ef8-406b-9a4b-9dc9dff31a9d",
+  "objectName": "MikeTest",
+  "objectPackage": "",
+  "objectTypeGuid": "88bc46ce-f409-269d-aa14-beb3a897edab",
+  "runnableFromMenu": false,
+  "staticObject": false,
+  "templateObject": false,
+  "attributes": {
+    "backgroundImage": "",
+    "baseLayout": "taskbarMainLayout",
+    "defaultTheme": "",
+    "loginScreen": "",
+    "mainMenuCode": "MikeTestMainMenu",
+    "startupScreen": "MikeTestMainScreen",
+    "translationNamespaces": ""
+  },
+  "instances": [],
+  "links": [],
+  "pages": []
+}

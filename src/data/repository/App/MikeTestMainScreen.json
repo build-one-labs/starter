@@ -1,0 +1,47 @@
+{
+  "deploymentType": "",
+  "moduleGuid": "ee101ae6-012d-a7a0-aa14-1db810f67ef0",
+  "objectDescription": "Main screen for MikeTest application with sidebar menu and screen container",
+  "objectExtension": "",
+  "objectMasterGuid": "0f3f08d0-05df-4f4d-9ccf-8d4d7f6509fe",
+  "objectName": "MikeTestMainScreen",
+  "objectPackage": "",
+  "objectTypeGuid": "8c27caef-9edb-f99a-3914-eb7c8cda142f",
+  "runnableFromMenu": false,
+  "staticObject": false,
+  "templateObject": false,
+  "attributes": {
+    "childPanels": false,
+    "LayoutOptions": "2U"
+  },
+  "instances": [
+    {
+      "containerObjectMasterGuid": "0f3f08d0-05df-4f4d-9ccf-8d4d7f6509fe",
+      "instanceName": "MainSidebar",
+      "layoutPosition": "a",
+      "objectInstanceGuid": "c49eedf9-7277-4d0d-9138-bca869b0e241",
+      "objectMasterGuid": "f3b27810-4170-0a91-df14-2ced507cc8a3",
+      "objectName": "MainSidebar",
+      "objectSequence": 2,
+      "parentInstanceGuid": "",
+      "attributes": {
+        "menuId": "MikeTestMainMenu"
+      },
+      "instances": []
+    },
+    {
+      "containerObjectMasterGuid": "0f3f08d0-05df-4f4d-9ccf-8d4d7f6509fe",
+      "instanceName": "SidebarScreenContainer",
+      "layoutPosition": "b",
+      "objectInstanceGuid": "58c073eb-a082-4964-8fe0-058faf648296",
+      "objectMasterGuid": "f3b27810-4170-0a91-df14-31ed8803ecf7",
+      "objectName": "SidebarScreenContainer",
+      "objectSequence": 3,
+      "parentInstanceGuid": "",
+      "attributes": {},
+      "instances": []
+    }
+  ],
+  "links": [],
+  "pages": []
+}
