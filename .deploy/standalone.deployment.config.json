@@ -92,6 +92,7 @@
         "MICROSOFT_CLIENT_ID": "${MICROSOFT_CLIENT_ID:-}",
         "MICROSOFT_CLIENT_SECRET": "${MICROSOFT_CLIENT_SECRET:-}",
         "MICROSOFT_TENANT_ID": "${MICROSOFT_TENANT_ID:-}",
+        "MICROSOFT_SCOPE": "${MICROSOFT_SCOPE}",
         "B1_DATA_FOLDER": "/data/b1",
         "APP_DATA_FOLDER": "/data/app",
         "B1_DATABASE_URL": "${B1_DATABASE_URL:-postgres://${B1_DATABASE_CREDENTIALS:-}@b1_db_server:5432/b1?sslmode=disable}",

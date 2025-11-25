@@ -77,6 +77,7 @@
         "MICROSOFT_CLIENT_ID": "${MICROSOFT_CLIENT_ID:-}",
         "MICROSOFT_CLIENT_SECRET": "${MICROSOFT_CLIENT_SECRET:-}",
         "MICROSOFT_TENANT_ID": "${MICROSOFT_TENANT_ID:-}",
+        "MICROSOFT_SCOPE": "${MICROSOFT_SCOPE}",
         "B1_DATA_FOLDER": "/data/b1",
         "APP_DATA_FOLDER": "/data/app",
         "B1_DATABASE_URL": "${B1_DATABASE_URL:-postgres://${B1_DATABASE_CREDENTIALS:-}@b1_db_server:5432/b1?sslmode=disable}",
@@ -101,7 +102,8 @@
       "volumes": {
         "/app-data": "${WORKSPACE_ROOT}/data",
         "/data/b1": "${WORKSPACE_ROOT}/node_modules/@buildone/swat-data",
-        "/data/app": "${WORKSPACE_ROOT}/src/data"
+        "/data/app": "${WORKSPACE_ROOT}/src/data",
+        "/tmp/secrets/automationhub": "${BUILDONE_CLI_WORKSPACE}/automationhub"
       },
       "depends_on": {
         "b1_db_server": {
@@ -259,7 +261,7 @@
       }
     },
     "web-docs": {
-      "image": "docker.cloudsmith.io/buildone/repository/buildone-web-docs:24.3.0-VG.21",
+      "image": "docker.cloudsmith.io/buildone/repository/buildone-web-docs:24.3.0-VG.28",
       "restart": "unless-stopped",
       "ports": {
         "80": "5173"

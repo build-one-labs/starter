@@ -156,6 +156,8 @@ Uses CircleCI with dynamic pipeline continuation:
 - Change detection triggers conditional builds based on modified files
 - Build targets configured in the main CircleCI config mapping section
 
+For detailed CircleCI pipeline architecture, change detection patterns, and advanced workflows, see `node_modules/@buildone/swat-cli/knowledge/architecture_info/circleci.md`.
+
 ## Build.One Framework
 
 This application uses Build.One proprietary packages:
@@ -168,6 +170,17 @@ This application uses Build.One proprietary packages:
 - `@buildone/swat-circleci` - CircleCI integration scripts
 
 Check `package.json` files for current version numbers.
+
+### SWAT CLI Knowledge Base
+
+The `@buildone/swat-cli` package includes comprehensive documentation at `node_modules/@buildone/swat-cli/knowledge/`:
+
+**Reference documentation for:**
+- **Architecture & DevOps**: `architecture_info/CLAUDE.md` - Full framework architecture, CLI commands, deployment, CircleCI, git workflow, testing
+- **Blueprint DSL**: `blueprint_dsl/CLAUDE.md` - UI generation, screens, layouts, menus, rendering engine
+- **Skills**: `skills/CLAUDE.md` - Multi-step workflows (Portainer deployment, schema generation)
+
+**Note:** The knowledge base documents the full Build.One Vanguard framework. This Starter template uses a simplified subset of that architecture. For advanced framework features, deployment patterns, or Blueprint DSL work, consult the knowledge base.
 
 ## Database Migrations
 
@@ -225,3 +238,5 @@ Backend uses Jest with TypeScript:
 - Config: Inline in `src/app-server-ts/package.json`
 - Coverage output: `src/app-server-ts/coverage/` directory
 - Run tests from the `src/app-server-ts` workspace
+
+For comprehensive testing strategies including E2E testing, visual regression, and test environments, see `node_modules/@buildone/swat-cli/knowledge/architecture_info/testing.md`.

@@ -152,6 +152,6 @@
   "updateRemoteUserUID": true,
 
   // Workspace paths
-  "workspaceFolder": "/workspaces/starter",
-  "workspaceMount": "source=${localWorkspaceFolder},target=/workspaces/starter,type=bind,consistency=cached"
+  "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+  "workspaceMount": "source=${localWorkspaceFolder},target=/workspaces/${localWorkspaceFolderBasename},type=bind,consistency=cached"
 }
