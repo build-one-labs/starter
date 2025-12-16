@@ -118,7 +118,7 @@ services:
       app_db_server:
         condition: service_healthy
   n8n_db_server:
-    image: docker.cloudsmith.io/buildone/repository/automation-hub-db:1.11.0
+    image: docker.cloudsmith.io/buildone/repository/automation-hub-db:1.12.0
     restart: unless-stopped
     healthcheck:
       test:
@@ -132,7 +132,7 @@ services:
     volumes:
       - ah_db_storage:/var/lib/postgresql/data
   n8n:
-    image: docker.cloudsmith.io/buildone/repository/automation-hub-1-114-3-2:1.11.0
+    image: docker.cloudsmith.io/buildone/repository/automation-hub-1-121-2-1:1.12.0
     restart: unless-stopped
     environment:
       - AUTHENTICATION_URI=http://swat_app_server_ts:3000
@@ -192,7 +192,7 @@ services:
     volumes:
       - redis_storage:/data
   ah_worker:
-    image: docker.cloudsmith.io/buildone/repository/automation-hub-1-114-3-2:1.11.0
+    image: docker.cloudsmith.io/buildone/repository/automation-hub-1-121-2-1:1.12.0
     scale: ${AH_NUM_WORKERS:-1}
     entrypoint:
       - n8n
