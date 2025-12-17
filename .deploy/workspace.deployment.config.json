@@ -261,7 +261,7 @@
       }
     },
     "web-docs": {
-      "image": "docker.cloudsmith.io/buildone/repository/buildone-web-docs:24.3.0-VG.49",
+      "image": "docker.cloudsmith.io/buildone/repository/buildone-web-docs:24.3.0-VG.52",
       "restart": "unless-stopped",
       "ports": {
         "80": "5173"
