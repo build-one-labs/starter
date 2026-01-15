@@ -6,9 +6,25 @@
     "$schema": {
       "type": "string"
     },
+    "options": {
+      "type": "object",
+      "properties": {
+        "authenticationServerType": {
+          "type": "string",
+          "enum": [
+            "local",
+            "remote"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
     "globals": {
       "type": "object",
       "properties": {
+        "authenticationUrl": {
+          "type": "string"
+        },
         "dataImage": {
           "type": "string"
         },
