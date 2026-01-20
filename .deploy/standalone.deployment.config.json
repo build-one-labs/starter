@@ -4,7 +4,7 @@
     "authenticationServerType": "local"
   },
   "globals": {
-    "appUrl": "${APP_URL:-${STACK}.${DOMAIN}}",
+    "appUrl": "${APP_URL:-https://${STACK}.${DOMAIN}}",
     "authenticationTrustedOrigins": "https://${APP_URL:-${STACK}.${DOMAIN}}",
     "authenticationUrl": "${AUTH_URL:-http://auth_server:3000}",
     "automationHubImage": "docker.cloudsmith.io/buildone/repository/automation-hub-1-121-2-1:1.12.0",

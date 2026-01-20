@@ -27,6 +27,7 @@ node_modules
 !.yarn/sdks
 !.yarn/versions
 
-# Claude Code local settings
+# Claude Code local files
 .claude/settings.local.json
 .claude/mcp-configs/
+.claude/commands/

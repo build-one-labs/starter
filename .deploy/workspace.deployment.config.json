@@ -260,7 +260,7 @@
       }
     },
     "web-docs": {
-      "image": "docker.cloudsmith.io/buildone/repository/buildone-web-docs:24.3.0-VG.69",
+      "image": "docker.cloudsmith.io/buildone/repository/buildone-web-docs:24.3.0-VG.75",
       "restart": "unless-stopped",
       "ports": {
         "80": "5173"
@@ -287,6 +287,9 @@
       ],
       "volumes": {
         "/var/lib/postgresql/data": "auth_db_storage"
+      },
+      "ports": {
+        "5432": "25432"
       }
     },
     "auth_server": {
@@ -319,6 +322,13 @@
         "auth_db_server": {
           "condition": "service_healthy"
         }
+      },
+      "ports": {
+        "3000": "3002",
+        "9229": "3012"
+      },
+      "volumes": {
+        "/tmp/secrets/automationhub": "${BUILDONE_CLI_WORKSPACE}/automationhub"
       }
     }
   }

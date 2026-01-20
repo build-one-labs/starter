@@ -56,7 +56,7 @@ services:
     image: docker.cloudsmith.io/buildone/repository/buildone-swat-app-server-ts:${BUILDONE_VERSION}
     restart: unless-stopped
     environment:
-      - APP_URL=${APP_URL:-${STACK}.${DOMAIN}}
+      - APP_URL=${APP_URL:-https://${STACK}.${DOMAIN}}
       - BETTER_AUTH_SECRET=${BETTER_AUTH_SECRET}
       - IMPORT_DATA=true
       - PORT=3000
@@ -66,11 +66,11 @@ services:
       - B1_DATABASE_URL=${B1_DATABASE_URL:-postgres://${B1_DATABASE_CREDENTIALS:-}@b1_db_server:5432/b1?sslmode=disable}
       - AUTH_URL=${AUTH_URL:-http://auth_server:3000}
       - REPOSITORY_SERVICE_TYPE=POSTGRES
-      - LEGACY_APPLICATION_APPURL=${APP_URL:-${STACK}.${DOMAIN}}
+      - LEGACY_APPLICATION_APPURL=${APP_URL:-https://${STACK}.${DOMAIN}}
       - LEGACY_AUTHENTICATION_ALLOWEDAUTHENTICATION=${ALLOWED_AUTHENTICATION:-AkiomaUser}
       - LEGACY_AUTHENTICATION_SSOAUTHENTICATIONURI=${AUTH_URL:-http://auth_server:3000}
       - LEGACY_AUTHENTICATION_AUTHENTICATIONOIDCROLEID=undefined
-      - LEGACY_ENVIRONMENT_URL=${APP_URL:-${STACK}.${DOMAIN}}
+      - LEGACY_ENVIRONMENT_URL=${APP_URL:-https://${STACK}.${DOMAIN}}
       - LEGACY_INTEGRATION_GOOGLEAPIKEY=${GOOGLEAPIKEY:-}
       - LEGACY_INTEGRATION_KENDOLICENSEKEY=${KENDO_LICENSE_KEY:-}
     networks:
@@ -156,7 +156,7 @@ services:
       - HOST=0.0.0.0
       - PORT=3000
       - NODE_ENV=production
-      - APP_URL=${APP_URL:-${STACK}.${DOMAIN}}
+      - APP_URL=${APP_URL:-https://${STACK}.${DOMAIN}}
     networks:
       app-network: 
     command:
@@ -225,7 +225,7 @@ services:
     restart: unless-stopped
     environment:
       - PORT=3000
-      - APP_URL=${APP_URL:-${STACK}.${DOMAIN}}
+      - APP_URL=${APP_URL:-https://${STACK}.${DOMAIN}}
       - AUTH_DATABASE_URL=${AUTH_DATABASE_URL:-postgres://${AUTH_DATABASE_CREDENTIALS:-}@auth_db_server:5432/auth_db?sslmode=disable}
       - BETTER_AUTH_SECRET=${BETTER_AUTH_SECRET}
       - B1_AUTOMATION_HUB_USER=${B1_AUTOMATION_HUB_USER}
