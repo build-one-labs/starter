@@ -1779,9 +1779,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@buildone/app-server-tslib@npm:24.3.0-b1-399-toast-message-doesnt-work-on-starter.1":
-  version: 24.3.0-b1-399-toast-message-doesnt-work-on-starter.1
-  resolution: "@buildone/app-server-tslib@npm:24.3.0-b1-399-toast-message-doesnt-work-on-starter.1"
+"@buildone/app-server-tslib@npm:24.3.0-b1-399-toast-message-doesnt-work-on-starter.2":
+  version: 24.3.0-b1-399-toast-message-doesnt-work-on-starter.2
+  resolution: "@buildone/app-server-tslib@npm:24.3.0-b1-399-toast-message-doesnt-work-on-starter.2"
   dependencies:
     "@nestjs/axios": "npm:^4.0.0"
     "@nestjs/common": "npm:^11.1.5"
@@ -1829,20 +1829,20 @@ __metadata:
     pg: ^8.16.3
     reflect-metadata: ^0.2.2
     rxjs: ^7.8.1
-  checksum: 10c0/b9914c685b4d28c682db744f198ea67f0cf6d1c1efc4d7cd616faeeb59bdd17b5cf86d20252db637883025d8d249b44d2b22e88e26bdfecd66185e33c621f28d
+  checksum: 10c0/1b91485cc9501df41a6b668edaead8d828bd4c86370660ff3dd49da374066a673c20c7d8a6d82bb66bb97dd08014adadf70f5a2db7d9b897a30a6cc1f4bb96c2
   languageName: node
   linkType: hard
 
-"@buildone/swat-circleci@npm:24.3.0-b1-399-toast-message-doesnt-work-on-starter.1":
-  version: 24.3.0-b1-399-toast-message-doesnt-work-on-starter.1
-  resolution: "@buildone/swat-circleci@npm:24.3.0-b1-399-toast-message-doesnt-work-on-starter.1"
-  checksum: 10c0/a12d482a77a9166535851f76a468e9761718c2fadfc479fc59c84822158fd9b00e9386801b72c9f4839502c5789d98de7c7c005d874b671443ba1203dea1b395
+"@buildone/swat-circleci@npm:24.3.0-b1-399-toast-message-doesnt-work-on-starter.2":
+  version: 24.3.0-b1-399-toast-message-doesnt-work-on-starter.2
+  resolution: "@buildone/swat-circleci@npm:24.3.0-b1-399-toast-message-doesnt-work-on-starter.2"
+  checksum: 10c0/8ca30cb4e30f653f779f8c75ea540ee8a7e935ca06f5595f8fffcab7aac70a737d0604e30b387b819f7722122463426d18509c0d35e0bf47404f2bcdef9cb778
   languageName: node
   linkType: hard
 
-"@buildone/swat-cli@npm:24.3.0-b1-399-toast-message-doesnt-work-on-starter.1":
-  version: 24.3.0-b1-399-toast-message-doesnt-work-on-starter.1
-  resolution: "@buildone/swat-cli@npm:24.3.0-b1-399-toast-message-doesnt-work-on-starter.1"
+"@buildone/swat-cli@npm:24.3.0-b1-399-toast-message-doesnt-work-on-starter.2":
+  version: 24.3.0-b1-399-toast-message-doesnt-work-on-starter.2
+  resolution: "@buildone/swat-cli@npm:24.3.0-b1-399-toast-message-doesnt-work-on-starter.2"
   dependencies:
     fast-xml-parser: "npm:^5.3.1"
     js-yaml: "npm:^4.1.0"
@@ -1851,27 +1851,27 @@ __metadata:
   bin:
     b1: bin/build-one.mjs
     build-one: bin/build-one.mjs
-  checksum: 10c0/da78694bbb6773bb7abfa0be305528f042fe86b1071612683e7e9ba71741d4a6bf8453271100db55545e5f8ccc2200543dc4356716cf44e96bb7c2400955f547
+  checksum: 10c0/f8382810123c1b13014390e87a5acbd72265dcbd6d7f72230b0c844c47ac4640b45ad6b9751049edeb66b16f5236a62187ffe0f0f10eb21b385dc6044d9363d4
   languageName: node
   linkType: hard
 
-"@buildone/swat-data@npm:24.3.0-b1-399-toast-message-doesnt-work-on-starter.1":
-  version: 24.3.0-b1-399-toast-message-doesnt-work-on-starter.1
-  resolution: "@buildone/swat-data@npm:24.3.0-b1-399-toast-message-doesnt-work-on-starter.1"
-  checksum: 10c0/fdf8986b75e5f51f62888072543cefccaf574e42d22c26506da5ece1ade503c6349748fe4a8bbb52b189a378fad9f2b2eca1df3f56060426080fb81f27323d95
+"@buildone/swat-data@npm:24.3.0-b1-399-toast-message-doesnt-work-on-starter.2":
+  version: 24.3.0-b1-399-toast-message-doesnt-work-on-starter.2
+  resolution: "@buildone/swat-data@npm:24.3.0-b1-399-toast-message-doesnt-work-on-starter.2"
+  checksum: 10c0/b4f738398f5892658621a08110bdcb8d205833e6d5da763fe7744fc81837eedfba8ea95221ad54948c4569ccd1bce78d0736b13328e285e2e71fdbf5058623b9
   languageName: node
   linkType: hard
 
-"@buildone/swat-vscode@npm:24.3.0-b1-399-toast-message-doesnt-work-on-starter.1":
-  version: 24.3.0-b1-399-toast-message-doesnt-work-on-starter.1
-  resolution: "@buildone/swat-vscode@npm:24.3.0-b1-399-toast-message-doesnt-work-on-starter.1"
-  checksum: 10c0/920e7e9a9d895d9491751b894f413db013f4809363ac81551a88d34abca91fdfc85860c6c99c00283b2e7af45b7d0d355394bb261180b482e84b268663f472ef
+"@buildone/swat-vscode@npm:24.3.0-b1-399-toast-message-doesnt-work-on-starter.2":
+  version: 24.3.0-b1-399-toast-message-doesnt-work-on-starter.2
+  resolution: "@buildone/swat-vscode@npm:24.3.0-b1-399-toast-message-doesnt-work-on-starter.2"
+  checksum: 10c0/141e9a71b5080132cae950deb91e4532f380f24f1e45ada48b8a02a081b07908ef083a02ace5897d0800a9f9188fe13836f07a35cd44181f26ad3c4a6ddf67b1
   languageName: node
   linkType: hard
 
-"@buildone/web-core@npm:24.3.0-b1-399-toast-message-doesnt-work-on-starter.1":
-  version: 24.3.0-b1-399-toast-message-doesnt-work-on-starter.1
-  resolution: "@buildone/web-core@npm:24.3.0-b1-399-toast-message-doesnt-work-on-starter.1"
+"@buildone/web-core@npm:24.3.0-b1-399-toast-message-doesnt-work-on-starter.2":
+  version: 24.3.0-b1-399-toast-message-doesnt-work-on-starter.2
+  resolution: "@buildone/web-core@npm:24.3.0-b1-399-toast-message-doesnt-work-on-starter.2"
   dependencies:
     "@dagrejs/dagre": "npm:^1.1.4"
     "@fortawesome/fontawesome-pro": "npm:^6.7.2"
@@ -1924,16 +1924,16 @@ __metadata:
     primevue: ^4.4.1
     vue: ^3.5.22
     vue-i18n: ^10.0.7
-  checksum: 10c0/7ae6b71663b672af14ddc07c7b4c0cf86bd704e06cade14741670e4142478c235cb9c9f6a0041c36a90f8e86c3d3c5be9ec9c5c8da05ff1b9f67b7511c4a8381
+  checksum: 10c0/61e3c40de139a9108c77ea24504125c0c1daacd06d03383b7f70a1ba24c6378f9316d2101898c4109b4126a4b706271dae8ee4c061997ab1ae8adf2fba824d51
   languageName: node
   linkType: hard
 
-"@buildone/web-framework-layer@npm:24.3.0-b1-399-toast-message-doesnt-work-on-starter.1":
-  version: 24.3.0-b1-399-toast-message-doesnt-work-on-starter.1
-  resolution: "@buildone/web-framework-layer@npm:24.3.0-b1-399-toast-message-doesnt-work-on-starter.1"
+"@buildone/web-framework-layer@npm:24.3.0-b1-399-toast-message-doesnt-work-on-starter.2":
+  version: 24.3.0-b1-399-toast-message-doesnt-work-on-starter.2
+  resolution: "@buildone/web-framework-layer@npm:24.3.0-b1-399-toast-message-doesnt-work-on-starter.2"
   dependencies:
-    "@buildone/web-core": "npm:24.3.0-b1-399-toast-message-doesnt-work-on-starter.1"
-    "@buildone/web-framework": "npm:24.3.0-b1-399-toast-message-doesnt-work-on-starter.1"
+    "@buildone/web-core": "npm:24.3.0-b1-399-toast-message-doesnt-work-on-starter.2"
+    "@buildone/web-framework": "npm:24.3.0-b1-399-toast-message-doesnt-work-on-starter.2"
     "@nuxt/image": "npm:1.10.0"
     "@nuxtjs/i18n": "npm:9.5.4"
     "@nuxtjs/tailwindcss": "npm:6.13.2"
@@ -1951,18 +1951,18 @@ __metadata:
     tailwindcss-primeui: "npm:^0.5.1"
     vue: "npm:^3.5.22"
     vue-router: "npm:^4.5.0"
-  checksum: 10c0/065b37bc0905496eebbb8268de465c27d61fc8f8e295960a04bec19d05b7d04a0567566e22f4bcec5889a692c1a89b1e53b6e9485f972f35e32feb892cb39239
+  checksum: 10c0/1422b9ee71a5eb02cb7d51b9aad7b55ae93239c878420a6996718bbd7239c19128be6191642c8d6d788bd042c6f53d58b8439a9f601fc4283b34c8b91c5f5e53
   languageName: node
   linkType: hard
 
-"@buildone/web-framework@npm:24.3.0-b1-399-toast-message-doesnt-work-on-starter.1":
-  version: 24.3.0-b1-399-toast-message-doesnt-work-on-starter.1
-  resolution: "@buildone/web-framework@npm:24.3.0-b1-399-toast-message-doesnt-work-on-starter.1"
+"@buildone/web-framework@npm:24.3.0-b1-399-toast-message-doesnt-work-on-starter.2":
+  version: 24.3.0-b1-399-toast-message-doesnt-work-on-starter.2
+  resolution: "@buildone/web-framework@npm:24.3.0-b1-399-toast-message-doesnt-work-on-starter.2"
   dependencies:
-    "@buildone/web-core": "npm:24.3.0-b1-399-toast-message-doesnt-work-on-starter.1"
+    "@buildone/web-core": "npm:24.3.0-b1-399-toast-message-doesnt-work-on-starter.2"
     nuxt: "npm:^3.16.2"
     vue: "npm:^3.5.22"
-  checksum: 10c0/a7a109c79e0032dba94bd69a89a7afa86c5afd44e1387226af301c89d2c9e7a743ed9fa7799c08126541b8ab17abb8a2e129ff08acd761088510a61311246e1c
+  checksum: 10c0/6bd5dcc31e1389d2840a502b6dd934eb06db5011d2bafeb65d476dec7b5d90d0e224ac562cf4ac4c54f1544eee3264a8384b52c23f60051920d3f5ba86e6e2fb
   languageName: node
   linkType: hard
 
@@ -9014,7 +9014,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "app-server-ts@workspace:src/app-server-ts"
   dependencies:
-    "@buildone/app-server-tslib": "npm:24.3.0-b1-399-toast-message-doesnt-work-on-starter.1"
+    "@buildone/app-server-tslib": "npm:24.3.0-b1-399-toast-message-doesnt-work-on-starter.2"
     "@nestjs/axios": "npm:^4.0.0"
     "@nestjs/cli": "npm:^11.0.0"
     "@nestjs/common": "npm:^11.0.8"
@@ -9078,8 +9078,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "app@workspace:."
   dependencies:
-    "@buildone/swat-cli": "npm:24.3.0-b1-399-toast-message-doesnt-work-on-starter.1"
-    "@buildone/swat-vscode": "npm:24.3.0-b1-399-toast-message-doesnt-work-on-starter.1"
+    "@buildone/swat-cli": "npm:24.3.0-b1-399-toast-message-doesnt-work-on-starter.2"
+    "@buildone/swat-vscode": "npm:24.3.0-b1-399-toast-message-doesnt-work-on-starter.2"
     "@eslint/js": "npm:^9.14.0"
     eslint: "npm:^9.19.0"
     eslint-config-prettier: "npm:^10.0.1"
@@ -10569,7 +10569,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "circleci@workspace:.circleci"
   dependencies:
-    "@buildone/swat-circleci": "npm:24.3.0-b1-399-toast-message-doesnt-work-on-starter.1"
+    "@buildone/swat-circleci": "npm:24.3.0-b1-399-toast-message-doesnt-work-on-starter.2"
   languageName: unknown
   linkType: soft
 
@@ -11560,7 +11560,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "data@workspace:src/data"
   dependencies:
-    "@buildone/swat-data": "npm:24.3.0-b1-399-toast-message-doesnt-work-on-starter.1"
+    "@buildone/swat-data": "npm:24.3.0-b1-399-toast-message-doesnt-work-on-starter.2"
   languageName: unknown
   linkType: soft
 
@@ -25798,9 +25798,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "web-app@workspace:src/web-app"
   dependencies:
-    "@buildone/web-core": "npm:24.3.0-b1-399-toast-message-doesnt-work-on-starter.1"
-    "@buildone/web-framework": "npm:24.3.0-b1-399-toast-message-doesnt-work-on-starter.1"
-    "@buildone/web-framework-layer": "npm:24.3.0-b1-399-toast-message-doesnt-work-on-starter.1"
+    "@buildone/web-core": "npm:24.3.0-b1-399-toast-message-doesnt-work-on-starter.2"
+    "@buildone/web-framework": "npm:24.3.0-b1-399-toast-message-doesnt-work-on-starter.2"
+    "@buildone/web-framework-layer": "npm:24.3.0-b1-399-toast-message-doesnt-work-on-starter.2"
     "@nuxt/eslint": "npm:^1.3.0"
     "@nuxt/image": "npm:1.10.0"
     "@pinia/nuxt": "npm:^0.11.1"

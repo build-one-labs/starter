@@ -9,7 +9,7 @@ networks:
   app-network: 
 services:
   caddy:
-    image: docker.cloudsmith.io/buildone/repository/buildone-caddy:24.3.0-b1-399-toast-message-doesnt-work-on-starter.1
+    image: docker.cloudsmith.io/buildone/repository/buildone-caddy:24.3.0-b1-399-toast-message-doesnt-work-on-starter.2
     restart: unless-stopped
     networks:
       app-network: 
@@ -42,7 +42,7 @@ services:
     ports:
       - '5432:5432'
   swat_app_server_ts:
-    image: docker.cloudsmith.io/buildone/repository/buildone-swat-app-server-ts:24.3.0-b1-399-toast-message-doesnt-work-on-starter.1
+    image: docker.cloudsmith.io/buildone/repository/buildone-swat-app-server-ts:24.3.0-b1-399-toast-message-doesnt-work-on-starter.2
     restart: unless-stopped
     environment:
       - APP_URL=${APP_URL:-}
@@ -180,7 +180,7 @@ services:
     volumes:
       - ${BUILDONE_CLI_WORKSPACE}/pgadmin.servers.json:/pgadmin4/servers.json
   web-docs:
-    image: docker.cloudsmith.io/buildone/repository/buildone-web-docs:24.3.0-b1-399-toast-message-doesnt-work-on-starter.1
+    image: docker.cloudsmith.io/buildone/repository/buildone-web-docs:24.3.0-b1-399-toast-message-doesnt-work-on-starter.2
     restart: unless-stopped
     ports:
       - '5173:80'
@@ -204,7 +204,7 @@ services:
     ports:
       - '25432:5432'
   auth_server:
-    image: docker.cloudsmith.io/buildone/repository/buildone-auth-server:24.3.0-b1-399-toast-message-doesnt-work-on-starter.1
+    image: docker.cloudsmith.io/buildone/repository/buildone-auth-server:24.3.0-b1-399-toast-message-doesnt-work-on-starter.2
     restart: unless-stopped
     environment:
       - PORT=3000

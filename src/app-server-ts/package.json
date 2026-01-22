@@ -25,7 +25,7 @@
     "database:seed": "node dist/seed.js"
   },
   "dependencies": {
-    "@buildone/app-server-tslib": "24.3.0-b1-399-toast-message-doesnt-work-on-starter.1",
+    "@buildone/app-server-tslib": "24.3.0-b1-399-toast-message-doesnt-work-on-starter.2",
     "@nestjs/axios": "^4.0.0",
     "@nestjs/common": "^11.0.8",
     "@nestjs/config": "^4.0.0",

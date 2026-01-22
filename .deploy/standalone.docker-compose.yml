@@ -18,7 +18,7 @@ networks:
     external: true
 services:
   caddy:
-    image: docker.cloudsmith.io/buildone/repository/buildone-caddy:24.3.0-b1-399-toast-message-doesnt-work-on-starter.1
+    image: docker.cloudsmith.io/buildone/repository/buildone-caddy:24.3.0-b1-399-toast-message-doesnt-work-on-starter.2
     restart: unless-stopped
     networks:
       app-network: 
@@ -53,7 +53,7 @@ services:
     volumes:
       - b1_db_storage:/var/lib/postgresql/data
   swat_app_server_ts:
-    image: docker.cloudsmith.io/buildone/repository/buildone-swat-app-server-ts:24.3.0-b1-399-toast-message-doesnt-work-on-starter.1
+    image: docker.cloudsmith.io/buildone/repository/buildone-swat-app-server-ts:24.3.0-b1-399-toast-message-doesnt-work-on-starter.2
     restart: unless-stopped
     environment:
       - APP_URL=${APP_URL:-https://${STACK}.${DOMAIN}}
@@ -90,7 +90,7 @@ services:
     volumes:
       - app_db_storage:/var/lib/postgresql/data
   app_server_ts:
-    image: docker.cloudsmith.io/buildone/repository/buildone-app-server-ts:24.3.0-b1-399-toast-message-doesnt-work-on-starter.1
+    image: docker.cloudsmith.io/buildone/repository/buildone-app-server-ts:24.3.0-b1-399-toast-message-doesnt-work-on-starter.2
     restart: unless-stopped
     environment:
       - PORT=3000
@@ -142,7 +142,7 @@ services:
       - app-data:/workspace/data
       - n8n-data:/workspace/src/data/n8n
   web-app:
-    image: docker.cloudsmith.io/buildone/repository/buildone-web-app:24.3.0-b1-399-toast-message-doesnt-work-on-starter.1
+    image: docker.cloudsmith.io/buildone/repository/buildone-web-app:24.3.0-b1-399-toast-message-doesnt-work-on-starter.2
     restart: unless-stopped
     environment:
       - HOST=0.0.0.0
@@ -155,7 +155,7 @@ services:
       - node
       - dist/server/index.mjs
   n8n_init_data:
-    image: docker.cloudsmith.io/buildone/repository/buildone-data:24.3.0-b1-399-toast-message-doesnt-work-on-starter.1
+    image: docker.cloudsmith.io/buildone/repository/buildone-data:24.3.0-b1-399-toast-message-doesnt-work-on-starter.2
     restart: 'no'
     entrypoint:
       - /workspace/node_modules/@buildone/swat-data/.build/initialize_automation_hub_data.sh
@@ -213,7 +213,7 @@ services:
     volumes:
       - auth_db_storage:/var/lib/postgresql/data
   auth_server:
-    image: docker.cloudsmith.io/buildone/repository/buildone-auth-server:24.3.0-b1-399-toast-message-doesnt-work-on-starter.1
+    image: docker.cloudsmith.io/buildone/repository/buildone-auth-server:24.3.0-b1-399-toast-message-doesnt-work-on-starter.2
     restart: unless-stopped
     environment:
       - PORT=3000

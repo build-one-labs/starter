@@ -10,11 +10,11 @@
     "automationHubImage": "docker.cloudsmith.io/buildone/repository/automation-hub-1-121-2-1:1.12.0",
     "automationHubDBImage": "docker.cloudsmith.io/buildone/repository/automation-hub-db:1.12.0",
     "postgresDbImage": "docker.cloudsmith.io/buildone/repository/build-one-postgres-db:17-2",
-    "caddyImage": "docker.cloudsmith.io/buildone/repository/buildone-caddy:24.3.0-b1-399-toast-message-doesnt-work-on-starter.1",
-    "swatAppServerTsImage": "docker.cloudsmith.io/buildone/repository/buildone-swat-app-server-ts:24.3.0-b1-399-toast-message-doesnt-work-on-starter.1",
-    "appServerTsImage": "docker.cloudsmith.io/buildone/repository/buildone-app-server-ts:24.3.0-b1-399-toast-message-doesnt-work-on-starter.1",
-    "webAppImage": "docker.cloudsmith.io/buildone/repository/buildone-web-app:24.3.0-b1-399-toast-message-doesnt-work-on-starter.1",
-    "dataImage": "docker.cloudsmith.io/buildone/repository/buildone-data:24.3.0-b1-399-toast-message-doesnt-work-on-starter.1"
+    "caddyImage": "docker.cloudsmith.io/buildone/repository/buildone-caddy:24.3.0-b1-399-toast-message-doesnt-work-on-starter.2",
+    "swatAppServerTsImage": "docker.cloudsmith.io/buildone/repository/buildone-swat-app-server-ts:24.3.0-b1-399-toast-message-doesnt-work-on-starter.2",
+    "appServerTsImage": "docker.cloudsmith.io/buildone/repository/buildone-app-server-ts:24.3.0-b1-399-toast-message-doesnt-work-on-starter.2",
+    "webAppImage": "docker.cloudsmith.io/buildone/repository/buildone-web-app:24.3.0-b1-399-toast-message-doesnt-work-on-starter.2",
+    "dataImage": "docker.cloudsmith.io/buildone/repository/buildone-data:24.3.0-b1-399-toast-message-doesnt-work-on-starter.2"
   },
   "volumes": [
     "ah_db_storage",
@@ -299,7 +299,7 @@
       }
     },
     "auth_server": {
-      "image": "docker.cloudsmith.io/buildone/repository/buildone-auth-server:24.3.0-b1-399-toast-message-doesnt-work-on-starter.1",
+      "image": "docker.cloudsmith.io/buildone/repository/buildone-auth-server:24.3.0-b1-399-toast-message-doesnt-work-on-starter.2",
       "restart": "unless-stopped",
       "environment": {
         "PORT": "3000",
