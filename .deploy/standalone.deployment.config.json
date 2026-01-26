@@ -1,5 +1,5 @@
 {
-  "$schema": "../deployment.config.schema.json",
+  "$schema": "deployment.config.schema.json",
   "options": {
     "authenticationServerType": "local"
   },
@@ -10,11 +10,11 @@
     "automationHubImage": "docker.cloudsmith.io/buildone/repository/automation-hub-1-121-2-1:1.12.0",
     "automationHubDBImage": "docker.cloudsmith.io/buildone/repository/automation-hub-db:1.12.0",
     "postgresDbImage": "docker.cloudsmith.io/buildone/repository/build-one-postgres-db:17-2",
-    "caddyImage": "docker.cloudsmith.io/buildone/repository/buildone-caddy:${BUILDONE_VERSION}",
-    "swatAppServerTsImage": "docker.cloudsmith.io/buildone/repository/buildone-swat-app-server-ts:${BUILDONE_VERSION}",
-    "appServerTsImage": "docker.cloudsmith.io/buildone/repository/buildone-app-server-ts:${BUILDONE_VERSION}",
-    "webAppImage": "docker.cloudsmith.io/buildone/repository/buildone-web-app:${BUILDONE_VERSION}",
-    "dataImage": "docker.cloudsmith.io/buildone/repository/buildone-data:${BUILDONE_VERSION}"
+    "caddyImage": "docker.cloudsmith.io/buildone/repository/buildone-caddy:24.3.0-VG.81",
+    "swatAppServerTsImage": "docker.cloudsmith.io/buildone/repository/buildone-swat-app-server-ts:24.3.0-VG.81",
+    "appServerTsImage": "docker.cloudsmith.io/buildone/repository/starter-app-server-ts:${VERSION}",
+    "webAppImage": "docker.cloudsmith.io/buildone/repository/starter-web-app:${VERSION}",
+    "dataImage": "docker.cloudsmith.io/buildone/repository/starter-data:${VERSION}"
   },
   "volumes": [
     "ah_db_storage",
@@ -90,6 +90,8 @@
       "environment": {
         "APP_URL": "#globals.appUrl",
         "BETTER_AUTH_SECRET": "${BETTER_AUTH_SECRET}",
+        "GOOGLE_API_KEY": "${GOOGLE_API_KEY:-}",
+        "B1_OPEN_EDGE_PASOE_URL": "${B1_OPEN_EDGE_PASOE_URL:-}",
         "IMPORT_DATA": "true",
         "PORT": "3000",
         "UPLOAD_DIR": "/app-data/uploads",
@@ -97,14 +99,7 @@
         "APP_DATA_FOLDER": "/data/app",
         "B1_DATABASE_URL": "${B1_DATABASE_URL:-postgres://${B1_DATABASE_CREDENTIALS:-}@b1_db_server:5432/b1?sslmode=disable}",
         "AUTH_URL": "#globals.authenticationUrl",
-        "REPOSITORY_SERVICE_TYPE": "POSTGRES",
-        "LEGACY_APPLICATION_APPURL": "#globals.appUrl",
-        "LEGACY_AUTHENTICATION_ALLOWEDAUTHENTICATION": "${ALLOWED_AUTHENTICATION:-AkiomaUser}",
-        "LEGACY_AUTHENTICATION_SSOAUTHENTICATIONURI": "#globals.authenticationUrl",
-        "LEGACY_AUTHENTICATION_AUTHENTICATIONOIDCROLEID": "#globals.authenticationOIDCRoleId",
-        "LEGACY_ENVIRONMENT_URL": "#globals.appUrl",
-        "LEGACY_INTEGRATION_GOOGLEAPIKEY": "${GOOGLEAPIKEY:-}",
-        "LEGACY_INTEGRATION_KENDOLICENSEKEY": "${KENDO_LICENSE_KEY:-}"
+        "B1_DEFAULT_APP": "${B1_DEFAULT_APP:-sample-app}"
       },
       "networks": [
         "app-network"
@@ -231,7 +226,7 @@
       "image": "#globals.dataImage",
       "restart": "no",
       "entrypoint": [
-        "/workspace/src/data/.build/initialize_automation_hub_data.sh"
+        "/workspace/node_modules/@buildone/swat-data/.build/initialize_automation_hub_data.sh"
       ],
       "volumes": {
         "/update": "n8n-data"
@@ -307,7 +302,7 @@
       }
     },
     "auth_server": {
-      "image": "docker.cloudsmith.io/buildone/repository/buildone-auth-server:${BUILDONE_VERSION}",
+      "image": "docker.cloudsmith.io/buildone/repository/buildone-auth-server:24.3.0-VG.81",
       "restart": "unless-stopped",
       "environment": {
         "PORT": "3000",
@@ -322,7 +317,7 @@
         "MICROSOFT_CLIENT_ID": "${MICROSOFT_CLIENT_ID:-}",
         "MICROSOFT_CLIENT_SECRET": "${MICROSOFT_CLIENT_SECRET:-}",
         "MICROSOFT_TENANT_ID": "${MICROSOFT_TENANT_ID:-}",
-        "MICROSOFT_SCOPE": "${MICROSOFT_SCOPE}",
+        "MICROSOFT_SCOPE": "${MICROSOFT_SCOPE:-}",
         "GOOGLE_CLIENT_ID": "${GOOGLE_CLIENT_ID:-}",
         "GOOGLE_CLIENT_SECRET": "${GOOGLE_CLIENT_SECRET:-}",
         "GITHUB_CLIENT_ID": "${GITHUB_CLIENT_ID:-}",

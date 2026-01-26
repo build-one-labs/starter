@@ -1,0 +1,15 @@
+{
+  "$schema": "deployment.config.schema.json",
+  "globals": {
+    "dataImage": "docker.cloudsmith.io/buildone/repository/starter-data:${VERSION}",
+    "appServerTsImage": "docker.cloudsmith.io/buildone/repository/starter-app-server-ts:${VERSION}",
+    "webAppImage": "docker.cloudsmith.io/buildone/repository/starter-web-app:${VERSION}"
+  },
+  "services": {
+    "swat_app_server_ts": {
+      "environment": {
+        "B1_DEFAULT_APP": "${B1_DEFAULT_APP:-sample-app}"
+      }
+    }
+  }
+}
