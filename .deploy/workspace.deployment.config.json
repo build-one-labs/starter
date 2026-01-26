@@ -10,10 +10,10 @@
     "automationHubImage": "docker.cloudsmith.io/buildone/repository/automation-hub-1-121-2-1:1.12.0",
     "automationHubDBImage": "docker.cloudsmith.io/buildone/repository/automation-hub-db:1.12.0",
     "postgresDbImage": "docker.cloudsmith.io/buildone/repository/build-one-postgres-db:17-2",
-    "caddyImage": "docker.cloudsmith.io/buildone/repository/buildone-caddy:24.3.0-VG.81",
-    "swatAppServerTsImage": "docker.cloudsmith.io/buildone/repository/buildone-swat-app-server-ts:24.3.0-VG.81",
-    "appServerTsImage": "docker.cloudsmith.io/buildone/repository/buildone-app-server-ts:24.3.0-VG.81",
-    "webAppImage": "docker.cloudsmith.io/buildone/repository/buildone-web-app:24.3.0-VG.81"
+    "caddyImage": "docker.cloudsmith.io/buildone/repository/buildone-caddy:24.3.0-VG.83",
+    "swatAppServerTsImage": "docker.cloudsmith.io/buildone/repository/buildone-swat-app-server-ts:24.3.0-VG.83",
+    "appServerTsImage": "docker.cloudsmith.io/buildone/repository/buildone-app-server-ts:24.3.0-VG.83",
+    "webAppImage": "docker.cloudsmith.io/buildone/repository/buildone-web-app:24.3.0-VG.83"
   },
   "volumes": [
     "ah_db_storage",
@@ -83,7 +83,7 @@
         "UPLOAD_DIR": "/app-data/uploads",
         "B1_DATA_FOLDER": "/data/b1",
         "APP_DATA_FOLDER": "/data/app",
-        "B1_DATABASE_URL": "${B1_DATABASE_URL:-postgres://${B1_DATABASE_CREDENTIALS:-}@b1_db_server:5432/b1?sslmode=disable}",
+        "B1_DATABASE_URL": "${B1_DATABASE_URL:-postgres://${B1_DATABASE_CREDENTIALS:-${DEFAULT_DATABASE_CREDENTIALS}}@b1_db_server:5432/b1?sslmode=disable}",
         "AUTH_URL": "#globals.authenticationUrl",
         "B1_FRAMEWORK_DEVELOPMENT": "false"
       },
@@ -137,7 +137,7 @@
       "restart": "unless-stopped",
       "environment": {
         "PORT": "3000",
-        "APP_DATABASE_URL": "${APP_DATABASE_URL:-postgres://${APP_DATABASE_CREDENTIALS:-}@app_db_server:5432/app_db?sslmode=disable}",
+        "APP_DATABASE_URL": "${APP_DATABASE_URL:-postgres://${APP_DATABASE_CREDENTIALS:-${DEFAULT_DATABASE_CREDENTIALS}}@app_db_server:5432/app_db?sslmode=disable}",
         "AUTH_URL": "#globals.authenticationUrl",
         "BETTER_AUTH_SECRET": "${BETTER_AUTH_SECRET}",
         "NODE_ENV": "development"
@@ -235,7 +235,7 @@
         "PGADMIN_CONFIG_PROXY_X_FOR_COUNT": "1",
         "PGADMIN_CONFIG_ENHANCED_COOKIE_PROTECTION": "False",
         "PGADMIN_CONFIG_CSRF_TRUSTED_ORIGINS": "['https://*.github.dev']",
-        "PGADMIN_DEFAULT_EMAIL": "${B1_AUTOMATION_HUB_EMAIL}",
+        "PGADMIN_DEFAULT_EMAIL": "${B1_AUTOMATION_HUB_EMAIL:-automation_hub@build.one}",
         "PGADMIN_DEFAULT_PASSWORD": "${B1_AUTOMATION_HUB_PASSWORD}",
         "PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED": "False",
         "PGADMIN_CONFIG_ALLOW_SAVE_PASSWORD": "False",
@@ -253,7 +253,7 @@
       }
     },
     "web-docs": {
-      "image": "docker.cloudsmith.io/buildone/repository/buildone-web-docs:24.3.0-VG.81",
+      "image": "docker.cloudsmith.io/buildone/repository/buildone-web-docs:24.3.0-VG.83",
       "restart": "unless-stopped",
       "ports": {
         "80": "5173"
@@ -286,15 +286,15 @@
       }
     },
     "auth_server": {
-      "image": "docker.cloudsmith.io/buildone/repository/buildone-auth-server:24.3.0-VG.81",
+      "image": "docker.cloudsmith.io/buildone/repository/buildone-auth-server:24.3.0-VG.83",
       "restart": "unless-stopped",
       "environment": {
         "PORT": "3000",
         "APP_URL": "#globals.appUrl",
-        "AUTH_DATABASE_URL": "${AUTH_DATABASE_URL:-postgres://${AUTH_DATABASE_CREDENTIALS:-}@auth_db_server:5432/auth_db?sslmode=disable}",
+        "AUTH_DATABASE_URL": "${AUTH_DATABASE_URL:-postgres://${AUTH_DATABASE_CREDENTIALS:-${DEFAULT_DATABASE_CREDENTIALS}}@auth_db_server:5432/auth_db?sslmode=disable}",
         "BETTER_AUTH_SECRET": "${BETTER_AUTH_SECRET}",
-        "B1_AUTOMATION_HUB_USER": "${B1_AUTOMATION_HUB_USER}",
-        "B1_AUTOMATION_HUB_EMAIL": "${B1_AUTOMATION_HUB_EMAIL}",
+        "B1_AUTOMATION_HUB_USER": "${B1_AUTOMATION_HUB_USER:-automation_hub}",
+        "B1_AUTOMATION_HUB_EMAIL": "${B1_AUTOMATION_HUB_EMAIL:-automation_hub@build.one}",
         "B1_AUTOMATION_HUB_PASSWORD": "${B1_AUTOMATION_HUB_PASSWORD}",
         "AH_CREDENTIALS": "${AH_CREDENTIALS:-}",
         "AUTHENTICATION_TRUSTED_ORIGINS": "#globals.authenticationTrustedOrigins",
