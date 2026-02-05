@@ -2,14 +2,14 @@
 volumes:
   ah_db_storage: 
   app_db_storage: 
+  auth_db_storage: 
   b1_db_storage: 
   swat_app_uploads: 
-  auth_db_storage: 
 networks:
   app-network: 
 services:
   caddy:
-    image: docker.cloudsmith.io/buildone/repository/buildone-caddy:24.3.0-VG.83
+    image: docker.cloudsmith.io/buildone/repository/buildone-caddy:24.3.0-VG.103
     restart: unless-stopped
     networks:
       app-network: 
@@ -22,7 +22,6 @@ services:
       - caddyfile
     ports:
       - '8080:8080'
-      - '8081:8081'
   b1_db_server:
     image: docker.cloudsmith.io/buildone/repository/build-one-postgres-db:17-2
     restart: unless-stopped
@@ -42,7 +41,7 @@ services:
     ports:
       - '5432:5432'
   swat_app_server_ts:
-    image: docker.cloudsmith.io/buildone/repository/buildone-swat-app-server-ts:24.3.0-VG.83
+    image: docker.cloudsmith.io/buildone/repository/buildone-swat-app-server-ts:24.3.0-VG.103
     restart: unless-stopped
     environment:
       - APP_URL=${APP_URL:-}
@@ -57,13 +56,13 @@ services:
       - B1_DATABASE_URL=${B1_DATABASE_URL:-postgres://${B1_DATABASE_CREDENTIALS:-${DEFAULT_DATABASE_CREDENTIALS}}@b1_db_server:5432/b1?sslmode=disable}
       - AUTH_URL=${AUTH_URL:-http://auth_server:3000}
       - B1_FRAMEWORK_DEVELOPMENT=false
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
     networks:
       app-network: 
     volumes:
       - ${WORKSPACE_ROOT}/data:/app-data
       - ${WORKSPACE_ROOT}/node_modules/@buildone/swat-data:/data/b1
       - ${WORKSPACE_ROOT}/src/data:/data/app
-      - ${BUILDONE_CLI_WORKSPACE}/automationhub:/tmp/secrets/automationhub
     depends_on:
       b1_db_server:
         condition: service_healthy
@@ -112,7 +111,7 @@ services:
     volumes:
       - ${WORKSPACE_ROOT}:/workspace
   n8n_db_server:
-    image: docker.cloudsmith.io/buildone/repository/automation-hub-db:1.12.0
+    image: docker.cloudsmith.io/buildone/repository/automation-hub-db:1.12.6
     restart: unless-stopped
     healthcheck:
       test:
@@ -126,10 +125,9 @@ services:
     volumes:
       - ah_db_storage:/var/lib/postgresql/data
   n8n:
-    image: docker.cloudsmith.io/buildone/repository/automation-hub-1-121-2-1:1.12.0
+    image: docker.cloudsmith.io/buildone/repository/automation-hub-1-121-2-1:1.12.6
     restart: unless-stopped
     environment:
-      - SWAT_APP_SERVER_URL=${AUTH_URL:-http://auth_server:3000}
       - AUTHENTICATION_URI=${AUTH_URL:-http://auth_server:3000}
       - DB_POSTGRESDB_HOST=n8n_db_server
       - N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS=false
@@ -145,6 +143,53 @@ services:
       - '5678:5678'
     volumes:
       - ${WORKSPACE_ROOT}:/workspace
+  auth_db_server:
+    image: docker.cloudsmith.io/buildone/repository/build-one-postgres-db:17-2
+    restart: unless-stopped
+    environment:
+      - POSTGRES_DB=auth_db
+      - RESET_DATABASES=${RESET_DATABASES:-FALSE}
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - /wait_for_db.sh
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      app-network: 
+    volumes:
+      - auth_db_storage:/var/lib/postgresql/data
+    ports:
+      - '25432:5432'
+  auth_server:
+    image: docker.cloudsmith.io/buildone/repository/buildone-auth-server:24.3.0-VG.103
+    restart: unless-stopped
+    environment:
+      - PORT=3000
+      - APP_URL=${APP_URL:-}
+      - AUTH_DATABASE_URL=${AUTH_DATABASE_URL:-postgres://${AUTH_DATABASE_CREDENTIALS:-${DEFAULT_DATABASE_CREDENTIALS}}@auth_db_server:5432/auth_db?sslmode=disable}
+      - BETTER_AUTH_SECRET=${BETTER_AUTH_SECRET}
+      - B1_AUTOMATION_HUB_USER=${B1_AUTOMATION_HUB_USER:-automation_hub}
+      - B1_AUTOMATION_HUB_EMAIL=${B1_AUTOMATION_HUB_EMAIL:-automation_hub@build.one}
+      - B1_AUTOMATION_HUB_PASSWORD=${B1_AUTOMATION_HUB_PASSWORD}
+      - AH_CREDENTIALS=${AH_CREDENTIALS:-}
+      - AUTHENTICATION_TRUSTED_ORIGINS=${APP_URL},http://localhost:8080,https://localhost:8080
+      - MICROSOFT_CLIENT_ID=${MICROSOFT_CLIENT_ID:-}
+      - MICROSOFT_CLIENT_SECRET=${MICROSOFT_CLIENT_SECRET:-}
+      - MICROSOFT_TENANT_ID=${MICROSOFT_TENANT_ID:-}
+      - MICROSOFT_SCOPE=${MICROSOFT_SCOPE:-}
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID:-}
+      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET:-}
+      - GITHUB_CLIENT_ID=${GITHUB_CLIENT_ID:-}
+      - GITHUB_CLIENT_SECRET=${GITHUB_CLIENT_SECRET:-}
+      - DEPLOYMENT_TYPE=local
+      - NODE_ENV=production
+    networks:
+      app-network: 
+    depends_on:
+      auth_db_server:
+        condition: service_healthy
   web-app:
     image: nomad123/codespaces-nestjs-development:slim
     restart: unless-stopped
@@ -182,58 +227,7 @@ services:
     volumes:
       - ${BUILDONE_CLI_WORKSPACE}/pgadmin.servers.json:/pgadmin4/servers.json
   web-docs:
-    image: docker.cloudsmith.io/buildone/repository/buildone-web-docs:24.3.0-VG.83
+    image: docker.cloudsmith.io/buildone/repository/buildone-web-docs:24.3.0-VG.103
     restart: unless-stopped
     ports:
       - '5173:80'
-  auth_db_server:
-    image: docker.cloudsmith.io/buildone/repository/build-one-postgres-db:17-2
-    restart: unless-stopped
-    environment:
-      - POSTGRES_DB=auth_db
-      - RESET_DATABASES=${RESET_DATABASES:-FALSE}
-    healthcheck:
-      test:
-        - CMD-SHELL
-        - /wait_for_db.sh
-      interval: 5s
-      timeout: 5s
-      retries: 10
-    networks:
-      app-network: 
-    volumes:
-      - auth_db_storage:/var/lib/postgresql/data
-    ports:
-      - '25432:5432'
-  auth_server:
-    image: docker.cloudsmith.io/buildone/repository/buildone-auth-server:24.3.0-VG.83
-    restart: unless-stopped
-    environment:
-      - PORT=3000
-      - APP_URL=${APP_URL:-}
-      - AUTH_DATABASE_URL=${AUTH_DATABASE_URL:-postgres://${AUTH_DATABASE_CREDENTIALS:-${DEFAULT_DATABASE_CREDENTIALS}}@auth_db_server:5432/auth_db?sslmode=disable}
-      - BETTER_AUTH_SECRET=${BETTER_AUTH_SECRET}
-      - B1_AUTOMATION_HUB_USER=${B1_AUTOMATION_HUB_USER:-automation_hub}
-      - B1_AUTOMATION_HUB_EMAIL=${B1_AUTOMATION_HUB_EMAIL:-automation_hub@build.one}
-      - B1_AUTOMATION_HUB_PASSWORD=${B1_AUTOMATION_HUB_PASSWORD}
-      - AH_CREDENTIALS=${AH_CREDENTIALS:-}
-      - AUTHENTICATION_TRUSTED_ORIGINS=${APP_URL},${DESIGNER_URL},http://localhost:8080,http://localhost:8081,https://localhost:8080,https://localhost:8081
-      - MICROSOFT_CLIENT_ID=${MICROSOFT_CLIENT_ID:-}
-      - MICROSOFT_CLIENT_SECRET=${MICROSOFT_CLIENT_SECRET:-}
-      - MICROSOFT_TENANT_ID=${MICROSOFT_TENANT_ID:-}
-      - MICROSOFT_SCOPE=${MICROSOFT_SCOPE:-}
-      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID:-}
-      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET:-}
-      - GITHUB_CLIENT_ID=${GITHUB_CLIENT_ID:-}
-      - GITHUB_CLIENT_SECRET=${GITHUB_CLIENT_SECRET:-}
-      - NODE_ENV=production
-    networks:
-      app-network: 
-    depends_on:
-      auth_db_server:
-        condition: service_healthy
-    ports:
-      - '3002:3000'
-      - '3012:9229'
-    volumes:
-      - ${BUILDONE_CLI_WORKSPACE}/automationhub:/tmp/secrets/automationhub

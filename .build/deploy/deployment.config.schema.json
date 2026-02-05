@@ -8,15 +8,6 @@
     },
     "options": {
       "type": "object",
-      "properties": {
-        "authenticationServerType": {
-          "type": "string",
-          "enum": [
-            "local",
-            "remote"
-          ]
-        }
-      },
       "additionalProperties": false
     },
     "globals": {
