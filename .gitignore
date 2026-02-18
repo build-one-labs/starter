@@ -27,7 +27,13 @@ node_modules
 !.yarn/sdks
 !.yarn/versions
 
-# Claude Code local files
+# Claude Code local settings
 .claude/settings.local.json
 .claude/mcp-configs/
 .claude/commands/
+
+# OpenHands generated microagents (contain auth tokens)
+.openhands/microagents/mcp-tools.md
+
+# Local environment overrides (Neon DB credentials, etc.)
+.env.local

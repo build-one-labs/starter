@@ -8,7 +8,25 @@
     },
     "options": {
       "type": "object",
-      "additionalProperties": false
+      "additionalProperties": false,
+      "properties": {
+        "authenticationServerType": {
+          "type": "string",
+          "enum": [
+            "local",
+            "remote",
+            "${AUTHENTICATION_SERVER_TYPE}"
+          ]
+        },
+        "databaseServerType": {
+          "type": "string",
+          "enum": [
+            "local",
+            "neon",
+            "${DATABASE_SERVER_TYPE}"
+          ]
+        }
+      }
     },
     "globals": {
       "type": "object",

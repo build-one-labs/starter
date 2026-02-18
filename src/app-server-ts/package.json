@@ -25,7 +25,7 @@
     "database:seed": "node dist/seed.js"
   },
   "dependencies": {
-    "@buildone/app-server-tslib": "24.3.0-VG.103",
+    "@buildone/app-server-tslib": "24.3.0-VG.105",
     "@nestjs/axios": "^4.0.0",
     "@nestjs/common": "^11.1.5",
     "@nestjs/config": "^4.0.0",
