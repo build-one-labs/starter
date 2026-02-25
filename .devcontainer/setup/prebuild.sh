@@ -12,14 +12,15 @@ export WORKSPACE_ROOT
 # during postAttach to guide the user through configuration.
 # =============================================================================
 
-# Source secrets configuration (will be available after git clone)
-SECRETS_CONFIG="${WORKSPACE_ROOT}/.devcontainer/scripts/lib/secrets-config.sh"
+# Source secrets configuration from swat-cli (available after yarn install)
+SECRETS_CONFIG="${WORKSPACE_ROOT}/node_modules/@buildone/swat-cli/scripts/devcontainer/lib/secrets-config.sh"
 if [ -f "$SECRETS_CONFIG" ]; then
     source "$SECRETS_CONFIG"
+    secrets_init_paths
 
-    if is_codespace; then
+    if secrets_is_codespace; then
         missing_secrets=()
-        get_missing_secrets missing_secrets
+        secrets_get_missing missing_secrets
 
         if [ ${#missing_secrets[@]} -gt 0 ]; then
             echo ""

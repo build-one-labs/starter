@@ -12,14 +12,14 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # Source project configuration
 source "$SCRIPT_DIR/../lib/project-config.sh"
-init_paths
+secrets_init_paths
 
 # Marker to track if rename was completed or skipped
 RENAME_COMPLETE_MARKER="${SECRETS_STATE_DIR}/project_rename_complete.marker"
 
 main() {
   # Only run in Codespaces
-  if ! is_codespace; then
+  if ! secrets_is_codespace; then
     exit 0
   fi
 
@@ -39,32 +39,32 @@ main() {
 
   # Display notice about template project
   echo ""
-  echo -e "${COLOR_BOLD}${COLOR_YELLOW}╔════════════════════════════════════════════════════════════════════════╗${COLOR_NC}"
-  echo -e "${COLOR_BOLD}${COLOR_YELLOW}║                                                                        ║${COLOR_NC}"
-  echo -e "${COLOR_BOLD}${COLOR_YELLOW}║  📦 PROJECT RENAME RECOMMENDED                                         ║${COLOR_NC}"
-  echo -e "${COLOR_BOLD}${COLOR_YELLOW}║                                                                        ║${COLOR_NC}"
-  echo -e "${COLOR_BOLD}${COLOR_YELLOW}╚════════════════════════════════════════════════════════════════════════╝${COLOR_NC}"
+  echo -e "${SECRETS_COLOR_BOLD}${SECRETS_COLOR_YELLOW}╔════════════════════════════════════════════════════════════════════════╗${SECRETS_COLOR_NC}"
+  echo -e "${SECRETS_COLOR_BOLD}${SECRETS_COLOR_YELLOW}║                                                                        ║${SECRETS_COLOR_NC}"
+  echo -e "${SECRETS_COLOR_BOLD}${SECRETS_COLOR_YELLOW}║  📦 PROJECT RENAME RECOMMENDED                                         ║${SECRETS_COLOR_NC}"
+  echo -e "${SECRETS_COLOR_BOLD}${SECRETS_COLOR_YELLOW}║                                                                        ║${SECRETS_COLOR_NC}"
+  echo -e "${SECRETS_COLOR_BOLD}${SECRETS_COLOR_YELLOW}╚════════════════════════════════════════════════════════════════════════╝${SECRETS_COLOR_NC}"
   echo ""
   show_project_rename_instructions
   echo ""
 
   if [ -n "$suggested_name" ]; then
-    echo -e "${COLOR_GREEN}Suggested name based on repository: ${COLOR_BOLD}${suggested_name}${COLOR_NC}"
+    echo -e "${SECRETS_COLOR_GREEN}Suggested name based on repository: ${SECRETS_COLOR_BOLD}${suggested_name}${SECRETS_COLOR_NC}"
     echo ""
   fi
 
-  echo -e "${COLOR_BOLD}${COLOR_CYAN}Would you like to rename the project now?${COLOR_NC}"
+  echo -e "${SECRETS_COLOR_BOLD}${SECRETS_COLOR_CYAN}Would you like to rename the project now?${SECRETS_COLOR_NC}"
   echo ""
 
-  read -p "Rename project? (Y/n): " -n 1 -r
+  read -r -p "Rename project? (Y/n): " -n 1 reply </dev/tty
   echo ""
 
-  if [[ $REPLY =~ ^[Nn]$ ]]; then
+  if [[ $reply =~ ^[Nn]$ ]]; then
     echo ""
-    print_warning "Rename skipped."
+    secrets_print_warning "Rename skipped."
     echo ""
-    echo -e "${COLOR_BOLD}To rename later, run:${COLOR_NC}"
-    echo -e "  ${COLOR_CYAN}.devcontainer/scripts/orchestrators/project-rename-setup.sh${COLOR_NC}"
+    echo -e "${SECRETS_COLOR_BOLD}To rename later, run:${SECRETS_COLOR_NC}"
+    echo -e "  ${SECRETS_COLOR_CYAN}.devcontainer/scripts/orchestrators/project-rename-setup.sh${SECRETS_COLOR_NC}"
     echo ""
 
     # Mark as skipped so we don't prompt again this session
@@ -74,7 +74,7 @@ main() {
 
   # Run the rename wizard
   echo ""
-  print_info "Starting project rename wizard..."
+  secrets_print_info "Starting project rename wizard..."
   echo ""
 
   "${SCRIPT_DIR}/project-rename-setup.sh"
@@ -83,14 +83,14 @@ main() {
 
   if [ $setup_exit_code -eq 0 ]; then
     echo ""
-    print_success "Project renamed successfully!"
+    secrets_print_success "Project renamed successfully!"
     touch "$RENAME_COMPLETE_MARKER"
   else
     echo ""
-    print_error "Project rename failed or was cancelled."
+    secrets_print_error "Project rename failed or was cancelled."
     echo ""
-    echo -e "${COLOR_BOLD}To try again, run:${COLOR_NC}"
-    echo -e "  ${COLOR_CYAN}.devcontainer/scripts/orchestrators/project-rename-setup.sh${COLOR_NC}"
+    echo -e "${SECRETS_COLOR_BOLD}To try again, run:${SECRETS_COLOR_NC}"
+    echo -e "  ${SECRETS_COLOR_CYAN}.devcontainer/scripts/orchestrators/project-rename-setup.sh${SECRETS_COLOR_NC}"
     echo ""
     exit 1
   fi

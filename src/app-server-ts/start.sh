@@ -4,7 +4,7 @@ if [ "${NODE_ENV}" = "development" ]; then
   npm run build
 fi
 
-npx drizzle-kit migrate --config dist/drizzle/drizzle.config.js
+node dist/migrate.js
 
 if [ "${NODE_ENV}" = "development" ]; then
   npm run start:debug

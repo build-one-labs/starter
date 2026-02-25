@@ -10,7 +10,8 @@
   // Development tools and runtime features
   "features": {
     "ghcr.io/devcontainers/features/node:1": {
-      "version": "24"
+      "version": "24",
+      "pnpmVersion": "none"
     },
     "ghcr.io/devcontainers/features/docker-in-docker:2": {
       "moby": true,
@@ -77,7 +78,6 @@
     3011, // SWAT App Server Debug
     5432, // B1 DB Server
     5173, // Web Docs
-    5678, // AutomationHub
     8080, // Main Application
     8081, // Designer
     15432 // App DB Server
@@ -115,10 +115,6 @@
       "label": "B1 DB Server",
       "onAutoForward": "notify"
     },
-    "5678": {
-      "label": "AutomationHub",
-      "onAutoForward": "notify"
-    },
     "8080": {
       "label": "Main Application",
       "onAutoForward": "notify"
@@ -137,7 +133,9 @@
   "remoteEnv": {
     "NODE_OPTIONS": "--max-old-space-size=8192",
     "WORKSPACE_ROOT": "${containerWorkspaceFolder}",
-    "PATH": "${containerWorkspaceFolder}/node_modules/.bin:${containerWorkspaceFolder}/src/cli/bin:${containerEnv:PATH}"
+    "PATH": "${containerWorkspaceFolder}/node_modules/.bin:${containerWorkspaceFolder}/src/cli/bin:${containerEnv:PATH}",
+    "COREPACK_ENABLE_DOWNLOAD_PROMPT": "0",
+    "CLEAR_PREBUILD_CACHE": "true"
   },
 
   // Host machine requirements for Codespaces (dev only, not prebuilds)

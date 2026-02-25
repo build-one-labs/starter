@@ -20,8 +20,12 @@
     "script": "${WORKSPACE_ROOT}/node_modules/@buildone/swat-cli/scripts/openhands/start-stack.sh"
   },
   {
-    "description": "Waiting for services and importing data",
-    "script": "${WORKSPACE_ROOT}/node_modules/@buildone/swat-cli/scripts/openhands/wait-and-import.sh"
+    "description": "Waiting for services to be healthy",
+    "script": "${WORKSPACE_ROOT}/node_modules/@buildone/swat-cli/scripts/openhands/wait-for-services.sh"
+  },
+  {
+    "description": "Importing data",
+    "script": "${WORKSPACE_ROOT}/node_modules/@buildone/swat-cli/scripts/openhands/import-data.sh"
   },
   {
     "description": "Configuring B1 MCP authentication",

@@ -15,7 +15,9 @@
           "enum": [
             "local",
             "remote",
-            "${AUTHENTICATION_SERVER_TYPE}"
+            "${AUTHENTICATION_SERVER_TYPE}",
+            "${AUTHENTICATION_SERVER_TYPE:-local}",
+            "${AUTHENTICATION_SERVER_TYPE:-remote}"
           ]
         },
         "databaseServerType": {
@@ -23,7 +25,9 @@
           "enum": [
             "local",
             "neon",
-            "${DATABASE_SERVER_TYPE}"
+            "${DATABASE_SERVER_TYPE}",
+            "${DATABASE_SERVER_TYPE:-local}",
+            "${DATABASE_SERVER_TYPE:-neon}"
           ]
         }
       }
@@ -101,6 +105,9 @@
           "additionalProperties": false,
           "properties": {
             "image": {
+              "type": "string"
+            },
+            "user": {
               "type": "string"
             },
             "build": {

@@ -6,9 +6,9 @@
 # Source this file from any script that needs to check or rename the project.
 # =============================================================================
 
-# Source common utilities (colors, print functions)
-SCRIPT_DIR_PROJECT_CONFIG="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-source "$SCRIPT_DIR_PROJECT_CONFIG/secrets-config.sh"
+# Source common utilities from swat-cli (colors, print functions, secrets helpers)
+_WORKSPACE_ROOT_PROJECT_CONFIG="${WORKSPACE_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+source "${_WORKSPACE_ROOT_PROJECT_CONFIG}/node_modules/@buildone/swat-cli/scripts/devcontainer/lib/secrets-config.sh"
 
 # =============================================================================
 # Project Name Detection
@@ -123,12 +123,12 @@ validate_project_name() {
 # Instructions
 # =============================================================================
 show_project_rename_instructions() {
-  echo -e "${COLOR_BOLD}${COLOR_YELLOW}This repository was forked from the Build.One Starter template.${COLOR_NC}"
+  echo -e "${SECRETS_COLOR_BOLD}${SECRETS_COLOR_YELLOW}This repository was forked from the Build.One Starter template.${SECRETS_COLOR_NC}"
   echo ""
-  echo -e "${COLOR_CYAN}The project name 'starter' appears in several configuration files${COLOR_NC}"
-  echo -e "${COLOR_CYAN}and should be replaced with your project's actual name.${COLOR_NC}"
+  echo -e "${SECRETS_COLOR_CYAN}The project name 'starter' appears in several configuration files${SECRETS_COLOR_NC}"
+  echo -e "${SECRETS_COLOR_CYAN}and should be replaced with your project's actual name.${SECRETS_COLOR_NC}"
   echo ""
-  echo -e "${COLOR_BOLD}Files that will be updated:${COLOR_NC}"
+  echo -e "${SECRETS_COLOR_BOLD}Files that will be updated:${SECRETS_COLOR_NC}"
   for file in "${PROJECT_NAME_FILES[@]}"; do
     echo "  • $file"
   done

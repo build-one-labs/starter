@@ -4,7 +4,6 @@ const json = require('eslint-plugin-json');
 const node = require('eslint-plugin-n');
 const eslintPluginPrettierRecommended = require('eslint-plugin-prettier/recommended');
 const securityPlugin = require('eslint-plugin-security');
-const sonarjsPlugin = require('eslint-plugin-sonarjs');
 const unicornPlugin = require('eslint-plugin-unicorn');
 const ts = require('typescript-eslint');
 
@@ -22,7 +21,6 @@ module.exports = [
   securityPlugin.configs.recommended,
   {
     plugins: {
-      sonarjs: sonarjsPlugin,
       unicorn: unicornPlugin
     }
   },
@@ -86,13 +84,7 @@ module.exports = [
       'unicorn/no-null': 'off', // null is used in many APIs
       'unicorn/prefer-module': 'off', // Using CommonJS in configs
       'unicorn/prefer-top-level-await': 'off', // Not always appropriate
-      'unicorn/prevent-abbreviations': 'off', // Too strict
-
-      // SonarJS rules (selective code quality checks)
-      'sonarjs/cognitive-complexity': ['warn', 15],
-      'sonarjs/no-duplicate-string': ['warn', { threshold: 5 }],
-      'sonarjs/no-identical-functions': 'warn',
-      'sonarjs/no-redundant-boolean': 'error'
+      'unicorn/prevent-abbreviations': 'off' // Too strict
     }
   },
 
