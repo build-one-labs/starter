@@ -1,22 +1,16 @@
 # Standard
 node_modules
 
-# Build directries
-.pct/
-.builder/
-
 # Build.One Workspace directories & files
 /data
 /tmp
 /logs
-/db
 
 # Additional ignores
 /version.json
 *.log
 *.dfw
 /.vscode/*.code-snippets
-/src/data/n8n/credentials/auth.json
 
 # Yarn
 .pnp.*
@@ -37,3 +31,6 @@ node_modules
 
 # Local environment overrides (Neon DB credentials, etc.)
 .env.local
+
+# Local development secrets
+.env.secrets

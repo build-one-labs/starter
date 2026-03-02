@@ -1,17 +1,28 @@
 {
-  "name": "GitHub Codespace",
+  "name": "Local Dev Container",
 
   // Base image
   "build": {
-    "context": ".",
-    "dockerfile": "Dockerfile"
+    "context": "..",
+    "dockerfile": "../Dockerfile"
   },
+
+  // Mount .env.secrets file into container
+  "runArgs": ["--env-file", ".env.secrets"],
+
+  // Ensure ssh-agent is running before container starts
+  "initializeCommand": "bash -c 'eval $(ssh-agent -s) > /dev/null 2>&1 || true'",
+
+  // Mount SSH agent socket for git operations, Docker socket for shared daemon, and Claude config for persistence
+  "mounts": [
+    "type=bind,source=${localEnv:HOME}${localEnv:USERPROFILE}/.ssh,target=/home/vscode/.ssh,readonly",
+    "source=vanguard-claude-config,target=/home/vscode/.claude,type=volume"
+  ],
 
   // Development tools and runtime features
   "features": {
     "ghcr.io/devcontainers/features/node:1": {
-      "version": "24",
-      "pnpmVersion": "none"
+      "version": "24"
     },
     "ghcr.io/devcontainers/features/docker-in-docker:2": {
       "moby": true,
@@ -22,7 +33,7 @@
       "dockerDashComposeVersion": "latest"
     },
     "ghcr.io/devcontainers/features/sshd:1": {
-        "version": "latest"
+      "version": "latest"
     }
   },
 
@@ -42,7 +53,8 @@
         "eamodio.gitlens",
         "mhutchie.git-graph",
         "ms-vsliveshare.vsliveshare",
-        "CircleCI.circleci"
+        "CircleCI.circleci",
+        "Anthropic.claude-code"
       ],
       "settings": {
         "editor.formatOnSave": true,
@@ -50,43 +62,36 @@
         "editor.codeActionsOnSave": {
           "source.fixAll.eslint": "explicit"
         },
-        "eslint.validate": [
-          "javascript",
-          "typescript",
-          "vue"
-        ],
+        "eslint.validate": ["javascript", "typescript", "vue"],
         "typescript.tsdk": "node_modules/typescript/lib",
-        "vue.server.hybridMode": true,
-        "terminal.integrated.hideOnStartup": "always"
+        "vue.server.hybridMode": true
       }
     }
   },
-  
+
   // Lifecycle hooks
   // onCreateCommand: Runs once when container is first created (dependency installation, initial build)
   "onCreateCommand": "./.devcontainer/setup/prebuild.sh",
+  // postCreateCommand: Set up SSH permissions, fix workspace and Claude config ownership, and configure docker-compose user
+  "postCreateCommand": "bash -c 'chmod 600 ~/.ssh/* 2>/dev/null || true && sudo chown -R vscode:vscode ${containerWorkspaceFolder} /home/vscode/.claude 2>/dev/null || true && node_modules/@buildone/swat-cli/scripts/devcontainer/lib/configure-docker-user.sh'",
   // postStartCommand: Runs each time the container starts
   "postStartCommand": "node_modules/@buildone/swat-cli/scripts/devcontainer/orchestrators/poststart.sh",
-  // postAttachCommand: Runs when you attach to the container (parallel background tasks)
-  "postAttachCommand": {
-    "Stack Startup": ["${containerWorkspaceFolder}/.devcontainer/scripts/orchestrators/codespace-startup.sh"],
-    "Appserver": ["node_modules/@buildone/swat-cli/scripts/devcontainer/lib/task-runner.sh", "watch_app_server_ts"],
-    "Web App": ["node_modules/@buildone/swat-cli/scripts/devcontainer/lib/task-runner.sh", "watch_web_app"],
-    "Claude": ["node_modules/@buildone/swat-cli/scripts/devcontainer/lib/task-runner.sh", "start_claude"]
-  },
+  // postAttachCommand: Runs when you attach to the container
+  // Note: Automatic tasks with runOn:folderOpen don't always trigger reliably, so we provide manual task option
+  "postAttachCommand": "echo 'Container ready. Run the \"Start All Dev Tasks\" task from the VS Code command palette to start services.'",
 
   // Port forwarding
   "forwardPorts": [
-    2021,  // DB Admin
-    3000,  // App Server
-    3001,  // SWAT App Server
-    3002,  // Web App Dev
-    3010,  // App Server Debug
-    3011,  // SWAT App Server Debug
-    5432,  // B1 DB Server
-    5173,  // Web Docs
-    8080,  // Main Application
-    15432  // App DB Server
+    2021, // DB Admin
+    3000, // App Server
+    3001, // SWAT App Server
+    3002, // Web App Dev
+    3010, // App Server Debug
+    3011, // SWAT App Server Debug
+    5432, // B1 DB Server
+    5173, // Web Docs
+    8080, // Main Application
+    15432 // App DB Server
   ],
   "portsAttributes": {
     "2021": {
@@ -135,25 +140,21 @@
   "remoteEnv": {
     "NODE_OPTIONS": "--max-old-space-size=8192",
     "WORKSPACE_ROOT": "${containerWorkspaceFolder}",
-    "PATH": "${containerWorkspaceFolder}/node_modules/.bin:${remoteEnv:HOME}/.local/bin:${containerEnv:PATH}",
+    "PATH": "${containerWorkspaceFolder}/node_modules/.bin:${containerEnv:HOME}/.local/bin:${containerEnv:PATH}",
     "COREPACK_ENABLE_DOWNLOAD_PROMPT": "0",
-    "CLEAR_PREBUILD_CACHE": "true"
-  },
-
-  // Host machine requirements for Codespaces (dev only, not prebuilds)
-  // Prebuilds use 2-core machines by default - configure in GitHub Settings if needed
-  "hostRequirements": {
-    "cpus": 4,
-    "memory": "16gb",
-    "storage": "32gb"
+    "PUID": "1000",
+    "PGID": "1000",
+    "CLEAR_PREBUILD_CACHE": "false"
   },
 
   // Security and signal handling
+  // In local WSL, match the host user's UID for seamless file permissions
+  // The docker-compose services will adapt to match this UID
   "remoteUser": "vscode",
   "containerUser": "vscode",
   "updateRemoteUserUID": true,
 
   // Workspace paths
   "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
-  "workspaceMount": "source=${localWorkspaceFolder},target=/workspaces/${localWorkspaceFolderBasename},type=bind,consistency=cached"
+  "workspaceMount": "source=${localWorkspaceFolder},target=/workspaces/${localWorkspaceFolderBasename},type=bind,consistency=delegated"
 }

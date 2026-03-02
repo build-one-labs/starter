@@ -1,0 +1,68 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Stack Startup",
+      "type": "shell",
+      "command": "node_modules/@buildone/swat-cli/scripts/devcontainer/lib/task-runner.sh start_stack",
+      "isBackground": true,
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "focus": false
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "App Appserver",
+      "type": "shell",
+      "command": "node_modules/@buildone/swat-cli/scripts/devcontainer/lib/task-runner.sh watch_app_server_ts",
+      "isBackground": true,
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "focus": false
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Web App",
+      "type": "shell",
+      "command": "node_modules/@buildone/swat-cli/scripts/devcontainer/lib/task-runner.sh watch_web_app",
+      "isBackground": true,
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "focus": false
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Claude",
+      "type": "shell",
+      "command": "node_modules/@buildone/swat-cli/scripts/devcontainer/lib/task-runner.sh start_claude",
+      "isBackground": true,
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "focus": false
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Start All Dev Tasks",
+      "dependsOn": [
+        "Stack Startup",
+        "App Appserver",
+        "Web App",
+        "Claude"
+      ],
+      "dependsOrder": "parallel",
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated"
+      },
+      "problemMatcher": []
+    }
+  ]
+}
