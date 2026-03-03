@@ -137,7 +137,8 @@
     "WORKSPACE_ROOT": "${containerWorkspaceFolder}",
     "PATH": "${containerWorkspaceFolder}/node_modules/.bin:${remoteEnv:HOME}/.local/bin:${containerEnv:PATH}",
     "COREPACK_ENABLE_DOWNLOAD_PROMPT": "0",
-    "CLEAR_PREBUILD_CACHE": "true"
+    "CLEAR_PREBUILD_CACHE": "true",
+    "B1_WORKSPACE": "true"
   },
 
   // Host machine requirements for Codespaces (dev only, not prebuilds)

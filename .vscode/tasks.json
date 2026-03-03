@@ -51,16 +51,30 @@
     },
     {
       "label": "Start All Dev Tasks",
-      "dependsOn": [
-        "Stack Startup",
-        "App Appserver",
-        "Web App",
-        "Claude"
-      ],
+      "dependsOn": ["Stack Startup", "App Appserver", "Web App", "Claude"],
       "dependsOrder": "parallel",
       "presentation": {
         "reveal": "always",
         "panel": "dedicated"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Check Is Local Devcontainer",
+      "type": "shell",
+      "command": "[ \"$B1_WORKSPACE\" = \"true\" ] && [ \"$CODESPACES\" != \"true\" ]",
+      "presentation": {
+        "reveal": "never",
+        "close": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Auto Start Dev Environment",
+      "dependsOn": ["Check Is Local Devcontainer", "Start All Dev Tasks"],
+      "dependsOrder": "sequence",
+      "runOptions": {
+        "runOn": "folderOpen"
       },
       "problemMatcher": []
     }

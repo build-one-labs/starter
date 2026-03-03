@@ -144,7 +144,8 @@
     "COREPACK_ENABLE_DOWNLOAD_PROMPT": "0",
     "PUID": "1000",
     "PGID": "1000",
-    "CLEAR_PREBUILD_CACHE": "false"
+    "CLEAR_PREBUILD_CACHE": "false",
+    "B1_WORKSPACE": "true"
   },
 
   // Security and signal handling
