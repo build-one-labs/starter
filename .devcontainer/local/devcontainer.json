@@ -77,8 +77,8 @@
   // postStartCommand: Runs each time the container starts
   "postStartCommand": "node_modules/@buildone/swat-cli/scripts/devcontainer/orchestrators/poststart.sh",
   // postAttachCommand: Runs when you attach to the container
-  // Note: Automatic tasks with runOn:folderOpen don't always trigger reliably, so we provide manual task option
-  "postAttachCommand": "echo 'Container ready. Run the \"Start All Dev Tasks\" task from the VS Code command palette to start services.'",
+  // Dev tasks auto-start via runOn:folderOpen. If they don't trigger, run "Start All Dev Tasks" from the command palette.
+  "postAttachCommand": "echo 'Container ready. Dev tasks are starting automatically...'",
 
   // Port forwarding
   "forwardPorts": [
