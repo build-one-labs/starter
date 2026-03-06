@@ -47,7 +47,20 @@ fi
 # Skip install during prebuild check (triggered at stack startup) - will be installed by dedicated task
 if [[ "${PREBUILD_CHECK:-}" != "true" ]]; then
     cd "${WORKSPACE_ROOT}"
-    
+
+    # Map B1 credentials to AWS CLI environment variables if not already set
+    export AWS_ACCESS_KEY_ID="${AWS_ACCESS_KEY_ID:-${B1_ACCESS_KEY_ID:-}}"
+    export AWS_SECRET_ACCESS_KEY="${AWS_SECRET_ACCESS_KEY:-${B1_SECRET_ACCESS_KEY:-}}"
+
+    # Obtain CodeArtifact auth token for private @buildone registry (required by .yarnrc.yml)
+    if [[ -z "${CODEARTIFACT_AUTH_TOKEN:-}" ]]; then
+        echo "[INFO] Obtaining CodeArtifact auth token..."
+        CODEARTIFACT_AUTH_TOKEN=$(aws codeartifact get-authorization-token \
+            --domain buildone --domain-owner 653306034207 \
+            --region "${AWS_REGION:-eu-central-1}" --query authorizationToken --output text)
+        export CODEARTIFACT_AUTH_TOKEN
+    fi
+
     echo "[INFO] Installing packages..."
     yarn install
 

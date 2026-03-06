@@ -1,9 +1,9 @@
 {
   "$schema": "deployment.config.schema.json",
   "globals": {
-    "dataImage": "docker.cloudsmith.io/buildone/repository/starter-data:${VERSION}",
-    "appServerTsImage": "docker.cloudsmith.io/buildone/repository/starter-app-server-ts:${VERSION}",
-    "webAppImage": "docker.cloudsmith.io/buildone/repository/starter-web-app:${VERSION}"
+    "dataImage": "653306034207.dkr.ecr.eu-central-1.amazonaws.com/starter/starter-data:${VERSION}",
+    "appServerTsImage": "653306034207.dkr.ecr.eu-central-1.amazonaws.com/starter/starter-app-server-ts:${VERSION}",
+    "webAppImage": "653306034207.dkr.ecr.eu-central-1.amazonaws.com/starter/starter-web-app:${VERSION}"
   },
   "services": {
     "swat_app_server_ts": {

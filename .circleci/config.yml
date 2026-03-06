@@ -4,6 +4,7 @@ setup: true
 
 orbs:
   continuation: circleci/continuation@2.0.1
+  aws-cli: circleci/aws-cli@5.4.1
 
 parameters:
   base-revision:
@@ -20,6 +21,16 @@ jobs:
     resource_class: small
     steps:
       - checkout
+      - aws-cli/setup:
+          role_arn: "${B1_ROLE_ARN}"
+          region: "${AWS_REGION}"
+      - run:
+          name: Get CodeArtifact token
+          command: |
+            TOKEN=$(aws codeartifact get-authorization-token \
+              --domain buildone --domain-owner 653306034207 \
+              --region $AWS_REGION --query authorizationToken --output text)
+            echo "export CODEARTIFACT_AUTH_TOKEN=$TOKEN" >> $BASH_ENV
       - run:
           name: Install CircleCI pacakges
           command: yarn workspaces focus circleci
@@ -37,7 +48,7 @@ jobs:
             OUTPUT_PATH: /tmp/pipeline/pipeline-parameters.json
           command: |
             mkdir -p /tmp/pipeline
-            echo '{"app-name":"starter"}' > /tmp/pipeline/pipeline-parameters.json
+            echo '{"app-name":"starter", "docker-repository": "653306034207.dkr.ecr.eu-central-1.amazonaws.com/starter"}' > /tmp/pipeline/pipeline-parameters.json
             python3 node_modules/@buildone/swat-circleci/scripts/detect_git_changes.py
       - continuation/continue:
           configuration_path: node_modules/@buildone/swat-circleci/defaults/build/config.yml

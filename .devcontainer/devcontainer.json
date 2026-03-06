@@ -21,8 +21,11 @@
       "version": "latest",
       "dockerDashComposeVersion": "latest"
     },
+    "ghcr.io/devcontainers/features/aws-cli:1": {
+      "version": "latest"
+    },
     "ghcr.io/devcontainers/features/sshd:1": {
-        "version": "latest"
+      "version": "latest"
     }
   },
 
@@ -50,18 +53,14 @@
         "editor.codeActionsOnSave": {
           "source.fixAll.eslint": "explicit"
         },
-        "eslint.validate": [
-          "javascript",
-          "typescript",
-          "vue"
-        ],
+        "eslint.validate": ["javascript", "typescript", "vue"],
         "typescript.tsdk": "node_modules/typescript/lib",
         "vue.server.hybridMode": true,
         "terminal.integrated.hideOnStartup": "always"
       }
     }
   },
-  
+
   // Lifecycle hooks
   // onCreateCommand: Runs once when container is first created (dependency installation, initial build)
   "onCreateCommand": "./.devcontainer/setup/prebuild.sh",
@@ -77,16 +76,16 @@
 
   // Port forwarding
   "forwardPorts": [
-    2021,  // DB Admin
-    3000,  // App Server
-    3001,  // SWAT App Server
-    3002,  // Web App Dev
-    3010,  // App Server Debug
-    3011,  // SWAT App Server Debug
-    5432,  // B1 DB Server
-    5173,  // Web Docs
-    8080,  // Main Application
-    15432  // App DB Server
+    2021, // DB Admin
+    3000, // App Server
+    3001, // SWAT App Server
+    3002, // Web App Dev
+    3010, // App Server Debug
+    3011, // SWAT App Server Debug
+    5432, // B1 DB Server
+    5173, // Web Docs
+    8080, // Main Application
+    15432 // App DB Server
   ],
   "portsAttributes": {
     "2021": {
@@ -138,7 +137,8 @@
     "PATH": "${containerWorkspaceFolder}/node_modules/.bin:${remoteEnv:HOME}/.local/bin:${containerEnv:PATH}",
     "COREPACK_ENABLE_DOWNLOAD_PROMPT": "0",
     "CLEAR_PREBUILD_CACHE": "true",
-    "B1_WORKSPACE": "true"
+    "B1_WORKSPACE": "true",
+    "AWS_REGION": "eu-central-1"
   },
 
   // Host machine requirements for Codespaces (dev only, not prebuilds)
