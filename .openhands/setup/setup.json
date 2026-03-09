@@ -1,5 +1,9 @@
 [
   {
+    "description": "Installing AWS CLI",
+    "script": "if ! command -v aws &>/dev/null; then curl -s 'https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip' -o /tmp/awscliv2.zip && unzip -q /tmp/awscliv2.zip -d /tmp && sudo /tmp/aws/install && rm -rf /tmp/awscliv2.zip /tmp/aws && echo 'AWS CLI installed'; else echo 'AWS CLI already installed'; fi"
+  },
+  {
     "description": "Validating registry credentials",
     "script": "if [ -z \"${BUILDONE_USER:-}\" ] || [ -z \"${BUILDONE_TOKEN:-}\" ] || [ -z \"${WORKSPACE_ROOT:-}\" ]; then echo 'Missing BUILDONE_USER, BUILDONE_TOKEN, or WORKSPACE_ROOT'; exit 1; fi && echo 'Credentials validated'"
   },
