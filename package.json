@@ -34,7 +34,6 @@
   },
   "packageManager": "yarn@4.1.1",
   "workspaces": [
-    ".circleci",
     "src/app-server-ts",
     "src/data",
     "src/web-app"

@@ -1,0 +1,117 @@
+name: Publish
+
+on:
+  push:
+    tags: ['*']
+
+env:
+  AWS_REGION: eu-central-1
+
+  DOCKER_REPOSITORY: 653306034207.dkr.ecr.eu-central-1.amazonaws.com/starter
+  APP_NAME: starter
+
+jobs:
+  publish-app-server-ts:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: ./.github/actions/setup-node
+        with:
+          aws-access-key-id: ${{ secrets.B1_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.B1_SECRET_ACCESS_KEY }}
+          focus-workspaces: app app-server-ts data
+
+      - name: Build
+        run: yarn workspace app-server-ts build
+
+      - name: Prune to production dependencies
+        run: yarn workspaces focus app-server-ts --production
+
+      - name: Prepare Dockerfile
+        run: cp src/app-server-ts/Dockerfile ./Dockerfile
+
+      - uses: aws-actions/configure-aws-credentials@v5
+        with:
+          aws-access-key-id: ${{ secrets.B1_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.B1_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build and push image
+        run: |
+          VERSION="${GITHUB_REF_NAME}"
+          IMAGE="${DOCKER_REPOSITORY}/${APP_NAME}-app-server-ts"
+          docker build . -t "${IMAGE}:${VERSION}" \
+            --build-arg BUILD_VERSION="${VERSION}" \
+            --build-arg BUILD_DATE="$(date)" \
+            --build-arg BUILD_NAME="${APP_NAME}-app-server-ts" \
+            --build-arg BUILD_IMAGE="${IMAGE}"
+          docker push "${IMAGE}:${VERSION}"
+
+  publish-web-app:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: ./.github/actions/setup-node
+        with:
+          aws-access-key-id: ${{ secrets.B1_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.B1_SECRET_ACCESS_KEY }}
+          focus-workspaces: app web-app
+
+      - name: Build
+        run: yarn workspace web-app build
+
+      - name: Prepare Dockerfile
+        run: cp src/web-app/Dockerfile ./Dockerfile
+
+      - uses: aws-actions/configure-aws-credentials@v5
+        with:
+          aws-access-key-id: ${{ secrets.B1_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.B1_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build and push image
+        run: |
+          VERSION="${GITHUB_REF_NAME}"
+          IMAGE="${DOCKER_REPOSITORY}/${APP_NAME}-web-app"
+          docker build . -t "${IMAGE}:${VERSION}" \
+            --build-arg BUILD_VERSION="${VERSION}" \
+            --build-arg BUILD_DATE="$(date)" \
+            --build-arg BUILD_NAME="${APP_NAME}-web-app" \
+            --build-arg BUILD_IMAGE="${IMAGE}"
+          docker push "${IMAGE}:${VERSION}"
+
+  publish-data:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: ./.github/actions/setup-node
+        with:
+          aws-access-key-id: ${{ secrets.B1_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.B1_SECRET_ACCESS_KEY }}
+          focus-workspaces: app data
+
+      - name: Prepare Dockerfile
+        run: cp src/data/Dockerfile ./Dockerfile
+
+      - uses: aws-actions/configure-aws-credentials@v5
+        with:
+          aws-access-key-id: ${{ secrets.B1_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.B1_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build and push image
+        run: |
+          VERSION="${GITHUB_REF_NAME}"
+          IMAGE="${DOCKER_REPOSITORY}/${APP_NAME}-data"
+          docker build . -t "${IMAGE}:${VERSION}" \
+            --build-arg BUILD_VERSION="${VERSION}" \
+            --build-arg BUILD_DATE="$(date)" \
+            --build-arg BUILD_NAME="${APP_NAME}-data" \
+            --build-arg BUILD_IMAGE="${IMAGE}"
+          docker push "${IMAGE}:${VERSION}"

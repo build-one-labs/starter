@@ -933,13 +933,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@buildone/swat-circleci@npm:24.3.0-VG.156":
-  version: 24.3.0-VG.156
-  resolution: "@buildone/swat-circleci@npm:24.3.0-VG.156"
-  checksum: 10c0/734025225fccf4f92b42dcf8c39964c240f0bc6dc4aaf669a0df07ea48e64fa1c8a4858a5f8a9fd09615d56b15a97a661dde0e9ce9460e203048658ab53b2554
-  languageName: node
-  linkType: hard
-
 "@buildone/swat-cli@npm:24.3.0-VG.156":
   version: 24.3.0-VG.156
   resolution: "@buildone/swat-cli@npm:24.3.0-VG.156"
@@ -10958,14 +10951,6 @@ __metadata:
   checksum: 10c0/60d3dfe95d75c01454ec1cfd5108617dd598a28a2a3e148bd7e1523c1c208b5f5a3007cafcbe293e6fd0a5a310cc32217c5dc54743eeabc0a2bec80072fc055c
   languageName: node
   linkType: hard
-
-"circleci@workspace:.circleci":
-  version: 0.0.0-use.local
-  resolution: "circleci@workspace:.circleci"
-  dependencies:
-    "@buildone/swat-circleci": "npm:24.3.0-VG.156"
-  languageName: unknown
-  linkType: soft
 
 "citty@npm:^0.1.5, citty@npm:^0.1.6":
   version: 0.1.6

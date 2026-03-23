@@ -17,7 +17,6 @@ This is a monorepo containing a NestJS backend API server and a Nuxt.js frontend
 ## Workspace Structure
 
 This is a Yarn 4 workspace with the following workspaces:
-- `.circleci` - CircleCI configuration and pipeline definitions
 - `src/app-server-ts` - NestJS backend API server
 - `src/data` - Data definitions and configuration files
 - `src/web-app` - Nuxt.js frontend application
@@ -149,14 +148,24 @@ These files define data structures for the Build.One SmartFramework integration.
 
 ## CI/CD
 
-Uses CircleCI with dynamic pipeline continuation:
-- Main config: `.circleci/config.yml`
-- Pipeline variants: deploy, tag, audit (in `.circleci/pipelines/`)
-- Base branch: Check `.circleci/config.yml` for the configured base revision (typically `origin/develop` or `origin/main`)
-- Change detection triggers conditional builds based on modified files
-- Build targets configured in the main CircleCI config mapping section
+Uses GitHub Actions with workflows in `.github/workflows/`:
+- `build.yml` - Build and lint on push to `develop`, pull requests, and manual trigger. Uses `dorny/paths-filter` for change detection on PRs (only builds affected workspaces).
+- `publish.yml` - On tag push, builds Docker images and publishes to AWS ECR (`653306034207.dkr.ecr.eu-central-1.amazonaws.com/starter/`)
+- `audit.yml` - Weekly (Monday 9:00 UTC) and manual: runs `yarn audit:ws` and `yarn ncu:ws`
+- `tag.yml` - Manual: creates a version tag via `npx b1 tag`
+- `deploy.yml` - Manual: generates deployment files and deploys to Portainer via `npx b1 deploy`
 
-For detailed CircleCI pipeline architecture, change detection patterns, and advanced workflows, see `node_modules/@buildone/swat-cli/knowledge/architecture_info/circleci.md`.
+A composite action at `.github/actions/setup-node/action.yml` handles AWS CodeArtifact authentication, Node.js setup, dependency caching, and installation across all workflows.
+
+Each workspace has its own `Dockerfile` for production image builds:
+- `src/app-server-ts/Dockerfile`
+- `src/web-app/Dockerfile`
+- `src/data/Dockerfile`
+
+### Required GitHub Secrets for CI/CD
+
+- `B1_ACCESS_KEY_ID` / `B1_SECRET_ACCESS_KEY` - AWS credentials for CodeArtifact and ECR
+- `DEFAULT_PORTAINER_URL` / `DEFAULT_PORTAINER_API_KEY` - Portainer defaults for deploy workflow
 
 ## Build.One Framework
 
@@ -167,8 +176,6 @@ This application uses Build.One proprietary packages:
 - `@buildone/web-framework-layer` - Nuxt layer with framework integration
 - `@buildone/swat-cli` - CLI tooling for development
 - `@buildone/swat-vscode` - VS Code integration
-- `@buildone/swat-circleci` - CircleCI integration scripts
-
 Check `package.json` files for current version numbers.
 
 ### SWAT CLI Knowledge Base
@@ -218,7 +225,6 @@ This repository is optimized for GitHub Codespaces with the B1 Framework. The de
 
 **Optional:**
 - `BLUEPRINT_MCP_AUTH` - Blueprint MCP credentials (username:password)
-- `CIRCLECI_API_TOKEN` - CircleCI API token
 - `CLAUDE_ORG_UUID` - Claude organization UUID
 - `CONTEXT7_API_TOKEN` - Context7 API token
 - `PORTAINER_API_TOKEN` - Portainer API token

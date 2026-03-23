@@ -1,0 +1,38 @@
+name: Tag
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to tag (or "auto")'
+        required: false
+        default: auto
+
+env:
+  AWS_REGION: eu-central-1
+
+
+jobs:
+  tag:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - uses: ./.github/actions/setup-node
+        with:
+          aws-access-key-id: ${{ secrets.B1_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.B1_SECRET_ACCESS_KEY }}
+
+      - name: Configure git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Create tag
+        env:
+          WORKSPACE_ROOT: .
+        run: npx b1 tag "${{ github.event.inputs.version }}"
+
+      - name: Push tags
+        run: git push --tags

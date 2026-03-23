@@ -1,0 +1,60 @@
+name: Deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      stack-id:
+        description: Portainer stack ID
+        required: true
+      version:
+        description: 'Version to deploy (or "auto")'
+        required: false
+        default: auto
+      deployment-config:
+        description: Deployment config file name
+        required: false
+        default: standalone.deployment.docker-compose.yml
+      portainer-url:
+        description: 'Portainer URL (leave empty for default)'
+        required: false
+        default: ''
+      portainer-api-key:
+        description: 'Portainer API key (leave empty for default)'
+        required: false
+        default: ''
+
+env:
+  AWS_REGION: eu-central-1
+
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - uses: ./.github/actions/setup-node
+        with:
+          aws-access-key-id: ${{ secrets.B1_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.B1_SECRET_ACCESS_KEY }}
+
+      - name: Generate deployment files
+        env:
+          WORKSPACE_ROOT: .
+        run: npx b1 generate deployment
+
+      - name: Deploy to Portainer
+        env:
+          WORKSPACE_ROOT: .
+        run: |
+          PORTAINER_URL="${{ github.event.inputs.portainer-url }}"
+          PORTAINER_KEY="${{ github.event.inputs.portainer-api-key }}"
+          [ -z "$PORTAINER_URL" ] && PORTAINER_URL="${{ secrets.DEFAULT_PORTAINER_URL }}"
+          [ -z "$PORTAINER_KEY" ] && PORTAINER_KEY="${{ secrets.DEFAULT_PORTAINER_API_KEY }}"
+          npx b1 deploy \
+            "${{ github.event.inputs.version }}" \
+            ".deploy/${{ github.event.inputs.deployment-config }}" \
+            "${{ github.event.inputs.stack-id }}" \
+            "$PORTAINER_URL" \
+            "$PORTAINER_KEY"

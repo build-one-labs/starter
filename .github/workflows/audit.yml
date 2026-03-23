@@ -1,0 +1,26 @@
+name: Audit
+
+on:
+  schedule:
+    - cron: '0 9 * * 1'  # Every Monday at 9:00 UTC
+  workflow_dispatch: {}
+
+env:
+  AWS_REGION: eu-central-1
+
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: ./.github/actions/setup-node
+        with:
+          aws-access-key-id: ${{ secrets.B1_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.B1_SECRET_ACCESS_KEY }}
+
+      - name: Run audit
+        run: yarn audit:ws --severity critical
+
+      - name: Run npm check updates
+        run: yarn ncu:ws
