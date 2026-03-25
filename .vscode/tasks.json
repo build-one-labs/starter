@@ -4,7 +4,7 @@
     {
       "label": "Stack Startup",
       "type": "shell",
-      "command": "node_modules/@buildone/swat-cli/scripts/devcontainer/lib/task-runner.sh start_stack",
+      "command": "[ \"$OPENHANDS\" = \"true\" ] && exec node_modules/@buildone/swat-cli/scripts/openhands/skip-stack.sh; node_modules/@buildone/swat-cli/scripts/devcontainer/lib/task-runner.sh start_stack",
       "isBackground": true,
       "presentation": {
         "reveal": "always",
@@ -50,7 +50,18 @@
       "problemMatcher": []
     },
     {
-      "label": "Start All Dev Tasks",
+      "label": "Install Dependencies",
+      "type": "shell",
+      "command": "yarn install && find node_modules/@buildone/swat-cli/scripts/ -name '*.sh' -exec chmod +x {} +",
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "focus": false
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Dev Tasks",
       "dependsOn": ["Stack Startup", "App Appserver", "Web App", "Claude"],
       "dependsOrder": "parallel",
       "presentation": {
@@ -60,9 +71,19 @@
       "problemMatcher": []
     },
     {
-      "label": "Check Is Local Devcontainer",
+      "label": "Start All Dev Tasks",
+      "dependsOn": ["Install Dependencies", "Dev Tasks"],
+      "dependsOrder": "sequence",
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Check Should Auto Start",
       "type": "shell",
-      "command": "[ \"$B1_WORKSPACE\" = \"true\" ] && [ \"$CODESPACES\" != \"true\" ]",
+      "command": "[ \"$LOCAL_DEVCONTAINER\" = \"true\" ] || [ \"$OPENHANDS\" = \"true\" ]",
       "presentation": {
         "reveal": "never",
         "close": true
@@ -71,7 +92,7 @@
     },
     {
       "label": "Auto Start Dev Environment",
-      "dependsOn": ["Check Is Local Devcontainer", "Start All Dev Tasks"],
+      "dependsOn": ["Check Should Auto Start", "Start All Dev Tasks"],
       "dependsOrder": "sequence",
       "runOptions": {
         "runOn": "folderOpen"
