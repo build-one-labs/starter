@@ -149,6 +149,7 @@
     "PGID": "1000",
     "CLEAR_PREBUILD_CACHE": "false",
     "B1_WORKSPACE": "true",
+    "LOCAL_DEVCONTAINER": "true",
     "AWS_REGION": "eu-central-1"
   },
 
