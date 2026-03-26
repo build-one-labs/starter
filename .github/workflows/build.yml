@@ -1,5 +1,9 @@
 name: Build
 
+permissions:
+  contents: read
+  pull-requests: read
+
 on:
   push:
     branches: [develop]
@@ -8,7 +12,6 @@ on:
 
 env:
   AWS_REGION: eu-central-1
-
 
 jobs:
   detect-changes:
