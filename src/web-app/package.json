@@ -11,9 +11,9 @@
     "lint:fix": "nuxt prepare && eslint . --fix"
   },
   "dependencies": {
-    "@buildone/web-core": "24.3.0-VG.192",
-    "@buildone/web-framework": "24.3.0-VG.192",
-    "@buildone/web-framework-layer": "24.3.0-VG.192",
+    "@buildone/web-core": "24.3.0-VG.193",
+    "@buildone/web-framework": "24.3.0-VG.193",
+    "@buildone/web-framework-layer": "24.3.0-VG.193",
     "@nuxt/image": "1.10.0",
     "@pinia/nuxt": "^0.11.1",
     "@primevue/forms": "^4.3.6",
