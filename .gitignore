@@ -11,6 +11,7 @@ node_modules
 *.log
 *.dfw
 /.vscode/*.code-snippets
+/.vscode/mcp.json
 
 # Yarn
 .pnp.*
