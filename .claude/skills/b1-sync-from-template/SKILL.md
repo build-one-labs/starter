@@ -1,3 +1,8 @@
+---
+name: b1-sync-from-template
+description: Sync this project with the latest changes from the Build.One starter template repository (`build-one-labs/starter`) using `.devcontainer/scripts/sync-from-template.sh`. Use when the user says "sync from template", "sync with template", "update from template", "pull template changes", or "sync starter".
+---
+
 # Sync from Starter Template
 
 Synchronize this project with the latest changes from the Build.One starter template repository (`build-one-labs/starter`).
