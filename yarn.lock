@@ -7832,6 +7832,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/leaflet@npm:^1.9.21":
+  version: 1.9.21
+  resolution: "@types/leaflet@npm:1.9.21"
+  dependencies:
+    "@types/geojson": "npm:*"
+  checksum: 10c0/96a86bdeff7bf56104242e97536f39005a53dd857853aa0c5de127ce2c72f3f36638f2a5b8d23e2e825a2bfe32113be731ab26634a3143413b891299c29621ce
+  languageName: node
+  linkType: hard
+
 "@types/linkify-it@npm:^5":
   version: 5.0.0
   resolution: "@types/linkify-it@npm:5.0.0"
@@ -17839,6 +17848,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"leaflet@npm:^1.9.4":
+  version: 1.9.4
+  resolution: "leaflet@npm:1.9.4"
+  checksum: 10c0/f639441dbb7eb9ae3fcd29ffd7d3508f6c6106892441634b0232fafb9ffb1588b05a8244ec7085de2c98b5ed703894df246898477836cfd0ce5b96d4717b5ca1
+  languageName: node
+  linkType: hard
+
 "leven@npm:^3.1.0":
   version: 3.1.0
   resolution: "leven@npm:3.1.0"
@@ -26033,7 +26049,9 @@ __metadata:
     "@pinia/nuxt": "npm:^0.11.1"
     "@primevue/forms": "npm:^4.3.6"
     "@primevue/nuxt-module": "npm:^4.3.6"
+    "@types/leaflet": "npm:^1.9.21"
     eslint: "npm:^9.19.0"
+    leaflet: "npm:^1.9.4"
     nuxt: "npm:^4.0.0"
     pinia: "npm:^3.0.3"
     sass-embedded: "npm:^1.90.0"
