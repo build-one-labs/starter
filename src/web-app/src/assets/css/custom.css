@@ -1,0 +1,75 @@
+/*
+ * LCARS helper styles — utility classes for building the classic
+ * "elbow" panels by hand. These complement the PrimeVue preset
+ * (src/themes/preset.ts); colours/radii come from theme design tokens
+ * so they follow light/dark mode automatically.
+ *
+ * Best viewed with the `.app-dark` class on <html>.
+ */
+
+/* Horizontal LCARS label bar */
+.lcars-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--my-lcars-gap, 0.3125rem);
+  min-height: var(--my-bar-height, 2.25rem);
+  padding: 0 1rem;
+  background: var(--p-primary-color);
+  color: var(--p-primary-contrast-color);
+  border-radius: var(--my-pill-radius, 999px);
+  font-family: 'Antonio', var(--p-font-family);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.lcars-bar--violet {
+  background: var(--p-lcars-violet-400);
+}
+.lcars-bar--ice {
+  background: var(--p-lcars-ice-300);
+}
+.lcars-bar--salmon {
+  background: var(--p-lcars-salmon-500);
+}
+
+/* The signature rounded corner / "elbow" block */
+.lcars-elbow {
+  background: var(--p-primary-color);
+  border-top-left-radius: 4rem;
+  border-bottom-left-radius: 0;
+  min-width: 8rem;
+  min-height: 4rem;
+}
+
+/* A framed LCARS content panel: black body, colour-bar header */
+.lcars-panel {
+  background: var(--p-surface-900, #0c0c0d);
+  border: 1px solid var(--p-surface-700);
+  border-radius: var(--my-panel-radius, 1.75rem);
+  overflow: hidden;
+}
+.lcars-panel > .lcars-panel-header {
+  background: var(--p-primary-color);
+  color: var(--p-primary-contrast-color);
+  padding: 0.5rem 1.25rem;
+  font-family: 'Antonio', var(--p-font-family);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.lcars-panel > .lcars-panel-body {
+  padding: 1.25rem;
+}
+
+/* Generic LCARS text treatment */
+.lcars-text {
+  font-family: 'Antonio', var(--p-font-family);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+/* Dark-mode tightening of the panel border */
+.app-dark .lcars-panel {
+  border-color: var(--p-surface-800);
+}
