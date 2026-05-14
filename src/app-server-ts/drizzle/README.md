@@ -39,7 +39,7 @@ export const releases = pgTable('releases', {
 Use Drizzle Kit to generate a migration file based on schema changes:
 
 ```bash
-yarn workspace app-server-ts db:migrate:generate <migration_name>
+yarn workspace @buildone/app-server-ts db:migrate:generate <migration_name>
  
 ```
 
@@ -48,7 +48,7 @@ This creates a new migration file in your migrations directory with SQL commands
 For example
 
 ```bash
-yarn workspace app-server-ts db:migrate:generate add_users
+yarn workspace @buildone/app-server-ts db:migrate:generate add_users
 ```
 
 ```text
@@ -66,7 +66,7 @@ yarn workspace app-server-ts db:migrate:generate add_users
 Run the generated migration to update your database:
 
 ```bash
-yarn workspace app-server-ts db:migrate
+yarn workspace @buildone/app-server-ts db:migrate
 ```
 
 #### Step 4: Commit Changes
@@ -95,7 +95,7 @@ For complex data transformations that can't be handled by schema migrations alon
 1. **Create a new custom migration file**:
 
 ```bash
-yarn workspace app-server-ts db:migrate:generate <migration_name> --custom
+yarn workspace @buildone/app-server-ts db:migrate:generate <migration_name> --custom
 ```
 
 2. **Modify the new custom migration file**:
@@ -105,7 +105,7 @@ Modify the custom migration file to apply the required changes.
 For example
 
 ```bash
-yarn workspace app-server-ts db:migrate:generate seed_users --custom
+yarn workspace @buildone/app-server-ts db:migrate:generate seed_users --custom
 ```
 
 ```text

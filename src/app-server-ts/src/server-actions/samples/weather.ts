@@ -1,6 +1,6 @@
 import { B1Action, B1ActionPayload, B1Service } from '@buildone/app-server-tslib';
-import { handleExternalHttpRequest } from '@buildone/app-server-tslib/utils';
 import { HttpService } from '@nestjs/axios';
+import { handleExternalHttpRequest } from '@buildone/app-server-tslib/utils';
 
 class WeatherInfoPayload {
   lat: string;
@@ -26,5 +26,3 @@ export class Weather {
     return data;
   }
 }
-
-// curl -X POST   http://localhost:3000/server-actions/samples-weather/info    -H  "Authorization: Bearer ${SECHUB_TOKEN}" -H "Content-Type: application/json" -d '{"lat":"52"}'
