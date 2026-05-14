@@ -1,4 +1,4 @@
-import { boolean, date, integer, json, numeric, pgTable, serial, text, timestamp, varchar } from 'drizzle-orm/pg-core';
+import { boolean, date, integer, numeric, pgTable, serial, text, timestamp, varchar } from 'drizzle-orm/pg-core';
 
 export const clients = pgTable('clients', {
   id: serial().primaryKey().notNull(),
@@ -8,13 +8,13 @@ export const clients = pgTable('clients', {
   address: text(),
   createdAt: timestamp('created_at', { mode: 'string' }).defaultNow().notNull(),
   updatedAt: timestamp('updated_at', { mode: 'string' }).defaultNow().notNull(),
-  country: json(),
+  country: varchar({ length: 100 }),
   company: varchar({ length: 255 }),
   date: date(),
   status: varchar({ length: 50 }),
   verified: boolean().default(false),
   activity: integer(),
-  representative: json(),
+  representative: varchar({ length: 100 }),
   balance: numeric({ precision: 10, scale: 2 }),
   active: boolean().default(true),
   createdby: varchar({ length: 100 }),
@@ -29,7 +29,7 @@ export const clients = pgTable('clients', {
   rating: integer(),
   shippingAddress: text(),
   sla: varchar({ length: 100 }),
-  slaExpirationDate: date(),
+  slaExpirationDate: date({ mode: 'string' }),
   slaSerialNumber: varchar({ length: 10 }),
   tickerSymbol: varchar({ length: 20 }),
   type: varchar({ length: 50 }),

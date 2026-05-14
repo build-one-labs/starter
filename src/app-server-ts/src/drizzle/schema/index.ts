@@ -1,4 +1,5 @@
 export * from './salesReps.table';
+export * from './salesRepUserGrants.table';
 export * from './customers.table';
 export * from './clients.table';
 export * from './invoices.table';
@@ -12,3 +13,4 @@ export * from './products.table';
 export * from './orderItems.table';
 export * from './payments.table';
 export * from './invoiceItemTaxes.table';
+export * from './markdownFiles.table';

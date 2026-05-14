@@ -21,7 +21,7 @@ export const invoices = pgTable(
       columns: [table.customerId],
       foreignColumns: [clients.id],
       name: 'invoices_customer_id_clients_id_fk'
-    }),
+    }).onDelete('cascade'),
     unique('invoices_invoice_number_unique').on(table.invoiceNumber)
   ]
 );

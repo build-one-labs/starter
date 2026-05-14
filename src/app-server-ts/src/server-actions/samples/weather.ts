@@ -26,5 +26,3 @@ export class Weather {
     return data;
   }
 }
-
-// curl -X POST   http://localhost:3000/server-actions/samples-weather/info    -H  "Authorization: Bearer ${SECHUB_TOKEN}" -H "Content-Type: application/json" -d '{"lat":"52"}'
