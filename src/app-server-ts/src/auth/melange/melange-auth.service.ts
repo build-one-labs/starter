@@ -1,6 +1,6 @@
+import { PG_POOL } from '@buildone/app-server-tslib/drizzle';
 import { Inject, Injectable } from '@nestjs/common';
 import { Pool } from 'pg';
-import { PG_POOL } from '@buildone/app-server-tslib/drizzle';
 
 export interface CheckPermissionOptions {
   subjectType: string;

@@ -1,5 +1,6 @@
-import { Injectable } from '@nestjs/common';
 import { RequestContext } from '@buildone/app-server-tslib/modules';
+import { Injectable } from '@nestjs/common';
+
 import { MelangeAuthService } from '@/auth/melange';
 
 interface OpportunityRecord {

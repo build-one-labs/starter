@@ -1,23 +1,24 @@
-import { HttpModule } from '@nestjs/axios';
-import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
-import { APP_GUARD, DiscoveryModule } from '@nestjs/core';
-import { EventsModule } from './events/events.module';
-import { ApiModule } from './api/api.module';
-import { ServerActionsModule } from './server-actions/server-actions.module';
+import { B1AuthGuard } from '@buildone/app-server-tslib/auth';
+import { DrizzleModule } from '@buildone/app-server-tslib/drizzle';
 import {
   ApplicationSettingsModule,
   ConnectorModule,
   RepositoryModule,
   RequestContextModule
 } from '@buildone/app-server-tslib/modules';
-import { B1AuthGuard } from '@buildone/app-server-tslib/auth';
-import { DrizzleModule } from '@buildone/app-server-tslib/drizzle';
+import { HttpModule } from '@nestjs/axios';
+import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
+import { APP_GUARD, DiscoveryModule } from '@nestjs/core';
+
+import { ApiModule } from './api/api.module';
+import appSettingsConfig from './app-settings.config';
 import { MelangeAuthModule } from './auth/melange';
 import { SalesforceConnector } from './connectors/salesforce/salesforce.connector';
 import { SpaceXConnector } from './connectors/spacex/spacex.connector';
 import * as schema from './drizzle/schema';
-import appSettingsConfig from './app-settings.config';
+import { EventsModule } from './events/events.module';
+import { ServerActionsModule } from './server-actions/server-actions.module';
 
 @Module({
   imports: [

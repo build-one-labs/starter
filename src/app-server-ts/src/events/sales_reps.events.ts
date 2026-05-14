@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InferSelectModel } from 'drizzle-orm';
+
 import { salesReps } from '@/drizzle/schema';
 
 type SalesRepSelectModel = InferSelectModel<typeof salesReps>;

@@ -1,10 +1,11 @@
+import { DRIZZLE } from '@buildone/app-server-tslib/drizzle';
+import { RequestContext } from '@buildone/app-server-tslib/modules';
 import { Inject, Injectable } from '@nestjs/common';
 import { InferSelectModel, inArray, sql } from 'drizzle-orm';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
-import { DRIZZLE } from '@buildone/app-server-tslib/drizzle';
-import { RequestContext } from '@buildone/app-server-tslib/modules';
-import { clients, salesReps } from '@/drizzle/schema';
+
 import { MelangeAuthService } from '@/auth/melange';
+import { clients, salesReps } from '@/drizzle/schema';
 
 type ClientSelectModel = InferSelectModel<typeof clients>;
 type ClientCustom = ClientSelectModel & {
@@ -20,7 +21,7 @@ export class CustomerSearchRestrictedEvents {
   constructor(
     private readonly requestContext: RequestContext,
     private readonly melangeAuth: MelangeAuthService,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
     @Inject(DRIZZLE) private readonly db: NodePgDatabase<any>
   ) {}
 
@@ -53,10 +54,10 @@ export class CustomerSearchRestrictedEvents {
       'can_see_financial_data',
       'sales_rep'
     );
-    if (!allowedIds.length) return new Set();
+    if (allowedIds.length === 0) return new Set();
 
     const idSet = allowedIds.map((id) => Number.parseInt(id, 10)).filter((n) => Number.isFinite(n));
-    if (!idSet.length) return new Set();
+    if (idSet.length === 0) return new Set();
 
     const rows = await this.db
       .select({

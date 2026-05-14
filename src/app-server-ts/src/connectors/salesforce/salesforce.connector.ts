@@ -1,9 +1,8 @@
-import { Injectable, Logger } from '@nestjs/common';
-import { HttpService } from '@nestjs/axios';
-import { firstValueFrom } from 'rxjs';
-import type { QueryObject } from '@buildone/app-server-tslib/utils';
 import { buildSoqlQuery } from '@buildone/app-server-tslib/utils';
-import type { IDataConnector } from '@buildone/app-server-tslib/modules';
+import { HttpService } from '@nestjs/axios';
+import { Injectable, Logger } from '@nestjs/common';
+import { firstValueFrom } from 'rxjs';
+
 import type {
   CachedToken,
   SalesforceDescribeResult,
@@ -13,6 +12,8 @@ import type {
   SalesforceTokenResponse,
   SalesforceWriteResult
 } from './salesforce.types';
+import type { IDataConnector } from '@buildone/app-server-tslib/modules';
+import type { QueryObject } from '@buildone/app-server-tslib/utils';
 
 /** Salesforce REST API version */
 const SF_API_VERSION = 'v59.0';
@@ -257,8 +258,9 @@ export class SalesforceConnector implements IDataConnector {
     const fromQuery = (query as { fieldlist?: string }).fieldlist;
     if (fromQuery && fromQuery !== '*') return fromQuery;
 
-    if (this.fieldCache.has(object)) {
-      return this.fieldCache.get(object)!;
+    const cached = this.fieldCache.get(object);
+    if (cached !== undefined) {
+      return cached;
     }
 
     try {
@@ -276,8 +278,9 @@ export class SalesforceConnector implements IDataConnector {
    * Returns cached describe metadata for an SObject, fetching it if not yet cached.
    */
   private async getDescribe(object: string): Promise<SalesforceFieldDescribe[]> {
-    if (this.describeCache.has(object)) {
-      return this.describeCache.get(object)!;
+    const cached = this.describeCache.get(object);
+    if (cached !== undefined) {
+      return cached;
     }
     const fields = await this.describeObject(object);
     this.describeCache.set(object, fields);

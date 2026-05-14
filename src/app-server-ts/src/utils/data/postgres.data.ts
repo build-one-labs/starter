@@ -1,8 +1,10 @@
-import { drizzle, NodePgDatabase } from 'drizzle-orm/node-postgres';
-import { sql } from 'drizzle-orm';
-import path from 'path';
 import * as fs from 'fs';
+import path from 'path';
+
+import { sql } from 'drizzle-orm';
+import { drizzle, NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { Pool } from 'pg';
+
 import {
   taxes,
   productCategories,
@@ -57,6 +59,7 @@ const SEQUENCES: Array<{ table: string; column: string }> = [
 ];
 
 function readJsonFile<T = unknown>(file: string): T[] {
+  // eslint-disable-next-line security/detect-non-literal-fs-filename
   const fileString = fs.readFileSync(file, { encoding: 'utf-8' });
   return JSON.parse(fileString);
 }
@@ -94,6 +97,7 @@ function stripFields<T extends Record<string, unknown>>(item: T, fields: readonl
 
 function readTableJson<T = Record<string, unknown>>(root: string, fileName: string): T[] | null {
   const filePath = path.join(root, fileName);
+  // eslint-disable-next-line security/detect-non-literal-fs-filename
   if (!fs.existsSync(filePath)) return null;
   const data = readJsonFile<T>(filePath);
   return Array.isArray(data) ? data : null;
@@ -274,6 +278,7 @@ export async function importData(type: ImportTypes, clearData = false) {
     console.warn('APP_DATA_FOLDER is not set — skipping JSON import');
     return;
   }
+  // eslint-disable-next-line security/detect-non-literal-fs-filename
   if (!fs.existsSync(APP_DATA_FOLDER)) {
     console.info(`No JSON data folder at ${APP_DATA_FOLDER} — skipping import`);
     return;
@@ -344,17 +349,20 @@ function sortObjectKeys(obj: unknown): unknown {
 }
 
 function writeTableJson(root: string, fileName: string, data: unknown[]) {
+  // eslint-disable-next-line security/detect-non-literal-fs-filename
   if (!fs.existsSync(root)) {
+    // eslint-disable-next-line security/detect-non-literal-fs-filename
     fs.mkdirSync(root, { recursive: true });
   }
   const outputFile = path.join(root, fileName);
+  // eslint-disable-next-line security/detect-non-literal-fs-filename
   fs.writeFileSync(outputFile, JSON.stringify(data, null, 2) + '\n');
   console.info(`Exported ${data.length} rows to ${outputFile}`);
 }
 
 interface ExportOptions<T> {
   fileName: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
   table: any;
   sort: (a: T, b: T) => number;
   excludedFields?: readonly string[];

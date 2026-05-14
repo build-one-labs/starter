@@ -1,11 +1,13 @@
-import { Injectable, Logger, MethodNotAllowedException } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
+import { Injectable, Logger, MethodNotAllowedException } from '@nestjs/common';
 import { firstValueFrom } from 'rxjs';
-import type { QueryObject } from '@buildone/app-server-tslib/utils';
-import type { IDataConnector } from '@buildone/app-server-tslib/modules';
+
 import { buildSpaceXQuery } from './spacex.filter';
-import type { SpaceXQueryResponse } from './spacex.types';
 import { QUERYABLE_RESOURCES } from './spacex.types';
+
+import type { SpaceXQueryResponse } from './spacex.types';
+import type { IDataConnector } from '@buildone/app-server-tslib/modules';
+import type { QueryObject } from '@buildone/app-server-tslib/utils';
 
 /** Default SpaceX API base URL. Override with SPACEX_API_BASE_URL env var. */
 const DEFAULT_BASE_URL = 'https://api.spacexdata.com';

@@ -1,4 +1,5 @@
 import { Global, Module } from '@nestjs/common';
+
 import { MelangeAuthService } from './melange-auth.service';
 
 // NOTE: Intentionally NOT registering MelangeAuthService under AUTHORIZATION_SERVICE.
