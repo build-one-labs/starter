@@ -1,0 +1,140 @@
+name: Deploy Release
+run-name: Deploy Release ${{ inputs.version }}
+
+# Dispatched by the Release & Deploy screen's "Deploy" action. Deploys a released
+# version to a Portainer stack — either updating an existing stack (`stack-id`) or
+# creating a new one (`stack-name` + `endpoint-id` + `domain`).
+on:
+  workflow_dispatch:
+    inputs:
+      stack-id:
+        description: 'Portainer stack ID (update an existing stack; leave blank to create a new one)'
+        required: false
+        default: ''
+      stack-name:
+        description: 'New stack name (create a new stack; requires endpoint-id + domain)'
+        required: false
+        default: ''
+      endpoint-id:
+        description: 'Portainer endpoint id (required when creating a new stack)'
+        required: false
+        default: ''
+      domain:
+        description: 'Domain for the new stack, e.g. test.example.com (required when creating)'
+        required: false
+        default: ''
+      repository:
+        description: 'Source repository (org/repo) recorded on the new stack'
+        required: false
+        default: ''
+      version:
+        description: 'Version to deploy (use "auto" for the latest tag)'
+        required: true
+        default: auto
+      deployment-config:
+        description: 'Deployment config file name (under .deploy/)'
+        required: false
+        default: standalone.docker-compose.yml
+      portainer-url:
+        description: 'Portainer URL (leave empty for the DEFAULT_PORTAINER_URL secret)'
+        required: false
+        default: ''
+      portainer-api-key:
+        description: 'Portainer API key (leave empty for the DEFAULT_PORTAINER_API_KEY secret)'
+        required: false
+        default: ''
+  workflow_call:
+    inputs:
+      stack-id:
+        type: string
+        required: false
+        default: ''
+      stack-name:
+        type: string
+        required: false
+        default: ''
+      endpoint-id:
+        type: string
+        required: false
+        default: ''
+      domain:
+        type: string
+        required: false
+        default: ''
+      repository:
+        type: string
+        required: false
+        default: ''
+      version:
+        type: string
+        required: false
+        default: auto
+      deployment-config:
+        type: string
+        required: false
+        default: standalone.docker-compose.yml
+      portainer-url:
+        type: string
+        required: false
+        default: ''
+      portainer-api-key:
+        type: string
+        required: false
+        default: ''
+    secrets:
+      B1_ACCESS_KEY_ID:
+        required: true
+      B1_SECRET_ACCESS_KEY:
+        required: true
+      DEFAULT_PORTAINER_URL:
+        required: false
+      DEFAULT_PORTAINER_API_KEY:
+        required: false
+
+permissions:
+  contents: read
+
+env:
+  AWS_REGION: eu-central-1
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - uses: ./.github/actions/setup-node
+        with:
+          aws-access-key-id: ${{ secrets.B1_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.B1_SECRET_ACCESS_KEY }}
+      - name: Resolve version
+        id: version
+        run: |
+          VERSION="${{ inputs.version }}"
+          if [ -z "$VERSION" ] || [ "$VERSION" = "auto" ]; then
+            VERSION=$(git describe --tags --abbrev=0)
+          fi
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+      - name: Generate deployment files
+        env:
+          WORKSPACE_ROOT: .
+        run: npx b1 generate deployment
+      - name: Deploy to Portainer
+        env:
+          WORKSPACE_ROOT: .
+        run: |
+          PORTAINER_URL="${{ inputs.portainer-url }}"
+          PORTAINER_KEY="${{ inputs.portainer-api-key }}"
+          [ -z "$PORTAINER_URL" ] && PORTAINER_URL="${{ secrets.DEFAULT_PORTAINER_URL }}"
+          [ -z "$PORTAINER_KEY" ] && PORTAINER_KEY="${{ secrets.DEFAULT_PORTAINER_API_KEY }}"
+          npx b1 deploy \
+            "${{ steps.version.outputs.version }}" \
+            ".deploy/${{ inputs.deployment-config }}" \
+            "${{ inputs.stack-id }}" \
+            "$PORTAINER_URL" \
+            "$PORTAINER_KEY" \
+            --stack-name="${{ inputs.stack-name }}" \
+            --endpoint-id="${{ inputs.endpoint-id }}" \
+            --domain="${{ inputs.domain }}" \
+            --repository="${{ inputs.repository }}"
