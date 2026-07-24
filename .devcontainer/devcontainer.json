@@ -71,7 +71,11 @@
     "Stack Startup": ["${containerWorkspaceFolder}/.devcontainer/scripts/orchestrators/codespace-startup.sh"],
     "Appserver": ["node_modules/@buildone/swat-cli/scripts/devcontainer/lib/task-runner.sh", "watch_app_server_ts"],
     "Web App": ["node_modules/@buildone/swat-cli/scripts/devcontainer/lib/task-runner.sh", "watch_web_app"],
-    "Claude": ["node_modules/@buildone/swat-cli/scripts/devcontainer/lib/task-runner.sh", "start_claude"]
+    "Claude": ["node_modules/@buildone/swat-cli/scripts/devcontainer/lib/task-runner.sh", "start_claude"],
+    "Host Terminal": [
+      "node_modules/@buildone/swat-cli/scripts/devcontainer/lib/task-runner.sh",
+      "start_host_terminal"
+    ]
   },
 
   // Port forwarding

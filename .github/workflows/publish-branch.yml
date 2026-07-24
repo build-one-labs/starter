@@ -1,70 +1,102 @@
-name: Publish Tag
-# Carry the built version in the run title so consumers (e.g. the Release & Deploy
-# "Deployable" gate) can attribute a run to its version.
-run-name: Publish Tag ${{ inputs.version || github.ref_name }}
+name: Publish Branch
+run-name: Publish Branch ${{ inputs.version }}
 
+# Dispatched by the Release & Deploy screen's "Create Release" action. Computes the
+# version (GitVersion, or the exact `version` for "custom" mode), creates & pushes the
+# tag, AND builds & publishes every image in the same run. Tagging alone (tag.yml) is
+# avoided for this path because a GITHUB_TOKEN tag push does not fire publish.yml's
+# push trigger, which would leave the tag un-built.
 on:
-  push:
-    tags: ['**']
-  # Manual / programmatic (re)build of a tag whose images aren't in ECR — e.g. tags
-  # created by tag.yml, whose GITHUB_TOKEN push does not fire the push trigger above.
-  # The Release & Deploy screen's "Build images" action dispatches this.
   workflow_dispatch:
     inputs:
       version:
-        description: 'Tag to build & publish (e.g. 1.4.0)'
-        required: true
+        description: 'Exact tag to publish (or "auto" to compute from the branch)'
+        required: false
+        default: auto
   workflow_call:
     inputs:
       version:
         type: string
-        required: true
+        required: false
+        default: auto
     secrets:
       B1_ACCESS_KEY_ID:
         required: true
       B1_SECRET_ACCESS_KEY:
         required: true
 
+# `contents: write` so the version job can push the tag; `statuses: write` so the
+# marker job can set the commit status.
 permissions:
-  contents: read
+  contents: write
+  statuses: write
 
 env:
   AWS_REGION: eu-central-1
   DOCKER_REPOSITORY: 653306034207.dkr.ecr.eu-central-1.amazonaws.com/starter
   APP_NAME: starter
-  # Tag from the push event, or the explicit input on manual/called runs.
-  VERSION: ${{ inputs.version || github.ref_name }}
 
 jobs:
-  publish-app-server-ts:
+  # ---------------------------------------------------------------------------
+  # Compute the version and create + push the tag on the dispatched branch.
+  # ---------------------------------------------------------------------------
+  version:
     runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
     steps:
       - uses: actions/checkout@v6
         with:
-          ref: ${{ inputs.version || github.ref_name }}
+          fetch-depth: 0
+      - uses: ./.github/actions/setup-node
+        with:
+          aws-access-key-id: ${{ secrets.B1_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.B1_SECRET_ACCESS_KEY }}
+      - name: Configure git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+      - name: Create tag
+        id: version
+        env:
+          WORKSPACE_ROOT: .
+          INPUT_VERSION: ${{ inputs.version }}
+        run: |
+          # "auto" (or empty) lets `b1 tag` compute the version from the branch;
+          # an explicit value is used verbatim (the screen's "custom" mode).
+          npx b1 tag "${INPUT_VERSION:-auto}"
+          git push --tags
+          # The newest tag reachable from HEAD is the one just created.
+          VERSION=$(git describe --tags --abbrev=0)
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "Tagged $VERSION"
+
+  publish-app-server-ts:
+    needs: version
+    runs-on: ubuntu-latest
+    env:
+      VERSION: ${{ needs.version.outputs.version }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ needs.version.outputs.version }}
       - uses: ./.github/actions/setup-node
         with:
           aws-access-key-id: ${{ secrets.B1_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.B1_SECRET_ACCESS_KEY }}
           focus-workspaces: app app-server-ts data
-
       - name: Build
         run: yarn workspace app-server-ts build
-
       - name: Prune to production dependencies
         run: yarn workspaces focus app-server-ts --production
-
       - name: Prepare Dockerfile
         run: cp src/app-server-ts/Dockerfile ./Dockerfile
-
       - uses: aws-actions/configure-aws-credentials@v5
         with:
           aws-access-key-id: ${{ secrets.B1_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.B1_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
-
       - uses: aws-actions/amazon-ecr-login@v2
-
       - name: Build and push image
         run: |
           IMAGE="${DOCKER_REPOSITORY}/${APP_NAME}-app-server-ts"
@@ -76,31 +108,29 @@ jobs:
           docker push "${IMAGE}:${VERSION}"
 
   publish-web-app:
+    needs: version
     runs-on: ubuntu-latest
+    env:
+      VERSION: ${{ needs.version.outputs.version }}
     steps:
       - uses: actions/checkout@v6
         with:
-          ref: ${{ inputs.version || github.ref_name }}
+          ref: ${{ needs.version.outputs.version }}
       - uses: ./.github/actions/setup-node
         with:
           aws-access-key-id: ${{ secrets.B1_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.B1_SECRET_ACCESS_KEY }}
           focus-workspaces: app web-app
-
       - name: Build
         run: yarn workspace web-app build
-
       - name: Prepare Dockerfile
         run: cp src/web-app/Dockerfile ./Dockerfile
-
       - uses: aws-actions/configure-aws-credentials@v5
         with:
           aws-access-key-id: ${{ secrets.B1_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.B1_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
-
       - uses: aws-actions/amazon-ecr-login@v2
-
       - name: Build and push image
         run: |
           IMAGE="${DOCKER_REPOSITORY}/${APP_NAME}-web-app"
@@ -112,28 +142,27 @@ jobs:
           docker push "${IMAGE}:${VERSION}"
 
   publish-data:
+    needs: version
     runs-on: ubuntu-latest
+    env:
+      VERSION: ${{ needs.version.outputs.version }}
     steps:
       - uses: actions/checkout@v6
         with:
-          ref: ${{ inputs.version || github.ref_name }}
+          ref: ${{ needs.version.outputs.version }}
       - uses: ./.github/actions/setup-node
         with:
           aws-access-key-id: ${{ secrets.B1_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.B1_SECRET_ACCESS_KEY }}
           focus-workspaces: app data
-
       - name: Prepare Dockerfile
         run: cp src/data/Dockerfile ./Dockerfile
-
       - uses: aws-actions/configure-aws-credentials@v5
         with:
           aws-access-key-id: ${{ secrets.B1_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.B1_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
-
       - uses: aws-actions/amazon-ecr-login@v2
-
       - name: Build and push image
         run: |
           IMAGE="${DOCKER_REPOSITORY}/${APP_NAME}-data"
@@ -145,30 +174,28 @@ jobs:
           docker push "${IMAGE}:${VERSION}"
 
   # ---------------------------------------------------------------------------
-  # Publish marker — authoritative "Deployable" signal for the Release & Deploy
-  # screen. Sets a `build-one/publish` commit status on the built commit once all
-  # image jobs finish: success when every image reached ECR, failure otherwise.
-  # The backend reads this status by the tag's commit sha.
+  # Publish marker — sets the `build-one/publish` commit status on the tag's commit
+  # once the image jobs finish (see publish.yml for the rationale).
   # ---------------------------------------------------------------------------
   mark-publish-status:
     name: Mark publish commit status
     needs:
+      - version
       - publish-app-server-ts
       - publish-web-app
       - publish-data
-    if: always()
+    if: always() && needs.version.result == 'success'
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      statuses: write
+    env:
+      VERSION: ${{ needs.version.outputs.version }}
     steps:
       - uses: actions/checkout@v6
         with:
-          ref: ${{ inputs.version || github.ref_name }}
+          ref: ${{ needs.version.outputs.version }}
       - name: Set build-one/publish commit status
         env:
           GH_TOKEN: ${{ github.token }}
-          # Aggregate result of every image job above; tracks whatever is in `needs`.
+          # `version` is 'success' here (gated by the `if`), so it never flips STATE.
           RESULTS: ${{ join(needs.*.result, ',') }}
         run: |
           SHA=$(git rev-parse HEAD)
