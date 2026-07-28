@@ -70,6 +70,99 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@anthropic-ai/claude-agent-sdk-darwin-arm64@npm:0.3.220":
+  version: 0.3.220
+  resolution: "@anthropic-ai/claude-agent-sdk-darwin-arm64@npm:0.3.220"
+  conditions: os=darwin & cpu=arm64
+  languageName: node
+  linkType: hard
+
+"@anthropic-ai/claude-agent-sdk-darwin-x64@npm:0.3.220":
+  version: 0.3.220
+  resolution: "@anthropic-ai/claude-agent-sdk-darwin-x64@npm:0.3.220"
+  conditions: os=darwin & cpu=x64
+  languageName: node
+  linkType: hard
+
+"@anthropic-ai/claude-agent-sdk-linux-arm64-musl@npm:0.3.220":
+  version: 0.3.220
+  resolution: "@anthropic-ai/claude-agent-sdk-linux-arm64-musl@npm:0.3.220"
+  conditions: os=linux & cpu=arm64 & libc=musl
+  languageName: node
+  linkType: hard
+
+"@anthropic-ai/claude-agent-sdk-linux-arm64@npm:0.3.220":
+  version: 0.3.220
+  resolution: "@anthropic-ai/claude-agent-sdk-linux-arm64@npm:0.3.220"
+  conditions: os=linux & cpu=arm64 & libc=glibc
+  languageName: node
+  linkType: hard
+
+"@anthropic-ai/claude-agent-sdk-linux-x64-musl@npm:0.3.220":
+  version: 0.3.220
+  resolution: "@anthropic-ai/claude-agent-sdk-linux-x64-musl@npm:0.3.220"
+  conditions: os=linux & cpu=x64 & libc=musl
+  languageName: node
+  linkType: hard
+
+"@anthropic-ai/claude-agent-sdk-linux-x64@npm:0.3.220":
+  version: 0.3.220
+  resolution: "@anthropic-ai/claude-agent-sdk-linux-x64@npm:0.3.220"
+  conditions: os=linux & cpu=x64 & libc=glibc
+  languageName: node
+  linkType: hard
+
+"@anthropic-ai/claude-agent-sdk-win32-arm64@npm:0.3.220":
+  version: 0.3.220
+  resolution: "@anthropic-ai/claude-agent-sdk-win32-arm64@npm:0.3.220"
+  conditions: os=win32 & cpu=arm64
+  languageName: node
+  linkType: hard
+
+"@anthropic-ai/claude-agent-sdk-win32-x64@npm:0.3.220":
+  version: 0.3.220
+  resolution: "@anthropic-ai/claude-agent-sdk-win32-x64@npm:0.3.220"
+  conditions: os=win32 & cpu=x64
+  languageName: node
+  linkType: hard
+
+"@anthropic-ai/claude-agent-sdk@npm:0.3.220":
+  version: 0.3.220
+  resolution: "@anthropic-ai/claude-agent-sdk@npm:0.3.220"
+  dependencies:
+    "@anthropic-ai/claude-agent-sdk-darwin-arm64": "npm:0.3.220"
+    "@anthropic-ai/claude-agent-sdk-darwin-x64": "npm:0.3.220"
+    "@anthropic-ai/claude-agent-sdk-linux-arm64": "npm:0.3.220"
+    "@anthropic-ai/claude-agent-sdk-linux-arm64-musl": "npm:0.3.220"
+    "@anthropic-ai/claude-agent-sdk-linux-x64": "npm:0.3.220"
+    "@anthropic-ai/claude-agent-sdk-linux-x64-musl": "npm:0.3.220"
+    "@anthropic-ai/claude-agent-sdk-win32-arm64": "npm:0.3.220"
+    "@anthropic-ai/claude-agent-sdk-win32-x64": "npm:0.3.220"
+  peerDependencies:
+    "@anthropic-ai/sdk": ">=0.93.0"
+    "@modelcontextprotocol/sdk": ^1.29.0
+    zod: ^4.0.0
+  dependenciesMeta:
+    "@anthropic-ai/claude-agent-sdk-darwin-arm64":
+      optional: true
+    "@anthropic-ai/claude-agent-sdk-darwin-x64":
+      optional: true
+    "@anthropic-ai/claude-agent-sdk-linux-arm64":
+      optional: true
+    "@anthropic-ai/claude-agent-sdk-linux-arm64-musl":
+      optional: true
+    "@anthropic-ai/claude-agent-sdk-linux-x64":
+      optional: true
+    "@anthropic-ai/claude-agent-sdk-linux-x64-musl":
+      optional: true
+    "@anthropic-ai/claude-agent-sdk-win32-arm64":
+      optional: true
+    "@anthropic-ai/claude-agent-sdk-win32-x64":
+      optional: true
+  checksum: 10c0/0493727410ea8545114c05b185cd35bcab7a2e9f84d8d9e720fa853d900d5fd753d135d5dcd82e3f8e107c254556e4be240767c26c23abdd8190ae6b37e6179a
+  languageName: node
+  linkType: hard
+
 "@apidevtools/json-schema-ref-parser@npm:^14.1.1":
   version: 14.2.0
   resolution: "@apidevtools/json-schema-ref-parser@npm:14.2.0"
@@ -940,9 +1033,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@buildone/app-server-tslib@npm:24.3.0-VG.356":
-  version: 24.3.0-VG.356
-  resolution: "@buildone/app-server-tslib@npm:24.3.0-VG.356"
+"@buildone/app-server-tslib@npm:24.3.0-VG.368":
+  version: 24.3.0-VG.368
+  resolution: "@buildone/app-server-tslib@npm:24.3.0-VG.368"
   dependencies:
     better-auth: "npm:^1.6.11"
     check-disk-space: "npm:^3.4.0"
@@ -971,15 +1064,16 @@ __metadata:
     pg: ^8.16.3
     reflect-metadata: ^0.2.2
     rxjs: ^7.8.1
-  checksum: 10c0/87fe722a6bf4ea897a2af54de2bc92a448ee2b3590fcc425a42dcebb27d7b3ca4e87cc2c9168e3771adf1726f5dfa63f4fde51c1c1645e50d0b8a13bc5292461
+  checksum: 10c0/7974e89a6703b9c9b4af95c996aaee66ebb334d67270eb8e07a5ddfaa935dbcd043e2d6d3d2ff9f8bba617fccd7f27e6f925472940636120ef723a0ffb486d70
   languageName: node
   linkType: hard
 
-"@buildone/swat-cli@npm:24.3.0-VG.356":
-  version: 24.3.0-VG.356
-  resolution: "@buildone/swat-cli@npm:24.3.0-VG.356"
+"@buildone/swat-cli@npm:24.3.0-VG.368":
+  version: 24.3.0-VG.368
+  resolution: "@buildone/swat-cli@npm:24.3.0-VG.368"
   dependencies:
-    "@buildone/app-server-tslib": "npm:24.3.0-VG.356"
+    "@anthropic-ai/claude-agent-sdk": "npm:0.3.220"
+    "@buildone/app-server-tslib": "npm:24.3.0-VG.368"
     js-yaml: "npm:^4.1.1"
     minimist: "npm:^1.2.8"
     node-pty: "npm:^1.0.0"
@@ -989,27 +1083,27 @@ __metadata:
   bin:
     b1: bin/build-one.mjs
     build-one: bin/build-one.mjs
-  checksum: 10c0/a22d5416c12843e5c2108be3e680a647ae31e50d6115340a5669ade55a532dfb8ea88ed21c8c2eacff65ebccf5f7d94511050534b2caa719f402c82e202c4ac3
+  checksum: 10c0/a6da5fa399133f4725d2457f2cdbae0476204c088794170c2b8578c3d30428a38fbdbbd72805df78dbcb3b7e58ac470ff472777f581dfd7aad283fb632e4616d
   languageName: node
   linkType: hard
 
-"@buildone/swat-data@npm:24.3.0-VG.356":
-  version: 24.3.0-VG.356
-  resolution: "@buildone/swat-data@npm:24.3.0-VG.356"
-  checksum: 10c0/b2eda57bf85e98c23643879f50a250a7cf36b59c45d73e38988e636fb1c3d4011f9c6983bc566b027c5898d4790f2bba4431a5248fb1dfa6deb3be223175c708
+"@buildone/swat-data@npm:24.3.0-VG.368":
+  version: 24.3.0-VG.368
+  resolution: "@buildone/swat-data@npm:24.3.0-VG.368"
+  checksum: 10c0/f1245cfcb32fc3aefa261bd72e372cb01512ad141d8ae432d9d6c54b54223d8b999b02bba04cb4bc45df48cb0afd164cb8cf2dd7b886e92a40f58b23c0fc2e08
   languageName: node
   linkType: hard
 
-"@buildone/swat-vscode@npm:24.3.0-VG.356":
-  version: 24.3.0-VG.356
-  resolution: "@buildone/swat-vscode@npm:24.3.0-VG.356"
-  checksum: 10c0/1ac9b4cfbc3cc618069a00aefc0b3aae94810452daf7d85dc01ecc5d04e24b98043c5ad43d0709bc5fbd05825a8daddb8cf7d05bec37bd75ecbbc669529e7cac
+"@buildone/swat-vscode@npm:24.3.0-VG.368":
+  version: 24.3.0-VG.368
+  resolution: "@buildone/swat-vscode@npm:24.3.0-VG.368"
+  checksum: 10c0/9e2e07cce6a22fadfcfbcc0cce5f1ab62e18a0407e903e2447e4aa1870f652684e951f7ef0fb7e022b0a327e17ca9d68a091a93bed8f16c0b36610a05c610c31
   languageName: node
   linkType: hard
 
-"@buildone/web-framework-layer@npm:24.3.0-VG.356":
-  version: 24.3.0-VG.356
-  resolution: "@buildone/web-framework-layer@npm:24.3.0-VG.356"
+"@buildone/web-framework-layer@npm:24.3.0-VG.368":
+  version: 24.3.0-VG.368
+  resolution: "@buildone/web-framework-layer@npm:24.3.0-VG.368"
   dependencies:
     "@dagrejs/dagre": "npm:^1.1.4"
     "@event-calendar/core": "npm:^5.10.1"
@@ -1057,6 +1151,7 @@ __metadata:
     consola: "npm:3.4.2"
     dayjs: "npm:^1.11.18"
     dompurify: "npm:^3.4.9"
+    html-to-image: "npm:^1.11.13"
     leaflet: "npm:^1.9.4"
     leaflet.markercluster: "npm:^1.5.3"
     lodash: "npm:^4.18.0"
@@ -1078,7 +1173,7 @@ __metadata:
     vue-router: "npm:^4.5.0"
     vue3-google-map: "npm:^0.23.1"
     zod: "npm:^4.3.6"
-  checksum: 10c0/d92b764d893e9e0e9120ad7258275a311cf68e5be6da9799fa37ffcb4b8b66e6ab19bc8e92ca7a3dbf2e5fe1b9aa1c013c93d7eddfe7f1bb10686d91aaad5d73
+  checksum: 10c0/8d5c6df7fb0762d4a91c5ea65a109cc2aa25df4601a69efaef2521da519c23e9428380e965d144c0adbf3f8f23ca50e413869ad199a79cbd2448b6bcb16da10e
   languageName: node
   linkType: hard
 
@@ -9774,7 +9869,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "app-server-ts@workspace:src/app-server-ts"
   dependencies:
-    "@buildone/app-server-tslib": "npm:24.3.0-VG.356"
+    "@buildone/app-server-tslib": "npm:24.3.0-VG.368"
     "@nestjs/axios": "npm:^4.0.0"
     "@nestjs/cli": "npm:^11.0.0"
     "@nestjs/common": "npm:^11.1.18"
@@ -9833,8 +9928,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "app@workspace:."
   dependencies:
-    "@buildone/swat-cli": "npm:24.3.0-VG.356"
-    "@buildone/swat-vscode": "npm:24.3.0-VG.356"
+    "@buildone/swat-cli": "npm:24.3.0-VG.368"
+    "@buildone/swat-vscode": "npm:24.3.0-VG.368"
     "@eslint/js": "npm:^9.14.0"
     eslint: "npm:^9.19.0"
     eslint-config-prettier: "npm:^10.0.1"
@@ -12110,7 +12205,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "data@workspace:src/data"
   dependencies:
-    "@buildone/swat-data": "npm:24.3.0-VG.356"
+    "@buildone/swat-data": "npm:24.3.0-VG.368"
   languageName: unknown
   linkType: soft
 
@@ -15845,6 +15940,13 @@ __metadata:
   version: 2.0.2
   resolution: "html-escaper@npm:2.0.2"
   checksum: 10c0/208e8a12de1a6569edbb14544f4567e6ce8ecc30b9394fcaa4e7bb1e60c12a7c9a1ed27e31290817157e8626f3a4f29e76c8747030822eb84a6abb15c255f0a0
+  languageName: node
+  linkType: hard
+
+"html-to-image@npm:^1.11.13":
+  version: 1.11.13
+  resolution: "html-to-image@npm:1.11.13"
+  checksum: 10c0/03bd7192d87b99499e37ff12a8e2b41ddce4cf8e33a93dfadff18df0f213434c7f1ba8328db2158f4805da07b7aec3c90aec3152908281153217e86784218b10
   languageName: node
   linkType: hard
 
@@ -25794,7 +25896,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "web-app@workspace:src/web-app"
   dependencies:
-    "@buildone/web-framework-layer": "npm:24.3.0-VG.356"
+    "@buildone/web-framework-layer": "npm:24.3.0-VG.368"
     "@nuxt/eslint": "npm:^1.3.0"
     "@nuxt/image": "npm:1.10.0"
     "@nuxt/ui": "npm:^4.5.1"
