@@ -6,6 +6,14 @@
     "$schema": {
       "type": "string"
     },
+    "generationVars": {
+      "description": "Environment variables resolved by the generator, when the compose file is written, rather than left for docker compose or Portainer to interpolate when the stack comes up. Name one here and every ${NAME} and ${NAME:-default} in this definition is replaced with its value from the generator's own environment; a name that is not listed is copied through untouched, which is how ${VERSION} and the service environment keep reaching compose and Portainer. Layers concatenate, so a repository or a custom deployment type adds to the list without restating it. A listed variable that is referenced but resolves to nothing — unset, and no default given — aborts generation naming the variable and the file, rather than writing a compose file with a hole in it.",
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[A-Za-z_][A-Za-z0-9_]*$"
+      }
+    },
     "options": {
       "type": "object",
       "additionalProperties": false,

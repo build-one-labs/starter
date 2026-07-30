@@ -1,9 +1,9 @@
 {
   "$schema": "deployment.config.schema.json",
   "globals": {
-    "dataImage": "653306034207.dkr.ecr.eu-central-1.amazonaws.com/starter/starter-data:${VERSION}",
-    "appServerTsImage": "653306034207.dkr.ecr.eu-central-1.amazonaws.com/starter/starter-app-server-ts:${VERSION}",
-    "webAppImage": "653306034207.dkr.ecr.eu-central-1.amazonaws.com/starter/starter-web-app:${VERSION}"
+    "dataImage": "${PUBLISH_DOCKER_REPOSITORY}/${PUBLISH_APP_NAME}-data:${VERSION}",
+    "appServerTsImage": "${PUBLISH_DOCKER_REPOSITORY}/${PUBLISH_APP_NAME}-app-server-ts:${VERSION}",
+    "webAppImage": "${PUBLISH_DOCKER_REPOSITORY}/${PUBLISH_APP_NAME}-web-app:${VERSION}"
   },
   "services": {
     "swat_app_server_ts": {

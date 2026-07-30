@@ -24,14 +24,18 @@ on:
         required: true
       B1_SECRET_ACCESS_KEY:
         required: true
+      PUBLISH_DOCKER_REPOSITORY:
+        required: true
+      PUBLISH_APP_NAME:
+        required: true
 
 permissions:
   contents: read
 
 env:
   AWS_REGION: eu-central-1
-  DOCKER_REPOSITORY: 653306034207.dkr.ecr.eu-central-1.amazonaws.com/starter
-  APP_NAME: starter
+  DOCKER_REPOSITORY: ${{ secrets.PUBLISH_DOCKER_REPOSITORY }}
+  APP_NAME: ${{ secrets.PUBLISH_APP_NAME }}
   # Tag from the push event, or the explicit input on manual/called runs.
   VERSION: ${{ inputs.version || github.ref_name }}
 

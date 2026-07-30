@@ -5,24 +5,31 @@ WORKSPACE_ROOT="${WORKSPACE_ROOT:-$(git rev-parse --show-toplevel)}"
 export WORKSPACE_ROOT
 
 # >>> b1-user-secret-fetch (managed by @buildone/swat-cli migration; safe to re-run) >>>
-# Pull the credentials needed to INSTALL PACKAGES from the auth server, using a
-# single API key, so they need not be set as individual GitHub Codespaces
-# secrets. Accepts a personal B1_USER_API_KEY or a shared organization
-# B1_ORG_API_KEY; a personal key wins when both are set, and the server decides
-# what each can see from the key's owner.
+# Pull this workspace's secrets from the auth server using a single API key, so
+# they need not be set as individual GitHub Codespaces secrets. Accepts a
+# personal B1_USER_API_KEY or a shared organization B1_ORG_API_KEY; a personal
+# key wins when both are set, and the server decides what each can see from the
+# key's owner.
 #
-# Only the CodeArtifact credentials are fetched here, deliberately. This runs
-# before `yarn install`, so node_modules does not exist and this block cannot
-# read the workspace manifest (workspace/secrets.json) that lists every secret —
-# hence the two keys are written out literally. Everything else a workspace uses
-# (Neon, LLM keys, ...) is needed at stack start, not at install time, and is
-# fetched there by orchestrators/fetch-user-secrets.sh straight from the
-# manifest. So adding a secret never means touching this block: the list here is
-# pinned to what package installation needs, which is these two.
+# This block runs before `yarn install`, so node_modules does not exist and it
+# cannot read the workspace manifest — but it no longer needs to. One request to
+# /api/secrets/resolve-all returns every secret the caller can see, so there is
+# no list here to keep in step with anything: adding a secret means storing it
+# on the server, and neither this block nor the repository changes.
 #
-# Self-contained (curl + jq only); a no-op when no key / AUTH_URL is unset or the
-# tools are unavailable. Wrapped in a function invoked via `|| true` so `set -e`
-# cannot abort the prebuild on a transient fetch failure.
+# The variable *name* therefore comes from the server too, and this file is
+# sourced by the shell. Every name is accepted, by design — so whoever can write
+# a global or organization secret can set PATH, NODE_OPTIONS, BASH_ENV or
+# LD_PRELOAD here. Write access to shared secrets is write access to the
+# workspaces that read them. Kept in step with env_name_from_secret_key() in the
+# CLI's devcontainer/lib/common.sh.
+#
+# Values land in .env.fetched, rewritten whole on each successful run and loaded
+# before .env.local, as `NAME=${NAME:-'value'}` so an explicitly-set environment
+# variable still wins. Self-contained (curl + jq + base64); a no-op when no key
+# / AUTH_URL is unset or the tools are unavailable. Wrapped in a function
+# invoked via `|| true` so `set -e` cannot abort the prebuild on a transient
+# fetch failure.
 # Resolve this workspace's repository as `owner/name`, for use as a secret
 # scope; empty when it cannot be determined, which means unscoped.
 # GITHUB_REPOSITORY is set in a Codespace but not in a local devcontainer, so
@@ -49,6 +56,24 @@ _b1_repo_scope() {
   fi
 }
 
+# Map a secret key (lowercase with dashes) to the environment variable name it
+# is exposed as. The only rejection is a key that could not be a variable name:
+# an '=' or a space would put two lines into a sourced file, and a leading digit
+# cannot be assigned. No list beyond that — every secret becomes a variable.
+_b1_env_name() {
+  local name
+  name=$(printf '%s' "$1" | tr 'a-z.-' 'A-Z__')
+  [[ "$name" =~ ^[A-Z][A-Z0-9_]*$ ]] || return 1
+  printf '%s' "$name"
+}
+
+# Single-quote a value for a file that will be sourced: '\'' closes, escapes and
+# reopens around an embedded quote. Without this a value containing $(…), a
+# backtick or a newline would be executed rather than assigned.
+_b1_quote() {
+  printf "'%s'" "${1//\'/\'\\\'\'}"
+}
+
 _b1_fetch_user_secrets() {
   local b1_api_key="${B1_USER_API_KEY:-${B1_ORG_API_KEY:-}}"
   [ -n "$b1_api_key" ] || return 0
@@ -62,10 +87,12 @@ _b1_fetch_user_secrets() {
   [ -n "${AUTH_URL:-}" ] || return 0
   command -v curl >/dev/null 2>&1 || return 0
   command -v jq >/dev/null 2>&1 || return 0
+  command -v base64 >/dev/null 2>&1 || return 0
 
   local auth="${AUTH_URL%/}"
-  local env_local="${root}/.env.local"
-  local var key cur resp code body val
+  local env_fetched="${root}/.b1/env/.env.fetched"
+  mkdir -p "${root}/.b1/env" 2>/dev/null || true
+  local key encoded var val resp code body tmp n=0
 
   # Secrets may be stored for a specific repository as well as generally; the
   # scope is this workspace's repository. Empty means unscoped — exactly the
@@ -77,43 +104,70 @@ _b1_fetch_user_secrets() {
     query="?scope=${scope//\//%2F}"
     echo "[INFO] Resolving secrets for scope ${scope}"
   fi
-  # Keep in step with the `critical` entries in workspace/secrets.json; the test
-  # suite asserts the two lists match. A secret is stored under its variable
-  # name lowercased with dashes, so only the variable is named here.
-  for var in \
-    "B1_ACCESS_KEY_ID" \
-    "B1_SECRET_ACCESS_KEY"; do
-    key=$(printf '%s' "$var" | tr 'A-Z_' 'a-z-')
-    eval "cur=\${${var}:-}"
-    # Never overwrite a value the developer already set explicitly in the environment.
-    [ -z "$cur" ] || continue
-    # /resolve/ walks user -> organization -> global for a user key (a personal
-    # value wins) and organization -> global for an org key, so a shared credential
-    # set once at org (or global) level serves every developer. With ?scope=, each
-    # level prefers a value stored for this repository over its general one.
-    resp=$(curl -sS -w '\n%{http_code}' -H "x-api-key: ${b1_api_key}" \
-      "${auth}/api/secrets/resolve/${key}${query}" 2>/dev/null) || continue
-    code="${resp##*$'\n'}"; body="${resp%$'\n'*}"
-    # 404 = no secret at user, org or global level (not an error); non-200 is skipped.
-    [ "$code" = "200" ] || continue
-    # `.secret` may be a plain string, a JSON-encoded string, or an object wrapping
-    # { secret | value }. Normalise all of these to the raw value.
-    val=$(printf '%s' "$body" | jq -r '.secret as $s
-      | if ($s|type)=="object" then ($s.secret // $s.value // "")
+
+  # /resolve-all walks user -> organization -> global for a user key (a personal
+  # value wins) and organization -> global for an org key, so a shared credential
+  # set once at org (or global) level serves every developer. With ?scope=, each
+  # level prefers a value stored for this repository over its general one.
+  resp=$(curl -sS -w '\n%{http_code}' -H "x-api-key: ${b1_api_key}" \
+    "${auth}/api/secrets/resolve-all${query}" 2>/dev/null) || return 0
+  code="${resp##*$'\n'}"; body="${resp%$'\n'*}"
+  # Anything but success leaves any existing file alone: an expired key or an
+  # auth server still starting must not empty a workspace's secrets.
+  [ "$code" = "200" ] || { echo "[WARN] Secret fetch returned HTTP ${code}"; return 0; }
+
+  tmp="${env_fetched}.tmp.$$"
+  : > "$tmp"; chmod 600 "$tmp" 2>/dev/null || true
+  echo "# Secrets fetched from ${auth} - rewritten on every start, do not edit." >> "$tmp"
+
+  # `.secret` may be a plain string, a JSON-encoded string, or an object wrapping
+  # { secret | value }. Normalise all of these to the raw value, and carry it as
+  # base64 so spaces and newlines survive the read loop. Tab-separated: the
+  # server's key charset has no tab, so a malformed key stays whole and gets
+  # reported rather than being cut in half by the split.
+  while IFS=$'\t' read -r key encoded; do
+    [ -n "$key" ] || continue
+    var=$(_b1_env_name "$key") || { echo "[WARN] Skipped secret '${key}': not usable as a variable name"; continue; }
+    val=$(printf '%s' "$encoded" | base64 -d 2>/dev/null) || continue
+    [ -n "$val" ] || continue
+    printf '%s=${%s:-%s}\n' "$var" "$var" "$(_b1_quote "$val")" >> "$tmp"
+    n=$((n + 1))
+  done < <(printf '%s' "$body" | jq -r '
+    .secrets[] | .key as $k | .secret as $s
+    | ( if ($s|type)=="object" then ($s.secret // $s.value // "")
         elif ($s|type)=="string" then ((try ($s|fromjson) catch null) as $i
           | if ($i|type)=="object" then ($i.secret // $i.value // $s) else $s end)
-        else ($s|tostring) end' 2>/dev/null)
-    { [ -n "$val" ] && [ "$val" != "null" ]; } || continue
-    touch "$env_local"
-    if grep -q "^${var}=" "$env_local" 2>/dev/null; then
-      grep -v "^${var}=" "$env_local" > "${env_local}.tmp" && mv "${env_local}.tmp" "$env_local"
-    fi
-    printf '%s=%s\n' "$var" "$val" >> "$env_local"
-    export "${var}=${val}"
-    echo "[INFO] Fetched ${var} from the auth server"
-  done
+        else ($s|tostring) end ) as $v
+    | select($v != null and $v != "")
+    | "\($k)\t\($v|@base64)"' 2>/dev/null)
+
+  mv "$tmp" "$env_fetched" 2>/dev/null || { rm -f "$tmp"; return 0; }
+  echo "[INFO] Fetched ${n} secret(s) into .env.fetched"
 }
 _b1_fetch_user_secrets || true
+
+# Load what the fetch just wrote into this shell. The block above only *writes*
+# .env.fetched, while everything below still reads the environment — including
+# the CodeArtifact step, which needs B1_ACCESS_KEY_ID to obtain the token that
+# lets `yarn install` see the private @buildone packages. Until 24.3.0-VG.375
+# this was implicit: the older block exported each secret as it fetched it.
+#
+# `set -a` because .env.fetched assigns `NAME=${NAME:-'value'}` without export,
+# and .env.local second so a local override still wins — the precedence
+# start_stack.sh and build-one apply. Sourced with `|| true` so a malformed file
+# cannot abort the prebuild. .b1/env/ first, the workspace root second, for a
+# workspace that predates 24.3.0-VG.376.
+_b1_load_env_files() {
+  local root="${WORKSPACE_ROOT:-$PWD}" env_file resolved
+  for env_file in .env.fetched .env.local; do
+    resolved="${root}/.b1/env/${env_file}"
+    [ -f "$resolved" ] || resolved="${root}/${env_file}"
+    if [ -f "$resolved" ]; then
+      set -a; . "$resolved" || true; set +a
+    fi
+  done
+}
+_b1_load_env_files || true
 # <<< b1-user-secret-fetch <<<
 
 
@@ -183,15 +237,16 @@ if [[ "${PREBUILD_CHECK:-}" != "true" ]]; then
                 --region "${AWS_REGION:-eu-central-1}" --query authorizationToken --output text) \
                 && [[ -n "${CODEARTIFACT_AUTH_TOKEN}" ]]; then
                 export CODEARTIFACT_AUTH_TOKEN
-                echo "export CODEARTIFACT_AUTH_TOKEN=${CODEARTIFACT_AUTH_TOKEN}" > "${WORKSPACE_ROOT}/.aws-token.env"
+                mkdir -p "${WORKSPACE_ROOT}/.b1/env" 2>/dev/null || true
+            echo "export CODEARTIFACT_AUTH_TOKEN=${CODEARTIFACT_AUTH_TOKEN}" > "${WORKSPACE_ROOT}/.b1/env/.aws-token.env"
                 echo "[INFO] CodeArtifact token obtained"
             else
                 CODEARTIFACT_AUTH_TOKEN=""
                 echo "[WARN] Could not obtain a CodeArtifact token with the provided credentials"
             fi
         fi
-        if [[ -z "${CODEARTIFACT_AUTH_TOKEN:-}" && -f "${WORKSPACE_ROOT}/.aws-token.env" ]]; then
-            source "${WORKSPACE_ROOT}/.aws-token.env" || true
+        if [[ -z "${CODEARTIFACT_AUTH_TOKEN:-}" && -f "${WORKSPACE_ROOT}/.b1/env/.aws-token.env" ]]; then
+            source "${WORKSPACE_ROOT}/.b1/env/.aws-token.env" || true
             if [[ -n "${CODEARTIFACT_AUTH_TOKEN:-}" ]]; then
                 echo "[INFO] Using cached CodeArtifact token"
             fi
