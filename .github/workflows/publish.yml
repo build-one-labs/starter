@@ -21,13 +21,17 @@ on:
         required: true
     secrets:
       B1_ACCESS_KEY_ID:
-        required: true
+        required: false
       B1_SECRET_ACCESS_KEY:
-        required: true
+        required: false
       PUBLISH_DOCKER_REPOSITORY:
-        required: true
+        required: false
       PUBLISH_APP_NAME:
-        required: true
+        required: false
+      AUTH_URL:
+        required: false
+      B1_ORG_API_KEY:
+        required: false
 
 permissions:
   contents: read
@@ -41,15 +45,27 @@ env:
 
 jobs:
   publish-app-server-ts:
+    env:
+      B1_ORG_API_KEY: ${{ secrets.B1_ORG_API_KEY }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
         with:
           ref: ${{ inputs.version || github.ref_name }}
+      # Provisioned secrets from the auth server's store, with one organization
+      # API key. Skipped until that key is set, and every value below then
+      # falls back to the Actions secret it has always used.
+      # See .github/actions/b1-secrets.
+      - uses: ./.github/actions/b1-secrets
+        if: env.B1_ORG_API_KEY != ''
+        with:
+          auth-url: ${{ secrets.AUTH_URL }}
+          api-key: ${{ secrets.B1_ORG_API_KEY }}
+          require: B1_ACCESS_KEY_ID B1_SECRET_ACCESS_KEY
       - uses: ./.github/actions/setup-node
         with:
-          aws-access-key-id: ${{ secrets.B1_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.B1_SECRET_ACCESS_KEY }}
+          aws-access-key-id: ${{ env.B1_ACCESS_KEY_ID || secrets.B1_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ env.B1_SECRET_ACCESS_KEY || secrets.B1_SECRET_ACCESS_KEY }}
           focus-workspaces: app app-server-ts data
 
       - name: Build
@@ -63,8 +79,8 @@ jobs:
 
       - uses: aws-actions/configure-aws-credentials@v5
         with:
-          aws-access-key-id: ${{ secrets.B1_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.B1_SECRET_ACCESS_KEY }}
+          aws-access-key-id: ${{ env.B1_ACCESS_KEY_ID || secrets.B1_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ env.B1_SECRET_ACCESS_KEY || secrets.B1_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
 
       - uses: aws-actions/amazon-ecr-login@v2
@@ -80,15 +96,27 @@ jobs:
           docker push "${IMAGE}:${VERSION}"
 
   publish-web-app:
+    env:
+      B1_ORG_API_KEY: ${{ secrets.B1_ORG_API_KEY }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
         with:
           ref: ${{ inputs.version || github.ref_name }}
+      # Provisioned secrets from the auth server's store, with one organization
+      # API key. Skipped until that key is set, and every value below then
+      # falls back to the Actions secret it has always used.
+      # See .github/actions/b1-secrets.
+      - uses: ./.github/actions/b1-secrets
+        if: env.B1_ORG_API_KEY != ''
+        with:
+          auth-url: ${{ secrets.AUTH_URL }}
+          api-key: ${{ secrets.B1_ORG_API_KEY }}
+          require: B1_ACCESS_KEY_ID B1_SECRET_ACCESS_KEY
       - uses: ./.github/actions/setup-node
         with:
-          aws-access-key-id: ${{ secrets.B1_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.B1_SECRET_ACCESS_KEY }}
+          aws-access-key-id: ${{ env.B1_ACCESS_KEY_ID || secrets.B1_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ env.B1_SECRET_ACCESS_KEY || secrets.B1_SECRET_ACCESS_KEY }}
           focus-workspaces: app web-app
 
       - name: Build
@@ -99,8 +127,8 @@ jobs:
 
       - uses: aws-actions/configure-aws-credentials@v5
         with:
-          aws-access-key-id: ${{ secrets.B1_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.B1_SECRET_ACCESS_KEY }}
+          aws-access-key-id: ${{ env.B1_ACCESS_KEY_ID || secrets.B1_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ env.B1_SECRET_ACCESS_KEY || secrets.B1_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
 
       - uses: aws-actions/amazon-ecr-login@v2
@@ -116,15 +144,27 @@ jobs:
           docker push "${IMAGE}:${VERSION}"
 
   publish-data:
+    env:
+      B1_ORG_API_KEY: ${{ secrets.B1_ORG_API_KEY }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
         with:
           ref: ${{ inputs.version || github.ref_name }}
+      # Provisioned secrets from the auth server's store, with one organization
+      # API key. Skipped until that key is set, and every value below then
+      # falls back to the Actions secret it has always used.
+      # See .github/actions/b1-secrets.
+      - uses: ./.github/actions/b1-secrets
+        if: env.B1_ORG_API_KEY != ''
+        with:
+          auth-url: ${{ secrets.AUTH_URL }}
+          api-key: ${{ secrets.B1_ORG_API_KEY }}
+          require: B1_ACCESS_KEY_ID B1_SECRET_ACCESS_KEY
       - uses: ./.github/actions/setup-node
         with:
-          aws-access-key-id: ${{ secrets.B1_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.B1_SECRET_ACCESS_KEY }}
+          aws-access-key-id: ${{ env.B1_ACCESS_KEY_ID || secrets.B1_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ env.B1_SECRET_ACCESS_KEY || secrets.B1_SECRET_ACCESS_KEY }}
           focus-workspaces: app data
 
       - name: Prepare Dockerfile
@@ -132,8 +172,8 @@ jobs:
 
       - uses: aws-actions/configure-aws-credentials@v5
         with:
-          aws-access-key-id: ${{ secrets.B1_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.B1_SECRET_ACCESS_KEY }}
+          aws-access-key-id: ${{ env.B1_ACCESS_KEY_ID || secrets.B1_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ env.B1_SECRET_ACCESS_KEY || secrets.B1_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
 
       - uses: aws-actions/amazon-ecr-login@v2

@@ -99,9 +99,9 @@ on:
         default: ''
     secrets:
       B1_ACCESS_KEY_ID:
-        required: true
+        required: false
       B1_SECRET_ACCESS_KEY:
-        required: true
+        required: false
       PORTAINER_URL:
         required: false
       PORTAINER_API_KEY:
@@ -109,6 +109,10 @@ on:
       PUBLISH_DOCKER_REPOSITORY:
         required: false
       PUBLISH_APP_NAME:
+        required: false
+      AUTH_URL:
+        required: false
+      B1_ORG_API_KEY:
         required: false
 
 permissions:
@@ -119,15 +123,27 @@ env:
 
 jobs:
   deploy:
+    env:
+      B1_ORG_API_KEY: ${{ secrets.B1_ORG_API_KEY }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
         with:
           fetch-depth: 0
+      # Provisioned secrets from the auth server's store, with one organization
+      # API key. Skipped until that key is set, and every value below then
+      # falls back to the Actions secret it has always used.
+      # See .github/actions/b1-secrets.
+      - uses: ./.github/actions/b1-secrets
+        if: env.B1_ORG_API_KEY != ''
+        with:
+          auth-url: ${{ secrets.AUTH_URL }}
+          api-key: ${{ secrets.B1_ORG_API_KEY }}
+          require: B1_ACCESS_KEY_ID B1_SECRET_ACCESS_KEY PORTAINER_API_KEY PORTAINER_URL PUBLISH_APP_NAME PUBLISH_DOCKER_REPOSITORY
       - uses: ./.github/actions/setup-node
         with:
-          aws-access-key-id: ${{ secrets.B1_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.B1_SECRET_ACCESS_KEY }}
+          aws-access-key-id: ${{ env.B1_ACCESS_KEY_ID || secrets.B1_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ env.B1_SECRET_ACCESS_KEY || secrets.B1_SECRET_ACCESS_KEY }}
       - name: Resolve version
         id: version
         run: |
@@ -143,8 +159,8 @@ jobs:
       - name: Deploy to Portainer
         env:
           WORKSPACE_ROOT: .
-          PUBLISH_DOCKER_REPOSITORY: ${{ secrets.PUBLISH_DOCKER_REPOSITORY }}
-          PUBLISH_APP_NAME: ${{ secrets.PUBLISH_APP_NAME }}
+          PUBLISH_DOCKER_REPOSITORY: ${{ env.PUBLISH_DOCKER_REPOSITORY || secrets.PUBLISH_DOCKER_REPOSITORY }}
+          PUBLISH_APP_NAME: ${{ env.PUBLISH_APP_NAME || secrets.PUBLISH_APP_NAME }}
           # Stack env vars reach the deploy through the environment, not the command
           # line the runner echoes. `secrets` cannot be indexed by a name computed
           # at run time, so the whole context is passed and b1 deploy picks out only
@@ -155,8 +171,8 @@ jobs:
         run: |
           PORTAINER_URL="${{ inputs.portainer-url }}"
           PORTAINER_KEY="${{ inputs.portainer-api-key }}"
-          [ -z "$PORTAINER_URL" ] && PORTAINER_URL="${{ secrets.PORTAINER_URL }}"
-          [ -z "$PORTAINER_KEY" ] && PORTAINER_KEY="${{ secrets.PORTAINER_API_KEY }}"
+          [ -z "$PORTAINER_URL" ] && PORTAINER_URL="${{ env.PORTAINER_URL || secrets.PORTAINER_URL }}"
+          [ -z "$PORTAINER_KEY" ] && PORTAINER_KEY="${{ env.PORTAINER_API_KEY || secrets.PORTAINER_API_KEY }}"
           npx b1 deploy \
             "${{ steps.version.outputs.version }}" \
             ".deploy/${{ inputs.deployment-config }}" \

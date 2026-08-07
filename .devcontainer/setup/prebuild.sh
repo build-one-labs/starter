@@ -24,12 +24,40 @@ export WORKSPACE_ROOT
 # workspaces that read them. Kept in step with env_name_from_secret_key() in the
 # CLI's devcontainer/lib/common.sh.
 #
-# Values land in .env.fetched, rewritten whole on each successful run and loaded
-# before .env.local, as `NAME=${NAME:-'value'}` so an explicitly-set environment
-# variable still wins. Self-contained (curl + jq + base64); a no-op when no key
-# / AUTH_URL is unset or the tools are unavailable. Wrapped in a function
-# invoked via `|| true` so `set -e` cannot abort the prebuild on a transient
-# fetch failure.
+# Values land in .b1/env/.env.fetched, rewritten whole on each successful run
+# and loaded before .env.local, as `NAME=${NAME:-'value'}` so an explicitly-set
+# environment variable still wins. Self-contained (curl + jq + base64); a no-op
+# when no key / AUTH_URL is unset or the tools are unavailable. Wrapped in a
+# function invoked via `|| true` so `set -e` cannot abort the prebuild on a
+# transient fetch failure.
+#
+# WHY IT RECORDS WHY IT STOPPED
+# Failing softly is right — this runs as onCreateCommand, and exiting non-zero
+# would block container creation rather than leave a usable shell. But a bare
+# `return 0` threw away the one thing anybody downstream needed. The install is
+# skipped ~140 lines later, and the only fact still in scope there was whether
+# AUTH_URL happened to be empty, so a *wrong* AUTH_URL was reported as a
+# *missing* API key: the reader is told to set a key they have already set,
+# while the 401 that actually stopped it is named nowhere. Every exit now
+# records an outcome in _B1_SECRET_FETCH_STATUS and in
+# .b1/env/.prebuild-status, so the CodeArtifact message below states the cause
+# and later lifecycle hooks can read it instead of scraping creation.log.
+_B1_SECRET_FETCH_STATUS=''
+
+# Record why the fetch stopped, for the CodeArtifact block below and for any
+# later hook. Written to a file as well as a variable because the hooks that
+# need it most run in a different process, two lifecycle stages later.
+_b1_secret_status() {
+  _B1_SECRET_FETCH_STATUS="$1"
+  local root="${WORKSPACE_ROOT:-$PWD}"
+  mkdir -p "${root}/.b1/env" 2>/dev/null || true
+  {
+    printf '# Written by the prebuild secret fetch; rewritten on every run.\n'
+    printf 'B1_SECRET_FETCH_STATUS=%s\n' "$1"
+    printf 'B1_SECRET_FETCH_URL=%s\n' "${2:-}"
+  } > "${root}/.b1/env/.prebuild-status" 2>/dev/null || true
+}
+
 # Resolve this workspace's repository as `owner/name`, for use as a secret
 # scope; empty when it cannot be determined, which means unscoped.
 # GITHUB_REPOSITORY is set in a Codespace but not in a local devcontainer, so
@@ -74,9 +102,26 @@ _b1_quote() {
   printf "'%s'" "${1//\'/\'\\\'\'}"
 }
 
+# The API key travels in a request header, so the transport has to be encrypted
+# before the request is made — there is no undoing it afterwards. curl infers
+# `http://` when AUTH_URL carries no scheme at all, which is the case that
+# matters: `AUTH_URL=auth.example.com` sends the key in clear text and then
+# fails on the 301 that redirects to https, so the key is spent on a plain-text
+# hop for a request that was never going to succeed. Refuse instead of asking.
+# Loopback over http is allowed, for an auth server running on this machine.
+_b1_url_is_safe() {
+  case "$1" in
+    https://*) return 0 ;;
+    http://localhost|http://localhost:*|http://localhost/*) return 0 ;;
+    http://127.0.0.1|http://127.0.0.1:*|http://127.0.0.1/*) return 0 ;;
+    http://[::1]|http://[::1]:*|http://[::1]/*) return 0 ;;
+    *) return 1 ;;
+  esac
+}
+
 _b1_fetch_user_secrets() {
   local b1_api_key="${B1_USER_API_KEY:-${B1_ORG_API_KEY:-}}"
-  [ -n "$b1_api_key" ] || return 0
+  [ -n "$b1_api_key" ] || { _b1_secret_status 'no-key'; return 0; }
 
   local root="${WORKSPACE_ROOT:-$PWD}"
 
@@ -84,12 +129,22 @@ _b1_fetch_user_secrets() {
   if [ -z "${AUTH_URL:-}" ] && [ -f "${root}/.env" ]; then
     set -a; . "${root}/.env" 2>/dev/null || true; set +a
   fi
-  [ -n "${AUTH_URL:-}" ] || return 0
-  command -v curl >/dev/null 2>&1 || return 0
-  command -v jq >/dev/null 2>&1 || return 0
-  command -v base64 >/dev/null 2>&1 || return 0
+  [ -n "${AUTH_URL:-}" ] || { _b1_secret_status 'no-url'; return 0; }
 
   local auth="${AUTH_URL%/}"
+  if ! _b1_url_is_safe "$auth"; then
+    echo "[WARN] AUTH_URL (${auth}) is not https, so the API key would cross the network in clear text - request refused"
+    echo "[WARN] Set AUTH_URL to an https:// URL. A value with no scheme at all is read as http:// and hits this."
+    _b1_secret_status 'bad-url' "$auth"
+    return 0
+  fi
+
+  if ! command -v curl >/dev/null 2>&1 || ! command -v jq >/dev/null 2>&1 || ! command -v base64 >/dev/null 2>&1; then
+    echo "[WARN] curl, jq and base64 are required to fetch secrets - skipping"
+    _b1_secret_status 'no-tools' "$auth"
+    return 0
+  fi
+
   local env_fetched="${root}/.b1/env/.env.fetched"
   mkdir -p "${root}/.b1/env" 2>/dev/null || true
   local key encoded var val resp code body tmp n=0
@@ -109,12 +164,27 @@ _b1_fetch_user_secrets() {
   # value wins) and organization -> global for an org key, so a shared credential
   # set once at org (or global) level serves every developer. With ?scope=, each
   # level prefers a value stored for this repository over its general one.
-  resp=$(curl -sS -w '\n%{http_code}' -H "x-api-key: ${b1_api_key}" \
-    "${auth}/api/secrets/resolve-all${query}" 2>/dev/null) || return 0
+  #
+  # Timeouts because this is onCreateCommand: an AUTH_URL naming a host that
+  # drops packets rather than refusing them would otherwise stall container
+  # creation indefinitely instead of failing and letting the prebuild continue.
+  resp=$(curl -sS --connect-timeout 10 --max-time 30 -w '\n%{http_code}' \
+    -H "x-api-key: ${b1_api_key}" \
+    "${auth}/api/secrets/resolve-all${query}" 2>/dev/null) || {
+    # Curl could not complete the request at all: DNS, TLS, connection refused,
+    # timeout. This used to be the one failure that said nothing whatsoever.
+    echo "[WARN] Secret fetch could not reach ${auth} (network, DNS or TLS failure) - leaving ${env_fetched} as it is"
+    _b1_secret_status 'network' "$auth"
+    return 0
+  }
   code="${resp##*$'\n'}"; body="${resp%$'\n'*}"
   # Anything but success leaves any existing file alone: an expired key or an
   # auth server still starting must not empty a workspace's secrets.
-  [ "$code" = "200" ] || { echo "[WARN] Secret fetch returned HTTP ${code}"; return 0; }
+  [ "$code" = "200" ] || {
+    echo "[WARN] Secret fetch returned HTTP ${code} from ${auth} - leaving ${env_fetched} as it is"
+    _b1_secret_status "http-${code}" "$auth"
+    return 0
+  }
 
   tmp="${env_fetched}.tmp.$$"
   : > "$tmp"; chmod 600 "$tmp" 2>/dev/null || true
@@ -141,8 +211,29 @@ _b1_fetch_user_secrets() {
     | select($v != null and $v != "")
     | "\($k)\t\($v|@base64)"' 2>/dev/null)
 
-  mv "$tmp" "$env_fetched" 2>/dev/null || { rm -f "$tmp"; return 0; }
-  echo "[INFO] Fetched ${n} secret(s) into .env.fetched"
+  # A 200 carrying nothing readable must not overwrite a good file either. The
+  # non-200 guard above already says so, but it did not cover the two ways a
+  # *successful* response yields no secrets: a valid key with no grants (or a
+  # scope matching nothing), and a body jq cannot parse — a proxy or captive
+  # portal answering 200 with HTML. Both used to reach the `mv` below and move a
+  # file holding only the header comment over a working one, then report
+  # "Fetched 0 secret(s)", which reads as success. A workspace that had its
+  # secrets lost them on the next start.
+  if [ "$n" -eq 0 ]; then
+    rm -f "$tmp"
+    echo "[WARN] Secret fetch returned no readable secrets - leaving ${env_fetched} as it is"
+    _b1_secret_status 'empty' "$auth"
+    return 0
+  fi
+
+  mv "$tmp" "$env_fetched" 2>/dev/null || {
+    rm -f "$tmp"
+    echo "[WARN] Could not write ${env_fetched}"
+    _b1_secret_status 'write-failed' "$auth"
+    return 0
+  }
+  _b1_secret_status "ok:${n}" "$auth"
+  echo "[INFO] Fetched ${n} secret(s) into .b1/env/.env.fetched"
 }
 _b1_fetch_user_secrets || true
 
@@ -238,7 +329,7 @@ if [[ "${PREBUILD_CHECK:-}" != "true" ]]; then
                 && [[ -n "${CODEARTIFACT_AUTH_TOKEN}" ]]; then
                 export CODEARTIFACT_AUTH_TOKEN
                 mkdir -p "${WORKSPACE_ROOT}/.b1/env" 2>/dev/null || true
-            echo "export CODEARTIFACT_AUTH_TOKEN=${CODEARTIFACT_AUTH_TOKEN}" > "${WORKSPACE_ROOT}/.b1/env/.aws-token.env"
+                echo "export CODEARTIFACT_AUTH_TOKEN=${CODEARTIFACT_AUTH_TOKEN}" > "${WORKSPACE_ROOT}/.b1/env/.aws-token.env"
                 echo "[INFO] CodeArtifact token obtained"
             else
                 CODEARTIFACT_AUTH_TOKEN=""
@@ -261,12 +352,69 @@ if [[ "${PREBUILD_CHECK:-}" != "true" ]]; then
         echo ""
         echo "  No CodeArtifact token could be obtained, so private @buildone packages"
         echo "  cannot be downloaded."
-        if [[ -n "${B1_USER_API_KEY:-}${B1_ORG_API_KEY:-}" && -z "${AUTH_URL:-}" ]]; then
-            echo ""
-            echo "  Note: a B1 API key is set, but AUTH_URL is not, so the automatic"
-            echo "  secret fetch could not contact the auth server. Set AUTH_URL as a"
-            echo "  Codespaces secret alongside the key."
-        fi
+        # State the cause the secret fetch actually established, rather than
+        # inferring one from what happens to be unset here. Without this the only
+        # testable fact left is whether AUTH_URL is empty, so a *wrong* AUTH_URL is
+        # reported as a *missing* API key and the reader is told to set a key they
+        # have already set. _B1_SECRET_FETCH_STATUS is set by the
+        # b1-user-secret-fetch block above; on a workspace that has migrated only
+        # one of the two blocks it is unset, no arm matches, and this says nothing
+        # rather than something wrong.
+        case "${_B1_SECRET_FETCH_STATUS:-}" in
+            http-401|http-403)
+                echo ""
+                echo "  Cause: the auth server at ${AUTH_URL:-(unset)} rejected the API key"
+                echo "  (HTTP ${_B1_SECRET_FETCH_STATUS#http-}). Either the key has expired, or it was minted in a"
+                echo "  different environment than AUTH_URL names - a key and a URL from two"
+                echo "  environments produce exactly this."
+                ;;
+            http-*)
+                echo ""
+                echo "  Cause: the auth server at ${AUTH_URL:-(unset)} answered HTTP"
+                echo "  ${_B1_SECRET_FETCH_STATUS#http-} to the secret fetch, so no secrets were retrieved."
+                ;;
+            bad-url)
+                echo ""
+                echo "  Cause: AUTH_URL (${AUTH_URL:-(unset)}) is not an https:// URL, so the"
+                echo "  secret fetch refused to send the API key over an unencrypted"
+                echo "  connection. Note a value with no scheme at all is read as http://."
+                ;;
+            network)
+                echo ""
+                echo "  Cause: the auth server at ${AUTH_URL:-(unset)} could not be reached"
+                echo "  (network, DNS or TLS failure), so no secrets were retrieved."
+                ;;
+            empty)
+                echo ""
+                echo "  Cause: the auth server at ${AUTH_URL:-(unset)} returned no secrets this"
+                echo "  key can see. The key is valid, but nothing is provisioned for it -"
+                echo "  ask an org owner to grant the CodeArtifact credentials."
+                ;;
+            no-url)
+                echo ""
+                echo "  Cause: a B1 API key is set, but AUTH_URL is not, so the automatic"
+                echo "  secret fetch could not contact the auth server. Set AUTH_URL as a"
+                echo "  Codespaces secret alongside the key."
+                ;;
+            no-tools)
+                echo ""
+                echo "  Cause: curl, jq or base64 is missing from this image, so the"
+                echo "  automatic secret fetch could not run."
+                ;;
+            write-failed)
+                echo ""
+                echo "  Cause: the secrets were fetched but .b1/env/.env.fetched could not be"
+                echo "  written. Check the permissions on .b1/env/."
+                ;;
+            ok:*)
+                echo ""
+                echo "  Note: the secret fetch succeeded (${_B1_SECRET_FETCH_STATUS#ok:} secret(s) from ${AUTH_URL:-(unset)}),"
+                echo "  so the API key and AUTH_URL are not the problem. Either"
+                echo "  B1_ACCESS_KEY_ID / B1_SECRET_ACCESS_KEY were not among the secrets"
+                echo "  this key can see - ask an org owner to provision them - or the AWS"
+                echo "  CLI is unavailable. The [WARN] lines above say which."
+                ;;
+        esac
         echo ""
         echo "  These credentials are provisioned for you. Set ONE API key as a"
         echo "  Codespaces secret and rebuild the container:"
@@ -294,6 +442,69 @@ if [[ "${PREBUILD_CHECK:-}" != "true" ]]; then
 else
     echo "[INFO] Skipping package install during prebuild check"
 fi
+# >>> b1-framework-prebuild-guard (managed by @buildone/swat-cli migration; safe to re-run) >>>
+# Everything below this point reaches into node_modules — a find over it, then
+# an exec of the framework prebuild inside it. It is missing whenever the
+# install above was skipped, which is precisely the case worth explaining, and
+# whenever PREBUILD_CHECK=true skips that block outright. Without this check the
+# run ends on a bare "No such file or directory" (exit 127) that names nothing.
+# Exits 0 because this is onCreateCommand: a non-zero exit blocks container
+# creation rather than leaving a shell to fix things from.
+if [ ! -d "${WORKSPACE_ROOT}/node_modules/@buildone/swat-cli" ]; then
+    # The fetch sets this when it ran in this shell; the file carries it when
+    # this guard is reached from a later process.
+    _b1_status="${_B1_SECRET_FETCH_STATUS:-}"
+    if [ -z "$_b1_status" ] && [ -f "${WORKSPACE_ROOT}/.b1/env/.prebuild-status" ]; then
+        _b1_status=$(sed -n 's/^B1_SECRET_FETCH_STATUS=//p' "${WORKSPACE_ROOT}/.b1/env/.prebuild-status" 2>/dev/null)
+    fi
+    echo ""
+    echo "============================================================================="
+    echo "  TOOLCHAIN NOT INSTALLED - SKIPPING THE FRAMEWORK PREBUILD"
+    echo "============================================================================="
+    echo ""
+    echo "  node_modules/@buildone/swat-cli is not present, so the framework"
+    echo "  prebuild cannot run. Nothing below this point would work either."
+    case "$_b1_status" in
+        http-401|http-403)
+            echo ""
+            echo "  Cause: the auth server at ${AUTH_URL:-(unset)} rejected the API key"
+            echo "  (HTTP ${_b1_status#http-}), so the CodeArtifact credentials were never"
+            echo "  fetched and the package install was skipped. Either the key has"
+            echo "  expired, or it was minted in a different environment than AUTH_URL"
+            echo "  names."
+            ;;
+        bad-url)
+            echo ""
+            echo "  Cause: AUTH_URL (${AUTH_URL:-(unset)}) is not an https:// URL, so the"
+            echo "  secret fetch refused to send the API key over an unencrypted"
+            echo "  connection, and the package install was skipped."
+            ;;
+        network)
+            echo ""
+            echo "  Cause: the auth server at ${AUTH_URL:-(unset)} could not be reached,"
+            echo "  so the CodeArtifact credentials were never fetched."
+            ;;
+        http-*|empty|no-url|no-key|no-tools|write-failed)
+            echo ""
+            echo "  Cause: the secret fetch did not complete ($_b1_status), so the"
+            echo "  CodeArtifact credentials were never fetched and the install was"
+            echo "  skipped. See the [WARN] lines earlier in this log."
+            ;;
+        *)
+            echo ""
+            echo "  If the install was skipped for want of credentials, the reason is in"
+            echo "  the [WARN] lines earlier in this log. If PREBUILD_CHECK=true, the"
+            echo "  install is skipped by design and a dedicated task performs it."
+            ;;
+    esac
+    echo ""
+    echo "  Run 'yarn install' once credentials are configured, then rebuild."
+    echo "============================================================================="
+    echo ""
+    exit 0
+fi
+# <<< b1-framework-prebuild-guard <<<
+
 
 # Ensure the workspace scripts are executable
 find "${WORKSPACE_ROOT}/node_modules/@buildone/swat-cli/scripts/devcontainer" -type f -name "*.sh" -exec chmod +x {} \;
