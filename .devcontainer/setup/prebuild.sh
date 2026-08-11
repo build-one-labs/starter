@@ -7,9 +7,11 @@ export WORKSPACE_ROOT
 # >>> b1-user-secret-fetch (managed by @buildone/swat-cli migration; safe to re-run) >>>
 # Pull this workspace's secrets from the auth server using a single API key, so
 # they need not be set as individual GitHub Codespaces secrets. Accepts a
-# personal B1_USER_API_KEY or a shared organization B1_ORG_API_KEY; a personal
-# key wins when both are set, and the server decides what each can see from the
-# key's owner.
+# personal B1_USER_API_KEY or a shared organization B1_ORG_API_KEY, either of
+# them optionally named for the auth server it belongs to
+# (B1_USER_API_KEY__AUTH_DEVELOP_TEST_BUILD_ONE); a personal key wins over a
+# shared one at the same specificity, and the server decides what each can see
+# from the key's owner.
 #
 # This block runs before `yarn install`, so node_modules does not exist and it
 # cannot read the workspace manifest — but it no longer needs to. One request to
@@ -42,6 +44,16 @@ export WORKSPACE_ROOT
 # records an outcome in _B1_SECRET_FETCH_STATUS and in
 # .b1/env/.prebuild-status, so the CodeArtifact message below states the cause
 # and later lifecycle hooks can read it instead of scraping creation.log.
+#
+# WHY THE KEY IS RESOLVED BELOW THE .env LOAD
+# A key is a row in one auth server's database, so it is stored per server —
+# B1_USER_API_KEY__<HOST>, consulted before the unqualified name (see
+# lib/api-key.sh, which every *other* caller resolves through). This block
+# cannot source that file: it runs before `yarn install`, which is the whole
+# reason it carries its own copy of the fetch. So the resolution is inlined,
+# and it has to sit *below* the point where AUTH_URL is loaded from .env —
+# the suffix is AUTH_URL's host, and computing it from an empty AUTH_URL
+# silently degrades to the unqualified name, which looks like it works.
 _B1_SECRET_FETCH_STATUS=''
 
 # Record why the fetch stopped, for the CodeArtifact block below and for any
@@ -119,11 +131,66 @@ _b1_url_is_safe() {
   esac
 }
 
-_b1_fetch_user_secrets() {
-  local b1_api_key="${B1_USER_API_KEY:-${B1_ORG_API_KEY:-}}"
-  [ -n "$b1_api_key" ] || { _b1_secret_status 'no-key'; return 0; }
+# The auth server a URL names, as an environment-variable-name fragment: host
+# only (no scheme, userinfo, port or path), dots and dashes to underscores,
+# uppercased. Empty when the URL carries no host to speak of, which the caller
+# reads as "no suffixed name to look for". Kept in step with b1_auth_host_slug()
+# in the CLI's devcontainer/lib/api-key.sh.
+_b1_auth_host_slug() {
+  local url="${1:-}" host
+  host="${url#*://}"  # scheme
+  host="${host%%/*}"  # path
+  host="${host%%\?*}"
+  host="${host##*@}"  # userinfo
+  host="${host%%:*}"  # port
+  [ -n "$host" ] || return 1
+  host=$(printf '%s' "$host" | tr 'a-z.-' 'A-Z__')
+  [[ "$host" =~ ^[A-Z0-9_]+$ ]] || return 1
+  printf '%s' "$host"
+}
 
+# The variable holding the credential for the auth server this workspace points
+# at, most specific first: the personal key named for that host, the unqualified
+# personal key, then the same two for the organization key. Echoes the variable
+# NAME, not its value, so a log line can say which one was used. Returns 1 when
+# none of them is set. Kept in step with b1_api_key_candidates() in the CLI's
+# devcontainer/lib/api-key.sh — same order, same names.
+_b1_api_key_var() {
+  local slug="${1:-}" name
+  for name in ${slug:+"B1_USER_API_KEY__${slug}"} B1_USER_API_KEY \
+    ${slug:+"B1_ORG_API_KEY__${slug}"} B1_ORG_API_KEY; do
+    if [ -n "${!name:-}" ]; then
+      printf '%s' "$name"
+      return 0
+    fi
+  done
+  return 1
+}
+
+# Every B1 key set here under any name, one per line. Two callers: the cheap
+# "is there a key at all" test that keeps the no-key exit above the .env load,
+# and the diagnosis when a key is set but belongs to another auth server —
+# which is the whole message in one line ("you have a key for try-auth, and
+# this workspace points at auth-develop").
+_b1_api_key_vars_set() {
+  local name
+  for name in $(compgen -v 2>/dev/null | grep -E '^B1_(USER|ORG)_API_KEY(__[A-Z0-9_]+)?$' | sort); do
+    [ -n "${!name:-}" ] && printf '%s\n' "$name"
+  done
+  return 0
+}
+
+_b1_fetch_user_secrets() {
   local root="${WORKSPACE_ROOT:-$PWD}"
+
+  # Asked before .env is read, so a workspace with no key at all still records
+  # 'no-key' without this block having sourced or exported anything — the
+  # pre-existing behaviour exactly. It covers the suffixed names too, which is
+  # the point: a workspace whose only key is B1_USER_API_KEY__<HOST> must not
+  # be reported as having none.
+  local keys_set
+  keys_set=$(_b1_api_key_vars_set)
+  [ -n "$keys_set" ] || { _b1_secret_status 'no-key'; return 0; }
 
   # AUTH_URL usually lives in .env; load it non-fatally if not already exported.
   if [ -z "${AUTH_URL:-}" ] && [ -f "${root}/.env" ]; then
@@ -144,6 +211,26 @@ _b1_fetch_user_secrets() {
     _b1_secret_status 'no-tools' "$auth"
     return 0
   fi
+
+  # Only now is the host known, so only now can the host-specific name be looked
+  # up. Which variable was chosen is logged, because "the key is set but it is
+  # the wrong one" and "the key is set and is being used" are otherwise the same
+  # output.
+  local slug b1_api_key_var b1_api_key set_it_as
+  slug=$(_b1_auth_host_slug "$auth" 2>/dev/null) || slug=''
+  if ! b1_api_key_var=$(_b1_api_key_var "$slug"); then
+    # Reached only when a key IS set and none of it is for this server: the
+    # failure lib/api-key.sh exists to end, and the one the reader cannot see
+    # for themselves. Saying "no key is set" here would be false.
+    set_it_as='B1_USER_API_KEY'
+    [ -n "$slug" ] && set_it_as="B1_USER_API_KEY__${slug}"
+    echo "[WARN] No API key for ${auth} - the keys set here belong to other auth servers: $(printf '%s' "$keys_set" | tr '\n' ' ')"
+    echo "[WARN] A key only works at the auth server that minted it. Sign in at ${auth}, mint a key (Account > API keys) and set it as ${set_it_as}."
+    _b1_secret_status 'no-key' "$auth"
+    return 0
+  fi
+  b1_api_key="${!b1_api_key_var}"
+  echo "[INFO] Using ${b1_api_key_var} for ${auth}"
 
   local env_fetched="${root}/.b1/env/.env.fetched"
   mkdir -p "${root}/.b1/env" 2>/dev/null || true

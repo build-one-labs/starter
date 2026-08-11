@@ -38,8 +38,6 @@ permissions:
 
 env:
   AWS_REGION: eu-central-1
-  DOCKER_REPOSITORY: ${{ secrets.PUBLISH_DOCKER_REPOSITORY }}
-  APP_NAME: ${{ secrets.PUBLISH_APP_NAME }}
   # Tag from the push event, or the explicit input on manual/called runs.
   VERSION: ${{ inputs.version || github.ref_name }}
 
@@ -61,7 +59,7 @@ jobs:
         with:
           auth-url: ${{ secrets.AUTH_URL }}
           api-key: ${{ secrets.B1_ORG_API_KEY }}
-          require: B1_ACCESS_KEY_ID B1_SECRET_ACCESS_KEY
+          require: B1_ACCESS_KEY_ID B1_SECRET_ACCESS_KEY PUBLISH_APP_NAME PUBLISH_DOCKER_REPOSITORY
       - uses: ./.github/actions/setup-node
         with:
           aws-access-key-id: ${{ env.B1_ACCESS_KEY_ID || secrets.B1_ACCESS_KEY_ID }}
@@ -86,7 +84,16 @@ jobs:
       - uses: aws-actions/amazon-ecr-login@v2
 
       - name: Build and push image
+        env:
+          DOCKER_REPOSITORY: ${{ env.PUBLISH_DOCKER_REPOSITORY || secrets.PUBLISH_DOCKER_REPOSITORY }}
+          APP_NAME: ${{ env.PUBLISH_APP_NAME || secrets.PUBLISH_APP_NAME }}
         run: |
+          if [ -z "${DOCKER_REPOSITORY}" ] || [ -z "${APP_NAME}" ]; then
+            echo "DOCKER_REPOSITORY / APP_NAME are empty — is the auth server's" >&2
+            echo "publish-docker-repository / publish-app-name pair provisioned," >&2
+            echo "or PUBLISH_DOCKER_REPOSITORY / PUBLISH_APP_NAME set as secrets?" >&2
+            exit 1
+          fi
           IMAGE="${DOCKER_REPOSITORY}/${APP_NAME}-app-server-ts"
           docker build . -t "${IMAGE}:${VERSION}" \
             --build-arg BUILD_VERSION="${VERSION}" \
@@ -112,7 +119,7 @@ jobs:
         with:
           auth-url: ${{ secrets.AUTH_URL }}
           api-key: ${{ secrets.B1_ORG_API_KEY }}
-          require: B1_ACCESS_KEY_ID B1_SECRET_ACCESS_KEY
+          require: B1_ACCESS_KEY_ID B1_SECRET_ACCESS_KEY PUBLISH_APP_NAME PUBLISH_DOCKER_REPOSITORY
       - uses: ./.github/actions/setup-node
         with:
           aws-access-key-id: ${{ env.B1_ACCESS_KEY_ID || secrets.B1_ACCESS_KEY_ID }}
@@ -134,7 +141,16 @@ jobs:
       - uses: aws-actions/amazon-ecr-login@v2
 
       - name: Build and push image
+        env:
+          DOCKER_REPOSITORY: ${{ env.PUBLISH_DOCKER_REPOSITORY || secrets.PUBLISH_DOCKER_REPOSITORY }}
+          APP_NAME: ${{ env.PUBLISH_APP_NAME || secrets.PUBLISH_APP_NAME }}
         run: |
+          if [ -z "${DOCKER_REPOSITORY}" ] || [ -z "${APP_NAME}" ]; then
+            echo "DOCKER_REPOSITORY / APP_NAME are empty — is the auth server's" >&2
+            echo "publish-docker-repository / publish-app-name pair provisioned," >&2
+            echo "or PUBLISH_DOCKER_REPOSITORY / PUBLISH_APP_NAME set as secrets?" >&2
+            exit 1
+          fi
           IMAGE="${DOCKER_REPOSITORY}/${APP_NAME}-web-app"
           docker build . -t "${IMAGE}:${VERSION}" \
             --build-arg BUILD_VERSION="${VERSION}" \
@@ -160,7 +176,7 @@ jobs:
         with:
           auth-url: ${{ secrets.AUTH_URL }}
           api-key: ${{ secrets.B1_ORG_API_KEY }}
-          require: B1_ACCESS_KEY_ID B1_SECRET_ACCESS_KEY
+          require: B1_ACCESS_KEY_ID B1_SECRET_ACCESS_KEY PUBLISH_APP_NAME PUBLISH_DOCKER_REPOSITORY
       - uses: ./.github/actions/setup-node
         with:
           aws-access-key-id: ${{ env.B1_ACCESS_KEY_ID || secrets.B1_ACCESS_KEY_ID }}
@@ -179,7 +195,16 @@ jobs:
       - uses: aws-actions/amazon-ecr-login@v2
 
       - name: Build and push image
+        env:
+          DOCKER_REPOSITORY: ${{ env.PUBLISH_DOCKER_REPOSITORY || secrets.PUBLISH_DOCKER_REPOSITORY }}
+          APP_NAME: ${{ env.PUBLISH_APP_NAME || secrets.PUBLISH_APP_NAME }}
         run: |
+          if [ -z "${DOCKER_REPOSITORY}" ] || [ -z "${APP_NAME}" ]; then
+            echo "DOCKER_REPOSITORY / APP_NAME are empty — is the auth server's" >&2
+            echo "publish-docker-repository / publish-app-name pair provisioned," >&2
+            echo "or PUBLISH_DOCKER_REPOSITORY / PUBLISH_APP_NAME set as secrets?" >&2
+            exit 1
+          fi
           IMAGE="${DOCKER_REPOSITORY}/${APP_NAME}-data"
           docker build . -t "${IMAGE}:${VERSION}" \
             --build-arg BUILD_VERSION="${VERSION}" \

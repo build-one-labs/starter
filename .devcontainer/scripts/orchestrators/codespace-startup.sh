@@ -98,9 +98,19 @@ if [ ! -f "$SWAT_SECRETS_CONFIG" ]; then
             echo "  alongside the key."
             ;;
         no-key)
-            echo "  Cause: neither B1_USER_API_KEY nor B1_ORG_API_KEY is set, so the"
-            echo "  prebuild had no way to fetch the CodeArtifact credentials. Set one"
-            echo "  as a Codespaces secret and rebuild the container."
+            echo "  Cause: no B1 API key was set for the auth server this workspace"
+            echo "  points at, so the prebuild had no way to fetch the CodeArtifact"
+            echo "  credentials. Set one as a Codespaces secret and rebuild:"
+            echo ""
+            echo "    B1_USER_API_KEY__<HOST>  your key for one auth server - <HOST> is"
+            echo "                             the host of AUTH_URL, dots and dashes as"
+            echo "                             underscores, uppercased"
+            echo "    B1_USER_API_KEY          your key, used for any auth server"
+            echo "    B1_ORG_API_KEY           the shared organization key"
+            echo ""
+            echo "  A key only works at the auth server that minted it, so a key held"
+            echo "  under another host's name is deliberately not used here. The"
+            echo "  prebuild log names any that were set."
             ;;
         no-tools)
             echo "  Cause: curl, jq or base64 is missing from this image, so the"
