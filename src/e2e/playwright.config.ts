@@ -17,6 +17,22 @@ export default defineConfig({
   // Fail the build on CI if test.only is left in the source.
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,
+  /**
+   * The stack under test runs in DEV mode: the first visit to a screen compiles
+   * its route on demand, and the CI runner shares four cores between that
+   * compile, the two app servers and two browsers. The default 30s is enough on
+   * a developer's workspace but turns ordinary first-visit latency into failures
+   * there, so CI gets double.
+   */
+  timeout: process.env.CI ? 60_000 : 30_000,
+  /**
+   * Assertions get the same headroom for the same reason. The default 5s is a
+   * fair budget for "this should already be on screen" on a warm workspace; on
+   * CI the same wait covers a screen still being compiled and fetched, and the
+   * failure it produces then ("element(s) not found") says nothing about the
+   * feature under test.
+   */
+  expect: { timeout: process.env.CI ? 15_000 : 5_000 },
   // Parallelize spec files in CI while leaving tests within each stateful spec
   // sequential. Two browsers leave enough memory for the full local stack;
   // E2E_WORKERS allows larger runners and manual runs to tune this upward.

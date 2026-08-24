@@ -2,11 +2,11 @@
 # approval choices remain in ~/.codex/config.toml.
 
 [mcp_servers.B1_Blueprint]
-url = "http://localhost:3000/mcp/blueprint/dev"
+url = "http://localhost:3001/mcp/blueprint/dev"
 env_http_headers = { "x-api-key" = "B1_CODEX_MCP_API_KEY", "Authorization" = "B1_CODEX_MCP_AUTH_HEADER" }
 
 [mcp_servers.B1_Knowledge]
-url = "http://localhost:3000/mcp/knowledge/dev"
+url = "http://localhost:3001/mcp/knowledge/dev"
 env_http_headers = { "x-api-key" = "B1_CODEX_MCP_API_KEY", "Authorization" = "B1_CODEX_MCP_AUTH_HEADER" }
 
 [mcp_servers.context7]

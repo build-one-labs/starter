@@ -10,6 +10,7 @@ fi
 node dist/migrate.js
 
 if [ "${IMPORT_DATA}" = "true" ]; then
+  node ../app-server-tslib/dist/framework/utils/seed.js
   node dist/utils/seed.js
 fi
 

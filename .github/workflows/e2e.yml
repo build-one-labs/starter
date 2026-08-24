@@ -79,6 +79,18 @@ jobs:
       GITHUB_USER: github-actions
       DATABASE_SERVER_TYPE: neon
       AUTHENTICATION_SERVER_TYPE: remote
+      # With no auth_server container to fall back on, the stack needs this by
+      # name: root.deployment.config.json resolves `authenticationUrl` from
+      # `${AUTH_URL:-http://auth_server:3000}`, and the guard calls getSession()
+      # before it checks whether a route is public — so an unset AUTH_URL is not
+      # a degraded run, it is HTTP 500 on every request including
+      # /api/healthcheck, and a stack that never reports healthy.
+      #
+      # The b1-secrets step below also fetches it, and `preflight` names it too,
+      # but a job environment does not carry across jobs and the secret store is
+      # not this job's to depend on. Pinned here, the run works whichever way
+      # the value arrives.
+      AUTH_URL: ${{ secrets.AUTH_URL }}
       E2E_WORKERS: ${{ inputs.workers || 2 }}
     steps:
       - uses: actions/checkout@v5
@@ -120,8 +132,28 @@ jobs:
           node_modules/@buildone/swat-cli/scripts/openhands/import-data.sh
           node_modules/@buildone/swat-cli/bin/build-one import-app --clear
 
+      # Split, rather than the single `--with-deps` this used to be. That form
+      # does two unrelated things — `sudo apt-get install` for ~30 system
+      # libraries, then a ~170MB browser download — and prints nothing until
+      # both finish, so when it once ran for 50 minutes there was no way to tell
+      # which half was stuck. Two steps with two timeouts answer that from the
+      # run page alone.
+      #
+      # The apt half is unattended, and on Ubuntu 24.04 an unattended install
+      # can stop on a needrestart prompt and wait for an answer that is never
+      # coming. These two variables are the usual cure and cost nothing if that
+      # was not the cause — the hang was never reproduced with logs, so treat
+      # them as a hypothesis and the timeouts as the actual protection.
+      - name: Install Chromium's system dependencies
+        timeout-minutes: 10
+        env:
+          DEBIAN_FRONTEND: noninteractive
+          NEEDRESTART_MODE: a
+        run: yarn workspace e2e exec playwright install-deps chromium
+
       - name: Install Chromium
-        run: yarn workspace e2e exec playwright install --with-deps chromium
+        timeout-minutes: 10
+        run: yarn workspace e2e exec playwright install chromium
 
       - name: Run E2E tests
         env:
