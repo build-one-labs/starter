@@ -46,9 +46,6 @@
         "authenticationUrl": {
           "type": "string"
         },
-        "dataImage": {
-          "type": "string"
-        },
         "appServerTsImage": {
           "type": "string"
         },

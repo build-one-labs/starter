@@ -159,60 +159,6 @@ jobs:
             --build-arg BUILD_IMAGE="${IMAGE}"
           docker push "${IMAGE}:${VERSION}"
 
-  publish-data:
-    env:
-      B1_ORG_API_KEY: ${{ secrets.B1_ORG_API_KEY }}
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-        with:
-          ref: ${{ inputs.version || github.ref_name }}
-      # Provisioned secrets from the auth server's store, with one organization
-      # API key. Skipped until that key is set, and every value below then
-      # falls back to the Actions secret it has always used.
-      # See .github/actions/b1-secrets.
-      - uses: ./.github/actions/b1-secrets
-        if: env.B1_ORG_API_KEY != ''
-        with:
-          auth-url: ${{ secrets.AUTH_URL }}
-          api-key: ${{ secrets.B1_ORG_API_KEY }}
-          require: B1_ACCESS_KEY_ID B1_SECRET_ACCESS_KEY PUBLISH_APP_NAME PUBLISH_DOCKER_REPOSITORY
-      - uses: ./.github/actions/setup-node
-        with:
-          aws-access-key-id: ${{ env.B1_ACCESS_KEY_ID || secrets.B1_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ env.B1_SECRET_ACCESS_KEY || secrets.B1_SECRET_ACCESS_KEY }}
-          focus-workspaces: app data
-
-      - name: Prepare Dockerfile
-        run: cp src/data/Dockerfile ./Dockerfile
-
-      - uses: aws-actions/configure-aws-credentials@v5
-        with:
-          aws-access-key-id: ${{ env.B1_ACCESS_KEY_ID || secrets.B1_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ env.B1_SECRET_ACCESS_KEY || secrets.B1_SECRET_ACCESS_KEY }}
-          aws-region: ${{ env.AWS_REGION }}
-
-      - uses: aws-actions/amazon-ecr-login@v2
-
-      - name: Build and push image
-        env:
-          DOCKER_REPOSITORY: ${{ env.PUBLISH_DOCKER_REPOSITORY || secrets.PUBLISH_DOCKER_REPOSITORY }}
-          APP_NAME: ${{ env.PUBLISH_APP_NAME || secrets.PUBLISH_APP_NAME }}
-        run: |
-          if [ -z "${DOCKER_REPOSITORY}" ] || [ -z "${APP_NAME}" ]; then
-            echo "DOCKER_REPOSITORY / APP_NAME are empty — is the auth server's" >&2
-            echo "publish-docker-repository / publish-app-name pair provisioned," >&2
-            echo "or PUBLISH_DOCKER_REPOSITORY / PUBLISH_APP_NAME set as secrets?" >&2
-            exit 1
-          fi
-          IMAGE="${DOCKER_REPOSITORY}/${APP_NAME}-data"
-          docker build . -t "${IMAGE}:${VERSION}" \
-            --build-arg BUILD_VERSION="${VERSION}" \
-            --build-arg BUILD_DATE="$(date)" \
-            --build-arg BUILD_NAME="${APP_NAME}-data" \
-            --build-arg BUILD_IMAGE="${IMAGE}"
-          docker push "${IMAGE}:${VERSION}"
-
   # ---------------------------------------------------------------------------
   # Publish marker — authoritative "Deployable" signal for the Release & Deploy
   # screen. Sets a `build-one/publish` commit status on the built commit once all
@@ -224,7 +170,6 @@ jobs:
     needs:
       - publish-app-server-ts
       - publish-web-app
-      - publish-data
     if: always()
     runs-on: ubuntu-latest
     permissions:

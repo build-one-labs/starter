@@ -23,8 +23,12 @@ COPY --chown=node:node ./src/app-server-ts/*.json ./
 COPY --chown=node:node ./src/app-server-ts/dist ./dist
 COPY --chown=node:node ./src/app-server-ts/start.sh ./
 COPY --chown=node:node ./src/app-server-ts/drizzle ./drizzle
+COPY --chown=node:node ./node_modules/@buildone/swat-data /data/b1
+COPY --chown=node:node ./src/data /data/app
 
 RUN chmod +x ./start.sh
+
+RUN mkdir -p /app-data/uploads && chown -R node:node /app-data
 
 USER node
 CMD ["./start.sh"]
