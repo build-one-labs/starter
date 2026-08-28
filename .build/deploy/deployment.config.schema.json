@@ -112,6 +112,10 @@
             "image": {
               "type": "string"
             },
+            "platform": {
+              "description": "Force the platform docker pulls for this service, e.g. linux/amd64. Only needed for an image published for a single architecture — a multi-arch manifest already resolves to the host's. Set it and the \"requested image's platform does not match the detected host platform\" warning goes away, because the choice is now deliberate.",
+              "type": "string"
+            },
             "user": {
               "type": "string"
             },
@@ -187,24 +191,38 @@
             },
             "deploy": {
               "type": "object",
-              "resources": {
-                "type": "object",
-                "limits": {
+              "additionalProperties": false,
+              "properties": {
+                "resources": {
                   "type": "object",
-                  "cpus": {
-                    "type": "string"
-                  },
-                  "memory": {
-                    "type": "string"
-                  }
-                },
-                "reservations": {
-                  "type": "object",
-                  "cpus": {
-                    "type": "string"
-                  },
-                  "memory": {
-                    "type": "string"
+                  "additionalProperties": false,
+                  "properties": {
+                    "limits": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "properties": {
+                        "cpus": {
+                          "type": "string"
+                        },
+                        "memory": {
+                          "type": "string",
+                          "pattern": "^\\$\\{[^}]+\\}$|^[0-9]+(b|k|m|g|kb|mb|gb)?$"
+                        }
+                      }
+                    },
+                    "reservations": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "properties": {
+                        "cpus": {
+                          "type": "string"
+                        },
+                        "memory": {
+                          "type": "string",
+                          "pattern": "^\\$\\{[^}]+\\}$|^[0-9]+(b|k|m|g|kb|mb|gb)?$"
+                        }
+                      }
+                    }
                   }
                 }
               }
