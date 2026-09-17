@@ -169,8 +169,8 @@ jobs:
         if: always()
         continue-on-error: true
         run: |
-          docker compose -p gitpod ps --all > src/e2e/stack-ps.txt
-          docker compose -p gitpod logs --no-color > src/e2e/stack.log
+          docker compose -p b1 ps --all > src/e2e/stack-ps.txt
+          docker compose -p b1 logs --no-color > src/e2e/stack.log
           node_modules/@buildone/swat-cli/bin/build-one status --json > src/e2e/stack-status.json
 
       # Puts the answer on the run page: the verdict, every failure with its

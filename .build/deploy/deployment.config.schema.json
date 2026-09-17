@@ -37,6 +37,11 @@
             "${DATABASE_SERVER_TYPE:-local}",
             "${DATABASE_SERVER_TYPE:-neon}"
           ]
+        },
+        "documentAiServices": {
+          "description": "Which optional Document AI containers to add: `none`, `all`, or a comma-separated list of `docling`, `ollama`, `tei`. Each named service applies its `custom/document-ai-<service>.*` layer, which adds the container and points the matching app_server_ts URL variable at it.",
+          "type": "string",
+          "pattern": "^(\\$\\{DOCUMENT_AI_SERVICES(:-[^}]*)?\\}|none|all|(docling|ollama|tei)(,(docling|ollama|tei))*)$"
         }
       }
     },

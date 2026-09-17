@@ -12,3 +12,8 @@ env_http_headers = { "x-api-key" = "B1_CODEX_MCP_API_KEY", "Authorization" = "B1
 [mcp_servers.context7]
 url = "https://mcp.context7.com/mcp"
 env_http_headers = { "CONTEXT7_API_KEY" = "CONTEXT7_API_TOKEN" }
+
+# Disabled at launch when LINEAR_API_KEY is unset (start_codex.sh, codex-env.mjs).
+[mcp_servers.linear]
+url = "https://mcp.linear.app/mcp"
+bearer_token_env_var = "LINEAR_API_KEY"
