@@ -10,6 +10,14 @@ This repository is based on the Build.One Starter GitHub template. When working 
 - Check actual file contents rather than assuming template defaults
 - Version numbers of Build.One packages may vary - check `package.json` files for current versions
 
+## Critical Rules
+
+### Temporary Files
+- Store temporary files (scratch scripts, intermediate results, downloads, generated output that does not belong in the project) in the workspace `tmp/` directory at the repository root, e.g. `/workspaces/<repo-name>/tmp` — for the customer repo `b1-labs-samples` that is `/workspaces/b1-labs-samples/tmp`.
+- **Never** write them to the system `/tmp` or anywhere else in the source tree. `tmp/` is git-ignored, so nothing in it is committed.
+- Use one subdirectory per task (e.g. `tmp/<task-name>/`); `tmp/workspace/` belongs to the workspace tooling. Remove files you no longer need when the task is done.
+- `AGENTS.md` carries this rule word for word; change both together.
+
 ## Repository Overview
 
 This is a monorepo containing a NestJS backend API server and a Nuxt.js frontend web application, using Yarn workspaces for dependency management.
