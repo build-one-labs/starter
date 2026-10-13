@@ -23,9 +23,9 @@
           "enum": [
             "local",
             "remote",
-            "${AUTHENTICATION_SERVER_TYPE}",
-            "${AUTHENTICATION_SERVER_TYPE:-local}",
-            "${AUTHENTICATION_SERVER_TYPE:-remote}"
+            "${B1_AUTHENTICATION_SERVER_TYPE}",
+            "${B1_AUTHENTICATION_SERVER_TYPE:-local}",
+            "${B1_AUTHENTICATION_SERVER_TYPE:-remote}"
           ]
         },
         "databaseServerType": {
@@ -33,9 +33,9 @@
           "enum": [
             "local",
             "neon",
-            "${DATABASE_SERVER_TYPE}",
-            "${DATABASE_SERVER_TYPE:-local}",
-            "${DATABASE_SERVER_TYPE:-neon}"
+            "${B1_DATABASE_SERVER_TYPE}",
+            "${B1_DATABASE_SERVER_TYPE:-local}",
+            "${B1_DATABASE_SERVER_TYPE:-neon}"
           ]
         },
         "documentAiServices": {
