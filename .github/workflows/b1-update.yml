@@ -43,6 +43,15 @@ run-name: B1 Update${{ inputs.version && format(' to {0}', inputs.version) || ' 
 # Settings → Actions → General. Without that last one the branch is still
 # pushed and the run says which setting to turn on. Optionally, the Build.One
 # GitHub App installed on the repository, so workflow changes are pushed too.
+#
+# MERGING AND TAGGING
+# Off by default: an update is reviewed like any other change. `merge` waits
+# for every check on the pull request and squash-merges it when they pass;
+# `tag` also tags the merge commit with the version, which starts whatever runs
+# on tags (Publish). Both need the Build.One GitHub App — the merge and the tag
+# are made with its token — and leave the pull request open, with this run red,
+# when a check fails. Build.One's starter repository is updated this way on
+# every release.
 
 on:
   workflow_dispatch:
@@ -59,12 +68,22 @@ on:
         description: 'Workflows to start against the new branch once the pull request is open. Empty starts none.'
         required: false
         default: 'build.yml e2e.yml'
+      merge:
+        description: 'Merge the pull request once every check on it passes (needs the Build.One GitHub App).'
+        type: boolean
+        default: false
+      tag:
+        description: 'Also tag the merge commit with the version, which starts Publish (implies merge).'
+        type: boolean
+        default: false
 
 permissions:
   contents: write # push the update branch
   pull-requests: write # open the pull request
   actions: write # start the checks against it
   id-token: write # prove this run to Build.One's token service (workflow files)
+  checks: read # wait for the pull request's checks, when merging
+  statuses: read
 
 # Two updates at once would race for the same branch name and leave two pull
 # requests changing the same files. Queued rather than cancelled: a run that has
@@ -76,7 +95,8 @@ concurrency:
 jobs:
   update:
     runs-on: ubuntu-24.04
-    timeout-minutes: 60
+    # The update, and — when merging — the pull request's checks.
+    timeout-minutes: 120
     env:
       # Every script `b1` launches resolves its paths from this; the CLI does
       # not derive it.
@@ -89,6 +109,8 @@ jobs:
       INPUT_VERSION: ${{ inputs.version }}
       INPUT_BRANCH: ${{ inputs.branch }}
       INPUT_CHECKS: ${{ inputs.checks }}
+      INPUT_MERGE: ${{ inputs.merge }}
+      INPUT_TAG: ${{ inputs.tag }}
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       # Where Build.One's token service is; `b1 publish-update` asks it for a
       # token that may push workflow files.
@@ -226,9 +248,18 @@ jobs:
             echo "::error title=B1 update::${VERSION} predates \`b1 publish-update\`. Update to a newer release, or run \`b1 update ${VERSION}\` in a workspace and push from there."
             exit 1
           fi
+          release=()
+          [[ "${INPUT_MERGE}" == "true" ]] && release+=(--merge)
+          [[ "${INPUT_TAG}" == "true" ]] && release+=(--tag)
+          # Read whole rather than piped into `grep -q`, whose early exit
+          # would fail the pipe under pipefail and read as "not supported".
+          if ((${#release[@]})) && [[ "$(b1 publish-update --help)" != *--merge* ]]; then
+            echo "::error title=B1 update::${VERSION} predates merging and tagging from \`b1 publish-update\`. Update without them."
+            exit 1
+          fi
           b1 publish-update --version "${VERSION}" --installed "${INSTALLED}" \
             --branch "${BRANCH}" --base "${BASE}" --run-url "${RUN_URL}" \
-            --checks "${INPUT_CHECKS}"
+            --checks "${INPUT_CHECKS}" "${release[@]}"
 
       # The workflow changes this run could not push, when there were any — the
       # pull request carries them too unless they are too large for its body.
@@ -250,6 +281,8 @@ jobs:
           CHANGED: ${{ steps.publish.outputs.changed }}
           PR_URL: ${{ steps.publish.outputs.url }}
           MODE: ${{ steps.publish.outputs.mode }}
+          MERGED: ${{ steps.publish.outputs.merged }}
+          TAG: ${{ steps.publish.outputs.tag }}
         run: |
           {
             echo "### B1 Update"
@@ -260,6 +293,10 @@ jobs:
               echo "\`${INSTALLED}\` → \`${VERSION}\` on \`${BRANCH}\`."
               echo ""
               echo "${PR_URL}"
+              if [[ "${MERGED}" == "true" ]]; then
+                echo ""
+                echo "Merged${TAG:+, and tagged \`${TAG}\`}."
+              fi
               if [[ "${MODE}" == "split" ]]; then
                 echo ""
                 echo "⚠️ The workflow changes are in the pull request as a patch to apply by hand — install the Build.One GitHub App (https://github.com/apps/build-one-update-service) on this repository to have them pushed too."
