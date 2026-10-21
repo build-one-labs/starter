@@ -12,6 +12,12 @@ This repository is based on the Build.One Starter GitHub template. When working 
 
 ## Critical Rules
 
+### Blueprint JSON Files
+- **Always** use the B1 MCP server (`B1_Blueprint`) to query and change blueprints — screens, forms, grids, data sources, menus and every other blueprint object.
+- **Never** create, edit or delete the blueprint JSON files under `src/data/repository/` and `src/data/base/` by hand. They are the git-versioned export of the blueprint database: the running application reads the database, not these files, so a hand edit does not show up in the app and is lost at the object's next export.
+- If a B1 MCP tool answers "ACCESS DENIED", stop and report it to the user; do not work around it by editing the files.
+- `AGENTS.md` carries this rule word for word; change both together.
+
 ### Temporary Files
 - Store temporary files (scratch scripts, intermediate results, downloads, generated output that does not belong in the project) in the workspace `tmp/` directory at the repository root, e.g. `/workspaces/<repo-name>/tmp` — for the customer repo `b1-labs-samples` that is `/workspaces/b1-labs-samples/tmp`.
 - **Never** write them to the system `/tmp` or anywhere else in the source tree. `tmp/` is git-ignored, so nothing in it is committed.
