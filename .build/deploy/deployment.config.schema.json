@@ -92,6 +92,9 @@
                     },
                     "external": {
                       "type": "boolean"
+                    },
+                    "name": {
+                      "type": "string"
                     }
                   }
                 }
@@ -102,10 +105,38 @@
       ]
     },
     "volumes": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      }
+      "anyOf": [
+        {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        {
+          "type": "object",
+          "patternProperties": {
+            "^.*$": {
+              "anyOf": [
+                {
+                  "type": "null"
+                },
+                {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "external": {
+                      "type": "boolean"
+                    },
+                    "name": {
+                      "type": "string"
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        }
+      ]
     },
     "services": {
       "type": "object",
