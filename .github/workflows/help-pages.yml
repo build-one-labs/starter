@@ -72,4 +72,6 @@ jobs:
           focus-workspaces: app data
 
       - name: Check that every help page covers its app
-        run: node_modules/@buildone/swat-cli/bin/build-one check-help
+        env:
+          WORKSPACE_ROOT: ${{ github.workspace }}
+        run: yarn b1 check-help
