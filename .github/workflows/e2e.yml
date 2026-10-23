@@ -77,8 +77,8 @@ jobs:
       # Names the Neon branch this run works in, so CI never lands on a
       # developer's.
       GITHUB_USER: github-actions
-      DATABASE_SERVER_TYPE: neon
-      AUTHENTICATION_SERVER_TYPE: remote
+      B1_DATABASE_SERVER_TYPE: neon
+      B1_AUTHENTICATION_SERVER_TYPE: remote
       # With no auth_server container to fall back on, the stack needs this by
       # name: root.deployment.config.json resolves `authenticationUrl` from
       # `${AUTH_URL:-http://auth_server:3000}`, and the guard calls getSession()
