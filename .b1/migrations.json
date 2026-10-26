@@ -81,6 +81,9 @@
     "B1-1376-convert-screen-mode",
     "B1-1397-fix-help-pages-check-step",
     "B1-1360-rename-workflow-env",
-    "B1-1378-remove-ported-linear-issue-agent"
+    "B1-1378-remove-ported-linear-issue-agent",
+    "B1-1341-sync-e2e-login-page",
+    "B1-1418-prefer-b1-object-types",
+    "B1-1406-commit-b1-folder"
   ]
 }
