@@ -84,6 +84,7 @@
     "B1-1378-remove-ported-linear-issue-agent",
     "B1-1341-sync-e2e-login-page",
     "B1-1418-prefer-b1-object-types",
-    "B1-1406-commit-b1-folder"
+    "B1-1406-commit-b1-folder",
+    "B1-1419-bump-melange-cli"
   ]
 }
