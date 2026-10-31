@@ -278,6 +278,60 @@ jobs:
           done
 
   # ---------------------------------------------------------------------------
+  # Deployment config bundle (B1-1357) — this version's generated .deploy/
+  # files, as <prefix>/<app>/<version>/deploy.tar.gz + manifest.json in the raw
+  # artifacts bucket. After the image jobs: the manifest pins their digests.
+  # The prefix is PUBLISH_ARTIFACTS_LOCATION's folder, or the IAM user name of
+  # the AWS key when it is unset; release or dev is read off the version.
+  # The steps before the last one are this project's own publish setup.
+  # ---------------------------------------------------------------------------
+  publish-deployment-config:
+    needs:
+      - version
+      - publish-app-server-ts
+      - publish-web-app
+    # A skipped image job (opt-in, or the version already in ECR) would skip
+    # this one too, and a re-dispatch is how a failed bundle is published again.
+    if: ${{ !failure() && !cancelled() }}
+    runs-on: ubuntu-24.04
+    env:
+      VERSION: ${{ needs.version.outputs.version }}
+      B1_ORG_API_KEY: ${{ secrets.B1_ORG_API_KEY }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ needs.version.outputs.version }}
+      # Provisioned secrets from the auth server's store, with one organization
+      # API key. Skipped until that key is set, and every value below then
+      # falls back to the Actions secret it has always used.
+      # See .github/actions/b1-secrets.
+      - uses: ./.github/actions/b1-secrets
+        if: env.B1_ORG_API_KEY != ''
+        with:
+          auth-url: ${{ secrets.AUTH_URL }}
+          api-key: ${{ secrets.B1_ORG_API_KEY }}
+          require: B1_ACCESS_KEY_ID B1_SECRET_ACCESS_KEY PUBLISH_APP_NAME PUBLISH_DOCKER_REPOSITORY
+      - uses: ./.github/actions/setup-node
+        with:
+          aws-access-key-id: ${{ env.B1_ACCESS_KEY_ID || secrets.B1_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ env.B1_SECRET_ACCESS_KEY || secrets.B1_SECRET_ACCESS_KEY }}
+          focus-workspaces: app app-server-ts data
+      - uses: aws-actions/configure-aws-credentials@v6
+        with:
+          aws-access-key-id: ${{ env.B1_ACCESS_KEY_ID || secrets.B1_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ env.B1_SECRET_ACCESS_KEY || secrets.B1_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+      # A tag cut before B1-1357 has no action to call; it publishes no bundle.
+      - name: Publish the deployment bundle
+        if: ${{ hashFiles('.github/actions/publish-deployment/action.yml') != '' }}
+        uses: ./.github/actions/publish-deployment
+        with:
+          version: ${{ env.VERSION }}
+          docker-repository: ${{ env.PUBLISH_DOCKER_REPOSITORY || secrets.PUBLISH_DOCKER_REPOSITORY }}
+          app-name: ${{ env.PUBLISH_APP_NAME || secrets.PUBLISH_APP_NAME }}
+          artifacts-location: ${{ env.PUBLISH_ARTIFACTS_LOCATION || secrets.PUBLISH_ARTIFACTS_LOCATION }}
+
+  # ---------------------------------------------------------------------------
   # Publish marker — sets the `build-one/publish` commit status on the tag's commit
   # once the image jobs finish (see publish.yml for the rationale).
   # ---------------------------------------------------------------------------
@@ -287,6 +341,7 @@ jobs:
       - version
       - publish-app-server-ts
       - publish-web-app
+      - publish-deployment-config
     if: always() && needs.version.result == 'success'
     runs-on: ubuntu-24.04
     env:

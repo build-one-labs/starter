@@ -164,9 +164,11 @@ jobs:
 
           version="${INPUT_VERSION}"
           if [[ -z "${version}" ]]; then
-            # The registry's own answer to "what is newest", so an unattended
-            # run needs no version list kept anywhere.
-            version=$(yarn npm info @buildone/swat-cli --fields version --json | jq -r '.version')
+            # The newest release, as the CLI defines it: the highest
+            # X.Y.Z-VG.N. Not the registry's own "newest", which is the highest
+            # version by semver and so a feature build such as
+            # 24.3.0-virtual-lars-app.1 — see scripts/update/newest-release.sh.
+            version=$(b1 newest-release)
           fi
 
           # `b1 update` puts the version into a shell command and into

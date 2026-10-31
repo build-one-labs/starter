@@ -85,6 +85,10 @@
     "B1-1341-sync-e2e-login-page",
     "B1-1418-prefer-b1-object-types",
     "B1-1406-commit-b1-folder",
-    "B1-1419-bump-melange-cli"
+    "B1-1419-bump-melange-cli",
+    "B1-1447-standard-screen-mode",
+    "B1-1456-workspace-state-in-b1",
+    "B1-1459-update-workflow-newest-release",
+    "B1-1357-publish-deployment-bundle"
   ]
 }
