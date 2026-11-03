@@ -11,7 +11,7 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   telemetry: false,
   extends: ['@buildone/web-framework-layer'],
-  modules: ['@nuxt/eslint', '@nuxt/image'],
+  modules: ['@nuxt/eslint'],
   app: {
     head: {
       title: 'BuildOne Application',

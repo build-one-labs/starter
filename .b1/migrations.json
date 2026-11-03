@@ -93,6 +93,7 @@
     "B1-1484-deploy-app-url-input",
     "B1-1488-app-server-env-in-dockerfile",
     "B1-1491-silence-port-notifications",
-    "B1-1487-remove-github-secrets"
+    "B1-1487-remove-github-secrets",
+    "B1-1493-faster-publish-workflows"
   ]
 }
