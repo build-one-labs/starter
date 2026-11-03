@@ -89,6 +89,10 @@
     "B1-1447-standard-screen-mode",
     "B1-1456-workspace-state-in-b1",
     "B1-1459-update-workflow-newest-release",
-    "B1-1357-publish-deployment-bundle"
+    "B1-1357-publish-deployment-bundle",
+    "B1-1484-deploy-app-url-input",
+    "B1-1488-app-server-env-in-dockerfile",
+    "B1-1491-silence-port-notifications",
+    "B1-1487-remove-github-secrets"
   ]
 }

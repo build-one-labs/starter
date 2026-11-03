@@ -20,14 +20,6 @@ on:
         type: string
         required: true
     secrets:
-      B1_ACCESS_KEY_ID:
-        required: false
-      B1_SECRET_ACCESS_KEY:
-        required: false
-      PUBLISH_DOCKER_REPOSITORY:
-        required: false
-      PUBLISH_APP_NAME:
-        required: false
       AUTH_URL:
         required: false
       B1_ORG_API_KEY:
@@ -62,15 +54,14 @@ jobs:
       # falls back to the Actions secret it has always used.
       # See .github/actions/b1-secrets.
       - uses: ./.github/actions/b1-secrets
-        if: env.B1_ORG_API_KEY != ''
         with:
           auth-url: ${{ secrets.AUTH_URL }}
           api-key: ${{ secrets.B1_ORG_API_KEY }}
           require: B1_ACCESS_KEY_ID B1_SECRET_ACCESS_KEY PUBLISH_APP_NAME PUBLISH_DOCKER_REPOSITORY
       - uses: ./.github/actions/setup-node
         with:
-          aws-access-key-id: ${{ env.B1_ACCESS_KEY_ID || secrets.B1_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ env.B1_SECRET_ACCESS_KEY || secrets.B1_SECRET_ACCESS_KEY }}
+          aws-access-key-id: ${{ env.B1_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ env.B1_SECRET_ACCESS_KEY }}
           focus-workspaces: app app-server-ts data
 
       - name: Build
@@ -84,8 +75,8 @@ jobs:
 
       - uses: aws-actions/configure-aws-credentials@v6
         with:
-          aws-access-key-id: ${{ env.B1_ACCESS_KEY_ID || secrets.B1_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ env.B1_SECRET_ACCESS_KEY || secrets.B1_SECRET_ACCESS_KEY }}
+          aws-access-key-id: ${{ env.B1_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ env.B1_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
 
       - uses: aws-actions/amazon-ecr-login@v2
@@ -97,8 +88,8 @@ jobs:
 
       - name: Build and push image
         env:
-          DOCKER_REPOSITORY: ${{ env.PUBLISH_DOCKER_REPOSITORY || secrets.PUBLISH_DOCKER_REPOSITORY }}
-          APP_NAME: ${{ env.PUBLISH_APP_NAME || secrets.PUBLISH_APP_NAME }}
+          DOCKER_REPOSITORY: ${{ env.PUBLISH_DOCKER_REPOSITORY }}
+          APP_NAME: ${{ env.PUBLISH_APP_NAME }}
         run: |
           if [ -z "${DOCKER_REPOSITORY}" ] || [ -z "${APP_NAME}" ]; then
             echo "DOCKER_REPOSITORY / APP_NAME are empty — is the auth server's" >&2
@@ -168,15 +159,14 @@ jobs:
       # falls back to the Actions secret it has always used.
       # See .github/actions/b1-secrets.
       - uses: ./.github/actions/b1-secrets
-        if: env.B1_ORG_API_KEY != ''
         with:
           auth-url: ${{ secrets.AUTH_URL }}
           api-key: ${{ secrets.B1_ORG_API_KEY }}
           require: B1_ACCESS_KEY_ID B1_SECRET_ACCESS_KEY PUBLISH_APP_NAME PUBLISH_DOCKER_REPOSITORY
       - uses: ./.github/actions/setup-node
         with:
-          aws-access-key-id: ${{ env.B1_ACCESS_KEY_ID || secrets.B1_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ env.B1_SECRET_ACCESS_KEY || secrets.B1_SECRET_ACCESS_KEY }}
+          aws-access-key-id: ${{ env.B1_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ env.B1_SECRET_ACCESS_KEY }}
           focus-workspaces: app web-app
 
       - name: Build
@@ -187,8 +177,8 @@ jobs:
 
       - uses: aws-actions/configure-aws-credentials@v6
         with:
-          aws-access-key-id: ${{ env.B1_ACCESS_KEY_ID || secrets.B1_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ env.B1_SECRET_ACCESS_KEY || secrets.B1_SECRET_ACCESS_KEY }}
+          aws-access-key-id: ${{ env.B1_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ env.B1_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
 
       - uses: aws-actions/amazon-ecr-login@v2
@@ -200,8 +190,8 @@ jobs:
 
       - name: Build and push image
         env:
-          DOCKER_REPOSITORY: ${{ env.PUBLISH_DOCKER_REPOSITORY || secrets.PUBLISH_DOCKER_REPOSITORY }}
-          APP_NAME: ${{ env.PUBLISH_APP_NAME || secrets.PUBLISH_APP_NAME }}
+          DOCKER_REPOSITORY: ${{ env.PUBLISH_DOCKER_REPOSITORY }}
+          APP_NAME: ${{ env.PUBLISH_APP_NAME }}
         run: |
           if [ -z "${DOCKER_REPOSITORY}" ] || [ -z "${APP_NAME}" ]; then
             echo "DOCKER_REPOSITORY / APP_NAME are empty — is the auth server's" >&2
@@ -285,21 +275,20 @@ jobs:
       # falls back to the Actions secret it has always used.
       # See .github/actions/b1-secrets.
       - uses: ./.github/actions/b1-secrets
-        if: env.B1_ORG_API_KEY != ''
         with:
           auth-url: ${{ secrets.AUTH_URL }}
           api-key: ${{ secrets.B1_ORG_API_KEY }}
           require: B1_ACCESS_KEY_ID B1_SECRET_ACCESS_KEY PUBLISH_APP_NAME PUBLISH_DOCKER_REPOSITORY
       - uses: ./.github/actions/setup-node
         with:
-          aws-access-key-id: ${{ env.B1_ACCESS_KEY_ID || secrets.B1_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ env.B1_SECRET_ACCESS_KEY || secrets.B1_SECRET_ACCESS_KEY }}
+          aws-access-key-id: ${{ env.B1_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ env.B1_SECRET_ACCESS_KEY }}
           focus-workspaces: app app-server-ts data
 
       - uses: aws-actions/configure-aws-credentials@v6
         with:
-          aws-access-key-id: ${{ env.B1_ACCESS_KEY_ID || secrets.B1_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ env.B1_SECRET_ACCESS_KEY || secrets.B1_SECRET_ACCESS_KEY }}
+          aws-access-key-id: ${{ env.B1_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ env.B1_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
 
       # A tag cut before B1-1357 has no action to call; it publishes no bundle.
@@ -308,9 +297,9 @@ jobs:
         uses: ./.github/actions/publish-deployment
         with:
           version: ${{ env.VERSION }}
-          docker-repository: ${{ env.PUBLISH_DOCKER_REPOSITORY || secrets.PUBLISH_DOCKER_REPOSITORY }}
-          app-name: ${{ env.PUBLISH_APP_NAME || secrets.PUBLISH_APP_NAME }}
-          artifacts-location: ${{ env.PUBLISH_ARTIFACTS_LOCATION || secrets.PUBLISH_ARTIFACTS_LOCATION }}
+          docker-repository: ${{ env.PUBLISH_DOCKER_REPOSITORY }}
+          app-name: ${{ env.PUBLISH_APP_NAME }}
+          artifacts-location: ${{ env.PUBLISH_ARTIFACTS_LOCATION }}
 
   # ---------------------------------------------------------------------------
   # Publish marker — authoritative "Deployable" signal for the Release & Deploy
