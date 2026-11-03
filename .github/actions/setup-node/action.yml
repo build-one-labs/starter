@@ -16,6 +16,10 @@ inputs:
     description: 'Workspaces to focus install on (empty = full install)'
     required: false
     default: ''
+  current-platform-only:
+    description: Install this runner's platform-specific packages only, for a job whose node_modules stays out of its image
+    required: false
+    default: 'false'
 
 runs:
   using: composite
@@ -49,8 +53,13 @@ runs:
       uses: actions/cache@v5
       with:
         path: .yarn/cache
-        key: yarn-deps-${{ hashFiles('yarn.lock') }}
+        key: yarn-deps-${{ inputs.current-platform-only == 'true' && 'current-' || '' }}${{ hashFiles('yarn.lock') }}
         restore-keys: yarn-deps-
+
+    - name: Limit the install to this runner's platform
+      if: inputs.current-platform-only == 'true'
+      shell: bash
+      run: yarn config set supportedArchitectures --json '{"os":["current"],"cpu":["current"],"libc":["current"]}'
 
     - name: Install dependencies
       shell: bash

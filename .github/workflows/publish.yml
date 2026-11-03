@@ -68,7 +68,10 @@ jobs:
         run: yarn workspace app-server-ts build
 
       - name: Prune to production dependencies
-        run: yarn workspaces focus app-server-ts --production
+        run: |
+          yarn workspaces focus app-server-ts --production
+          # About 1 GB of native binaries the app server never loads (B1-1493).
+          rm -rf node_modules/@anthropic-ai/claude-agent-sdk-*
 
       - name: Prepare Dockerfile
         run: cp src/app-server-ts/Dockerfile ./Dockerfile
@@ -85,6 +88,8 @@ jobs:
         with:
           platforms: arm64
       - uses: docker/setup-buildx-action@v4
+        with:
+          cleanup: false
 
       - name: Build and push image
         env:
@@ -168,9 +173,21 @@ jobs:
           aws-access-key-id: ${{ env.B1_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ env.B1_SECRET_ACCESS_KEY }}
           focus-workspaces: app web-app
+          current-platform-only: 'true'
 
       - name: Build
         run: yarn workspace web-app build
+
+      # The install above only has this runner's platform, so a native file in the build
+      # would be the wrong one in the other architecture's image, with nothing failing here.
+      - name: Check the build has no native files
+        run: |
+          NATIVE=$(find src/web-app/.output -name '*.node')
+          if [ -n "${NATIVE}" ]; then
+            echo "${NATIVE}"
+            echo "::error::The web app build has native files, built for this runner only. If the image needs them, set current-platform-only to false in this job, and check they work on Alpine and arm64."
+            exit 1
+          fi
 
       - name: Prepare Dockerfile
         run: cp src/web-app/Dockerfile ./Dockerfile
@@ -183,10 +200,9 @@ jobs:
 
       - uses: aws-actions/amazon-ecr-login@v2
 
-      - uses: docker/setup-qemu-action@v4
-        with:
-          platforms: arm64
       - uses: docker/setup-buildx-action@v4
+        with:
+          cleanup: false
 
       - name: Build and push image
         env:
@@ -250,12 +266,7 @@ jobs:
   # The steps before the last one are this project's own publish setup.
   # ---------------------------------------------------------------------------
   publish-deployment-config:
-    needs:
-      - publish-app-server-ts
-      - publish-web-app
-    # A skipped image job (opt-in, or the version already in ECR) would skip
-    # this one too, and a re-dispatch is how a failed bundle is published again.
-    if: ${{ !failure() && !cancelled() }}
+    # What generation yields, as in a workspace, so it waits for no image (B1-1493).
     env:
       B1_ORG_API_KEY: ${{ secrets.B1_ORG_API_KEY }}
     runs-on: ubuntu-24.04

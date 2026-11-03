@@ -151,7 +151,6 @@ Server actions use Build.One decorators:
 - Framework: Nuxt 3
 - UI: PrimeVue with @primevue/forms and @primevue/nuxt-module
 - State Management: Pinia
-- Image Optimization: @nuxt/image
 - Extends: @buildone/web-framework-layer (Build.One custom layer)
 
 **Configuration:**
