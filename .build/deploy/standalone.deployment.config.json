@@ -3,7 +3,7 @@
   "services": {
     "app_server_ts": {
       "environment": {
-        "B1_DEFAULT_APP": "${B1_DEFAULT_APP:-sample-app}",
+        "B1_DEFAULT_APP": "${B1_DEFAULT_APP:-b1-vibecode}",
         "REPOSITORY": "build-one-labs/starter"
       }
     }
