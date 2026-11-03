@@ -14,6 +14,10 @@ LABEL image=${BUILD_IMAGE}
 ENV NODE_ENV=production
 ENV BUILD_VERSION=${BUILD_VERSION}
 ENV BUILD_TIME=${BUILD_DATE}
+ENV APP_DATA_FOLDER=/data/app
+ENV B1_DATA_FOLDER=/data/b1
+ENV B1_UPLOAD_DIR=/app-data/uploads
+ENV B1_EXPORT_DATA_FOLDER=/data/local
 
 WORKDIR /workspace/src/app-server-ts
 
