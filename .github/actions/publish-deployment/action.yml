@@ -2,8 +2,8 @@ name: 'Publish Deployment Bundle'
 description: 'Generate this version''s deployment files and publish them to the raw artifacts bucket'
 
 # A thin wrapper over the CLI's `scripts/publish/publish-deployment.mjs`
-# (B1-1357), which does the work: the bundle, the manifest that pins the image
-# digests, the release/dev and write-once rules. It is a script of the installed
+# (B1-1357), which does the work: the bundle, its manifest, the release/dev and
+# write-once rules. It is a script of the installed
 # @buildone/swat-cli, not a `b1` command, like the other publish steps; it lives
 # in the CLI so that a fix reaches every repository with `b1 update`.
 #

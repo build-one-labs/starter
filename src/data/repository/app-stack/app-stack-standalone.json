@@ -1,0 +1,32 @@
+{
+  "moduleGuid": "82bb29e6-7a41-4b91-a66e-250a293f0dd8",
+  "objectDescription": "This repository's refinements of b1-stack-standalone (converted from .build/deploy).",
+  "objectMasterGuid": "2d77eb4b-0f18-40c7-95da-5bb92b089c5d",
+  "objectName": "app-stack-standalone",
+  "objectTypeGuid": "8908f9a5-cfc0-4001-ac5b-7a14c0295221",
+  "status": "Active",
+  "templateObject": false,
+  "attributes": {
+    "stackRef": "b1-stack-standalone"
+  },
+  "instances": [
+    {
+      "instanceName": "app_server_ts",
+      "objectInstanceGuid": "71a5f337-ed82-4222-af7d-ddcf60fda70e",
+      "objectMasterGuid": "70623cb6-98f3-460b-a266-223ef6cc1e51",
+      "objectSequence": 1,
+      "attributes": {
+        "env": {
+          "B1_DEFAULT_APP": "${B1_DEFAULT_APP:-b1-vibecode}",
+          "REPOSITORY": "build-one-labs/starter"
+        }
+      },
+      "instances": []
+    }
+  ],
+  "links": [],
+  "tags": [],
+  "tenantId": null,
+  "validFrom": null,
+  "validUntil": null
+}

@@ -13,8 +13,9 @@
 # Running with no config would give wrong versions and no error, so that fails instead.
 #
 # .github/actions/generate-version has a copy of this file, because a job using the
-# action has no CLI to run it from. generate-version.test.mjs fails if they differ.
-# Customers get the copy through a migration, so a change here needs a new one.
+# action has no CLI to run it from. `b1 update` owns that copy in an application
+# repository. In Vanguard, generate-version.test.mjs fails if the two differ, and a
+# change to them reaches customers through a new migration.
 set -euo pipefail
 
 GITVERSION=5.11.1

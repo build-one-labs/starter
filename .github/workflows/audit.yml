@@ -17,9 +17,7 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       # Provisioned secrets from the auth server's store, with one organization
-      # API key. Skipped until that key is set, and every value below then
-      # falls back to the Actions secret it has always used.
-      # See .github/actions/b1-secrets.
+      # API key. See .github/actions/b1-secrets.
       - uses: ./.github/actions/b1-secrets
         with:
           auth-url: ${{ secrets.AUTH_URL }}

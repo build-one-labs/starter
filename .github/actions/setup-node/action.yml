@@ -53,17 +53,15 @@ runs:
       uses: actions/cache@v5
       with:
         path: .yarn/cache
-        key: yarn-deps-${{ inputs.current-platform-only == 'true' && 'current-' || '' }}${{ hashFiles('yarn.lock') }}
-        restore-keys: yarn-deps-
-
-    - name: Limit the install to this runner's platform
-      if: inputs.current-platform-only == 'true'
-      shell: bash
-      run: yarn config set supportedArchitectures --json '{"os":["current"],"cpu":["current"],"libc":["current"]}'
+        key: yarn-deps-${{ inputs.current-platform-only == 'true' && format('current-{0}-', inputs.focus-workspaces) || 'all-' }}${{ hashFiles('yarn.lock') }}
+        restore-keys: yarn-deps-${{ inputs.current-platform-only == 'true' && format('current-{0}-', inputs.focus-workspaces) || 'all-' }}
 
     - name: Install dependencies
       shell: bash
       run: |
+        if [ "${{ inputs.current-platform-only }}" = "true" ]; then
+          yarn config set supportedArchitectures --json '{"os":["current"],"cpu":["current"],"libc":["current"]}'
+        fi
         if [ -z "${{ inputs.focus-workspaces }}" ]; then
           yarn install --immutable
         else

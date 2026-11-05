@@ -1,5 +1,5 @@
 name: Deploy Release
-run-name: Deploy Release ${{ inputs.version }}
+run-name: Deploy Release ${{ inputs.version }} to stack ${{ inputs.stack-id || inputs.stack-name || inputs.profile }}
 
 # Dispatched by the Release & Deploy screen's "Deploy" action. Deploys a released
 # version to a Portainer stack — either updating an existing stack (`stack-id`) or
@@ -50,6 +50,10 @@ on:
         description: 'Names of secret-store secrets to set as stack env vars (comma or newline separated). Names only — the values are resolved in the job.'
         required: false
         default: ''
+      profile:
+        description: 'Deployment profile to deploy (a b1_infra_deployment_profile in the repository). With it, stack-name only labels the run.'
+        required: false
+        default: ''
   workflow_call:
     inputs:
       stack-id:
@@ -96,6 +100,10 @@ on:
         type: string
         required: false
         default: ''
+      profile:
+        type: string
+        required: false
+        default: ''
     secrets:
       AUTH_URL:
         required: false
@@ -118,9 +126,7 @@ jobs:
         with:
           fetch-depth: 0
       # Provisioned secrets from the auth server's store, with one organization
-      # API key. Skipped until that key is set, and every value below then
-      # falls back to the Actions secret it has always used.
-      # See .github/actions/b1-secrets.
+      # API key. See .github/actions/b1-secrets.
       - uses: ./.github/actions/b1-secrets
         with:
           auth-url: ${{ secrets.AUTH_URL }}
@@ -160,10 +166,28 @@ jobs:
             git -c advice.detachedHead=false checkout "${TARGET}"
           fi
       - name: Generate deployment files
+        if: inputs.profile == ''
         env:
           WORKSPACE_ROOT: .
         run: npx b1 generate deployment
+      # B1-1275: a stack described by a deployment profile object — rendered from the
+      # repository's blueprint data, created or updated by name, then observed until
+      # every service is ready. The profile and version reach the command through the
+      # environment: a dispatch input interpolated into `run:` could inject a command.
+      - name: Deploy with profile
+        if: inputs.profile != ''
+        env:
+          WORKSPACE_ROOT: .
+          B1_DEPLOY_PROFILE: ${{ inputs.profile }}
+          B1_DEPLOY_VERSION: ${{ steps.version.outputs.version }}
+          B1_DEPLOY_ENV_VARS: ${{ inputs.env-vars }}
+          B1_DEPLOY_ENV_SECRETS: ${{ inputs.env-secrets }}
+          PORTAINER_URL: ${{ inputs.portainer-url || env.PORTAINER_URL }}
+          PORTAINER_API_KEY: ${{ inputs.portainer-api-key || env.PORTAINER_API_KEY }}
+          AUTH_URL: ${{ env.AUTH_URL || secrets.AUTH_URL }}
+        run: npx b1 deploy "${B1_DEPLOY_VERSION}" --profile "${B1_DEPLOY_PROFILE}"
       - name: Deploy to Portainer
+        if: inputs.profile == ''
         env:
           B1_INPUT_PORTAINER_URL: ${{ inputs.portainer-url }}
           B1_INPUT_PORTAINER_API_KEY: ${{ inputs.portainer-api-key }}
@@ -190,10 +214,10 @@ jobs:
           # sets it on every deploy of a remote-auth stack, overwriting what the stack has.
           AUTH_URL: ${{ env.AUTH_URL || secrets.AUTH_URL }}
         run: |
-          PORTAINER_URL="${B1_INPUT_PORTAINER_URL}"
-          PORTAINER_KEY="${B1_INPUT_PORTAINER_API_KEY}"
-          [ -z "$PORTAINER_URL" ] && PORTAINER_URL="${{ env.PORTAINER_URL }}"
-          [ -z "$PORTAINER_KEY" ] && PORTAINER_KEY="${{ env.PORTAINER_API_KEY }}"
+          # From the environment, not expanded into this script: a stored value containing a
+          # quote or $( would break the step or run commands in a job holding credentials.
+          PORTAINER_URL="${B1_INPUT_PORTAINER_URL:-${PORTAINER_URL:-}}"
+          PORTAINER_KEY="${B1_INPUT_PORTAINER_API_KEY:-${PORTAINER_API_KEY:-}}"
           npx b1 deploy \
             "${B1_STEPS_VERSION_VERSION}" \
             ".deploy/${B1_INPUT_DEPLOYMENT_CONFIG}" \
