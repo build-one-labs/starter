@@ -98,6 +98,8 @@
     "B1-1501-publish-workflow-fixes",
     "B1-1275-stack-objects",
     "B1-1438-app-start-links",
-    "B1-1514-bundle-job-installs-framework"
+    "B1-1514-bundle-job-installs-framework",
+    "B1-1517-reusable-publish-workflow",
+    "B1-1519-database-migration-rules"
   ]
 }

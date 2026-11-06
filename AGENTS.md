@@ -35,6 +35,13 @@ carries the rules that are expensive to get wrong, and defers the rest.
 - Use one subdirectory per task (e.g. `tmp/<task-name>/`); `tmp/workspace/` belongs to the workspace tooling. Remove files you no longer need when the task is done.
 - `CLAUDE.md` carries this rule word for word; change both together.
 
+### Database migrations
+- **One migration per pull request, per database.** Squash before merging: restore the migrations folder from the base branch, then generate once. Regenerating drops hand-written SQL, so add it back. Reset your database afterwards, because it has already applied the unsquashed ones.
+- **Name it by ticket** (`0117_shop_1234_add_thing`, through `db:migrate:generate <name>`) and start the file with a comment naming the ticket, why the migration exists, and a link to the ticket.
+- **A merged migration never changes**: no edits, renames or renumbering. Drizzle ignores them wherever the migration already ran, and it skips a migration whose journal `when` is older than the newest applied, without an error. Fix forward with a new one.
+- **Removals ship in a later release** than the code that stops using what they remove. Hand-written data changes are safe to rerun.
+- `b1 check-migrations` enforces this on pull requests. Details: `node_modules/@buildone/swat-cli/knowledge/architecture_info/database-migrations.md`.
+
 ## Repository layout
 
 | Workspace | |
