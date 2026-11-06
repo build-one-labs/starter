@@ -1,0 +1,9 @@
+[
+  {
+    "color": "#64748b",
+    "howToUse": "This repository's stack: refinements of the B1 platform stack (b1_infra_stack_overlay) and the stacks it deploys (b1_infra_deployment_profile).",
+    "id": "82bb29e6-7a41-4b91-a66e-250a293f0dd8",
+    "label": "app-stack",
+    "tagGroupId": "b7c1a511-1511-4b15-9e11-0a5e1511b1a5"
+  }
+]

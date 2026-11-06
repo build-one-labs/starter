@@ -1,9 +1,9 @@
 {
-  "moduleGuid": "82bb29e6-7a41-4b91-a66e-250a293f0dd8",
   "objectDescription": "This repository's refinements of b1-stack-standalone (converted from .build/deploy).",
   "objectMasterGuid": "2d77eb4b-0f18-40c7-95da-5bb92b089c5d",
   "objectName": "app-stack-standalone",
   "objectTypeGuid": "8908f9a5-cfc0-4001-ac5b-7a14c0295221",
+  "productGuid": "82bb29e6-7a41-4b91-a66e-250a293f0dd8",
   "status": "Active",
   "templateObject": false,
   "attributes": {
@@ -25,7 +25,9 @@
     }
   ],
   "links": [],
-  "tags": [],
+  "tags": [
+    "82bb29e6-7a41-4b91-a66e-250a293f0dd8"
+  ],
   "tenantId": null,
   "validFrom": null,
   "validUntil": null
