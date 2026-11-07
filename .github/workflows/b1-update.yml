@@ -46,12 +46,17 @@ run-name: B1 Update${{ inputs.version && format(' to {0}', inputs.version) || ' 
 #
 # MERGING AND TAGGING
 # Off by default: an update is reviewed like any other change. `merge` waits
-# for every check on the pull request and squash-merges it when they pass;
-# `tag` also tags the merge commit with the version, which starts whatever runs
-# on tags (Publish). Both need the Build.One GitHub App — the merge and the tag
-# are made with its token — and leave the pull request open, with this run red,
-# when a check fails. Build.One's starter repository is updated this way on
-# every release.
+# for every check on the pull request and squash-merges it when they pass.
+# `tag` also tags the merge commit, which starts whatever runs on tags
+# (Publish), with a version of this repository — not the Build.One version it
+# moved to, which is not one of this repository's releases:
+#   auto       this repository's next version, worked out by GitVersion on the
+#              merge commit as Publish Branch's `auto` does (e.g. 1.4.0-RC.7)
+#   <version>  exactly that version
+# Both need the Build.One GitHub App — the merge and the tag are made with its
+# token — and leave the pull request open, with this run red, when a check
+# fails. Build.One's starter repository, which is released under Build.One's
+# own versions, is updated this way on every release, tagged with that release.
 
 on:
   workflow_dispatch:
@@ -73,9 +78,9 @@ on:
         type: boolean
         default: false
       tag:
-        description: 'Also tag the merge commit with the version, which starts Publish (implies merge).'
-        type: boolean
-        default: false
+        description: 'Also tag the merge commit, which starts Publish (implies merge): "auto" for this repository''s next version from GitVersion, or an exact version. Empty tags nothing. Never the Build.One version, unless typed.'
+        required: false
+        default: ''
 
 permissions:
   contents: write # push the update branch
@@ -179,6 +184,17 @@ jobs:
             exit 1
           fi
 
+          # The tag becomes a git ref and a Docker image tag: a version, no
+          # `+`, nothing git refuses in a ref. It was a checkbox before
+          # B1-1361, so 'false' still means none and 'true' is refused.
+          tag="${INPUT_TAG}"
+          [[ "${tag}" == "false" ]] && tag=''
+          if [[ -n "${tag}" && "${tag}" != "auto" ]] && ! [[ "${tag}" =~ ^[vV]?[0-9][0-9A-Za-z._-]*$ &&
+            ${#tag} -le 128 && "${tag}" != *..* && "${tag}" != *. && "${tag}" != *.lock ]]; then
+            echo "::error title=B1 update::'${tag}' is not a version to tag with: give a version such as 1.4.0-RC.3, or 'auto'."
+            exit 1
+          fi
+
           branch="${INPUT_BRANCH:-b1-update/${version}}"
           if [[ ! "${branch}" =~ ^[A-Za-z0-9][A-Za-z0-9._/-]*$ || "${branch}" == *".."* ]]; then
             echo "::error title=B1 update::'${branch}' is not a usable branch name."
@@ -189,6 +205,7 @@ jobs:
             echo "version=${version}"
             echo "installed=${installed}"
             echo "branch=${branch}"
+            echo "tag=${tag}"
           } >> "${GITHUB_OUTPUT}"
 
           # Not a failure: "we are already there" is a perfectly good outcome
@@ -240,6 +257,7 @@ jobs:
           INSTALLED: ${{ steps.target.outputs.installed }}
           BRANCH: ${{ steps.target.outputs.branch }}
           BASE: ${{ github.ref_name }}
+          TAG: ${{ steps.target.outputs.tag }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
           # The token service only serves Build.One customers, so it wants the
           # organization key too. Given to this step alone, not the whole job.
@@ -252,11 +270,17 @@ jobs:
           fi
           release=()
           [[ "${INPUT_MERGE}" == "true" ]] && release+=(--merge)
-          [[ "${INPUT_TAG}" == "true" ]] && release+=(--tag)
+          [[ -n "${TAG}" ]] && release+=(--tag "${TAG}")
           # Read whole rather than piped into `grep -q`, whose early exit
           # would fail the pipe under pipefail and read as "not supported".
-          if ((${#release[@]})) && [[ "$(b1 publish-update --help)" != *--merge* ]]; then
+          help="$(b1 publish-update --help)"
+          if ((${#release[@]})) && [[ "${help}" != *--merge* ]]; then
             echo "::error title=B1 update::${VERSION} predates merging and tagging from \`b1 publish-update\`. Update without them."
+            exit 1
+          fi
+          # An older CLI's --tag takes no version and tags the Build.One one.
+          if [[ -n "${TAG}" && "${help}" != *"--tag <version|auto>"* ]]; then
+            echo "::error title=B1 update::${VERSION} predates tagging with a version of this repository. Update with merge only, and create the release by hand."
             exit 1
           fi
           b1 publish-update --version "${VERSION}" --installed "${INSTALLED}" \
