@@ -102,6 +102,9 @@
     "B1-1517-reusable-publish-workflow",
     "B1-1519-database-migration-rules",
     "B1-1511-modules-to-app-tags",
-    "B1-1521-failed-migration-stops-the-start"
+    "B1-1521-failed-migration-stops-the-start",
+    "B1-1523-untrack-deploy-folder",
+    "B1-1361-tag-input-takes-a-version",
+    "B1-1524-framework-objects-workflow"
   ]
 }
