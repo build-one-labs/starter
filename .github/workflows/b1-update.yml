@@ -47,6 +47,13 @@ run-name: B1 Update${{ inputs.version && format(' to {0}', inputs.version) || ' 
 # MERGING AND TAGGING
 # Off by default: an update is reviewed like any other change. `merge` waits
 # for every check on the pull request and squash-merges it when they pass.
+# Those are the checks GitHub starts for it — the workflows that run on
+# `pull_request` (Build, Help pages, Framework objects, …) — and nothing else:
+# with the App there are such checks, so `checks` is not started. E2E runs
+# nightly and on demand, not on pull requests, so a merge does not wait for it.
+# `b1 publish-update` waits up to an hour, inside this job's two; a check made
+# to run on pull requests and take longer leaves the pull request open, with
+# this run red.
 # `tag` also tags the merge commit, which starts whatever runs on tags
 # (Publish), with a version of this repository — not the Build.One version it
 # moved to, which is not one of this repository's releases:
@@ -70,11 +77,11 @@ on:
         required: false
         default: ''
       checks:
-        description: 'Workflows to start against the new branch once the pull request is open. Empty starts none.'
+        description: 'Without the Build.One GitHub App: workflows to start against the new branch, since GitHub starts none for it. Empty starts none. With the App the pull request runs its own checks, and these are not started.'
         required: false
         default: 'build.yml e2e.yml'
       merge:
-        description: 'Merge the pull request once every check on it passes (needs the Build.One GitHub App).'
+        description: 'Merge the pull request once every check on it passes: those that run on pull requests, not the nightly E2E (needs the Build.One GitHub App).'
         type: boolean
         default: false
       tag:
@@ -100,7 +107,8 @@ concurrency:
 jobs:
   update:
     runs-on: ubuntu-24.04
-    # The update, and — when merging — the pull request's checks.
+    # The update (minutes), and — when merging — the pull request's checks,
+    # which `b1 publish-update` stops waiting for after an hour.
     timeout-minutes: 120
     env:
       # Every script `b1` launches resolves its paths from this; the CLI does
