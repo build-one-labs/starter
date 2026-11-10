@@ -139,6 +139,9 @@
 
   // Environment variables
   "remoteEnv": {
+    // Read the host SSH config without macOS-only options or control socket writes.
+    "GIT_SSH_COMMAND": "bash \"${containerWorkspaceFolder}/.devcontainer/setup/b1-local-git-ssh.sh\"",
+    "GIT_SSH_VARIANT": "ssh",
     "WORKSPACE_ROOT": "${containerWorkspaceFolder}",
     "PATH": "${containerWorkspaceFolder}/node_modules/.bin:${containerEnv:HOME}/.local/bin:${containerEnv:PATH}",
     "COREPACK_ENABLE_DOWNLOAD_PROMPT": "0",

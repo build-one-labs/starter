@@ -105,6 +105,13 @@
     "B1-1521-failed-migration-stops-the-start",
     "B1-1523-untrack-deploy-folder",
     "B1-1361-tag-input-takes-a-version",
-    "B1-1524-framework-objects-workflow"
+    "B1-1524-framework-objects-workflow",
+    "B1-1362-merge-checks-and-sandbox-token",
+    "B1-1531-aws-token-env-key-value",
+    "B1-1326-arch-aware-awscli-install",
+    "B1-1326-local-git-ssh-transport",
+    "B1-1538-arch-aware-fga-cli",
+    "B1-1539-forwarded-ssh-agent",
+    "B1-1545-repository-layout-check"
   ]
 }
