@@ -115,6 +115,7 @@
     "B1-1545-repository-layout-check",
     "B1-1584-data-check-workflow",
     "B1-1587-sync-e2e-login-page",
-    "B1-1583-user-roles-not-exported"
+    "B1-1583-user-roles-not-exported",
+    "B1-1543-arch-aware-melange-cli"
   ]
 }
