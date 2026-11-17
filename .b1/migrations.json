@@ -116,6 +116,10 @@
     "B1-1584-data-check-workflow",
     "B1-1587-sync-e2e-login-page",
     "B1-1583-user-roles-not-exported",
-    "B1-1543-arch-aware-melange-cli"
+    "B1-1543-arch-aware-melange-cli",
+    "B1-1609-git-ssh-transport-in-image",
+    "B1-1612-checks-read-only-the-secret-store",
+    "B1-1611-openhands-token-key-value",
+    "B1-1607-fold-module-tags-into-app-tags"
   ]
 }
