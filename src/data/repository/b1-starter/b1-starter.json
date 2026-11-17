@@ -1,0 +1,44 @@
+{
+  "createdAt": "2026-11-17 11:24:32.610337",
+  "createdBy": "y5lt3P0fW0lVPg9uPLJH6QjoIU09Lw29",
+  "howToUse": "",
+  "label": "",
+  "objectDescription": "B1 Starter: a minimal application with a welcome home screen and an Admin menu, as a starting point for new apps.",
+  "objectMasterGuid": "67804f27-4fad-4faa-b7aa-e68feadf8b7c",
+  "objectName": "b1-starter",
+  "objectTypeGuid": "99c865f6-faf7-4d36-bf0e-5b3c1f4bccd0",
+  "owner": "y5lt3P0fW0lVPg9uPLJH6QjoIU09Lw29",
+  "productGuid": "d27f5bd1-f1e6-4f76-9bb7-8fc8d02b27c2",
+  "status": "Active",
+  "templateObject": false,
+  "attributes": {
+    "colorScheme": "light",
+    "logoLarge": "/b1-logo.png",
+    "logoSmall": "/b1-logo.png",
+    "mainLayoutScreen": "taskbarMainLayout"
+  },
+  "instances": [
+    {
+      "instanceName": "home",
+      "layoutPosition": "",
+      "objectInstanceGuid": "d8121b0a-88da-4005-9890-4c079ef4be6a",
+      "objectMasterGuid": "dc3d69ea-265b-4f0b-8428-ba7943d44549",
+      "objectSequence": 1,
+      "attributes": {},
+      "instances": []
+    }
+  ],
+  "links": [
+    {
+      "linkGuid": "804d7213-d37a-4101-8e40-53a88f86818f",
+      "linkName": "Start",
+      "linkTypeGuid": "fa12f732-41f4-4c79-a30d-80388c0096b4",
+      "sourceObjectInstanceGuid": "",
+      "targetObjectInstanceGuid": "d8121b0a-88da-4005-9890-4c079ef4be6a"
+    }
+  ],
+  "tags": [],
+  "tenantId": null,
+  "validFrom": null,
+  "validUntil": null
+}

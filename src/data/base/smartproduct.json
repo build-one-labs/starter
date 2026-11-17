@@ -9,5 +9,16 @@
     "vendor": "",
     "createdBy": null,
     "tenantId": null
+  },
+  {
+    "createdBy": "y5lt3P0fW0lVPg9uPLJH6QjoIU09Lw29",
+    "productCode": "b1-starter",
+    "productDescription": "B1 Starter: a minimal application with a welcome home screen and an Admin menu, as a starting point for new apps.",
+    "productGuid": "d27f5bd1-f1e6-4f76-9bb7-8fc8d02b27c2",
+    "productInstalled": false,
+    "productName": "b1-starter",
+    "systemOwned": false,
+    "vendor": "",
+    "tenantId": null
   }
 ]
