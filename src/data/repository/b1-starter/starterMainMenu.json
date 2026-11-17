@@ -19,11 +19,12 @@
     {
       "instanceName": "Home",
       "objectInstanceGuid": "b0ac038f-8df2-4ac6-9d71-7f1ec8d2dd1a",
-      "objectMasterGuid": "8fa9e83e-8645-1f95-df14-888c889d36fa",
+      "objectMasterGuid": "8c740703-547f-442f-a006-39fc99e22673",
       "objectSequence": 1,
       "pageGuid": "",
       "attributes": {
         "actionParameter": "starterHomeScreen",
+        "actionType": "Launch",
         "label": "Home",
         "smallImage": "i-lucide-house"
       },
@@ -60,7 +61,9 @@
     }
   ],
   "links": [],
-  "tags": [],
+  "tags": [
+    "436aa5b9-59b0-4f9a-a8df-762e0b08f939"
+  ],
   "tenantId": null,
   "validFrom": null,
   "validUntil": null
