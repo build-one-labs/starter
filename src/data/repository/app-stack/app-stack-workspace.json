@@ -1,0 +1,38 @@
+{
+  "createdAt": "2026-11-17 11:31:27.926179",
+  "createdBy": "y5lt3P0fW0lVPg9uPLJH6QjoIU09Lw29",
+  "howToUse": "",
+  "label": "",
+  "objectDescription": "This repository's refinements of b1-stack-workspace: opens b1-starter as the default app.",
+  "objectMasterGuid": "9821025c-5ea6-4c56-958a-7262da80244a",
+  "objectName": "app-stack-workspace",
+  "objectTypeGuid": "8908f9a5-cfc0-4001-ac5b-7a14c0295221",
+  "owner": "y5lt3P0fW0lVPg9uPLJH6QjoIU09Lw29",
+  "productGuid": "82bb29e6-7a41-4b91-a66e-250a293f0dd8",
+  "status": "Active",
+  "templateObject": false,
+  "attributes": {
+    "stackRef": "b1-stack-workspace"
+  },
+  "instances": [
+    {
+      "instanceName": "app_server_ts",
+      "objectInstanceGuid": "e9c657bb-3a3a-4a03-a16f-1a86cf5c9ddc",
+      "objectMasterGuid": "70623cb6-98f3-460b-a266-223ef6cc1e51",
+      "objectSequence": 1,
+      "attributes": {
+        "env": {
+          "B1_DEFAULT_APP": "${B1_DEFAULT_APP:-b1-starter}"
+        }
+      },
+      "instances": []
+    }
+  ],
+  "links": [],
+  "tags": [
+    "82bb29e6-7a41-4b91-a66e-250a293f0dd8"
+  ],
+  "tenantId": null,
+  "validFrom": null,
+  "validUntil": null
+}

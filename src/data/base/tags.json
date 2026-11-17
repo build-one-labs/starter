@@ -5,5 +5,12 @@
     "id": "82bb29e6-7a41-4b91-a66e-250a293f0dd8",
     "label": "app-stack",
     "tagGroupId": "b7c1a511-1511-4b15-9e11-0a5e1511b1a5"
+  },
+  {
+    "color": "#64748b",
+    "howToUse": "Objects of the b1-starter app: the app, its sidebar main screen, main menu and home screen.",
+    "id": "436aa5b9-59b0-4f9a-a8df-762e0b08f939",
+    "label": "b1-starter",
+    "tagGroupId": "b7c1a511-1511-4b15-9e11-0a5e1511b1a5"
   }
 ]

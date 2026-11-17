@@ -1,0 +1,44 @@
+{
+  "createdAt": "2026-11-17 11:24:36.512068",
+  "createdBy": "y5lt3P0fW0lVPg9uPLJH6QjoIU09Lw29",
+  "howToUse": "",
+  "label": "B1 Starter Home",
+  "objectDescription": "B1 Starter home screen: welcome page rendered by the HomeNewApplicationTemplate Vue component.",
+  "objectMasterGuid": "0e846921-d5a3-4d8c-ae2d-0646da97f2f9",
+  "objectName": "starterHomeScreen",
+  "objectTypeGuid": "d188099d-8548-49f0-86e4-c4b28dda9ecc",
+  "owner": "y5lt3P0fW0lVPg9uPLJH6QjoIU09Lw29",
+  "productGuid": "d27f5bd1-f1e6-4f76-9bb7-8fc8d02b27c2",
+  "status": "Active",
+  "templateObject": false,
+  "attributes": {},
+  "instances": [
+    {
+      "instanceName": "a",
+      "objectInstanceGuid": "7485cbc2-090f-4a19-80b6-171744f71b87",
+      "objectMasterGuid": "31572117-2fe3-4262-ba03-20a74c6b59ca",
+      "objectSequence": 1,
+      "attributes": {},
+      "instances": [
+        {
+          "instanceName": "NativeComponent",
+          "objectInstanceGuid": "f214af44-5785-48fa-9771-7bb62e79d7d5",
+          "objectMasterGuid": "84f8292f-4b45-4e03-aa34-6f5d06518aad",
+          "objectSequence": 2,
+          "pageGuid": "",
+          "attributes": {
+            "componentName": "HomeNewApplicationTemplate"
+          },
+          "instances": []
+        }
+      ]
+    }
+  ],
+  "links": [],
+  "tags": [
+    "436aa5b9-59b0-4f9a-a8df-762e0b08f939"
+  ],
+  "tenantId": null,
+  "validFrom": null,
+  "validUntil": null
+}

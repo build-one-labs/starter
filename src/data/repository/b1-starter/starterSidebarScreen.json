@@ -1,0 +1,69 @@
+{
+  "createdAt": "2026-11-17 11:24:38.590204",
+  "createdBy": "y5lt3P0fW0lVPg9uPLJH6QjoIU09Lw29",
+  "howToUse": "",
+  "label": "B1 Starter Main Screen",
+  "objectDescription": "B1 Starter main screen: sidebar with starterMainMenu and the screen container.",
+  "objectMasterGuid": "dc3d69ea-265b-4f0b-8428-ba7943d44549",
+  "objectName": "starterSidebarScreen",
+  "objectTypeGuid": "d188099d-8548-49f0-86e4-c4b28dda9ecc",
+  "owner": "y5lt3P0fW0lVPg9uPLJH6QjoIU09Lw29",
+  "productGuid": "d27f5bd1-f1e6-4f76-9bb7-8fc8d02b27c2",
+  "status": "Active",
+  "templateObject": false,
+  "attributes": {
+    "htmlClass": "flex flex-row gap-2",
+    "title": "B1 Starter"
+  },
+  "instances": [
+    {
+      "instanceName": "a",
+      "objectInstanceGuid": "3e7ef112-0f9f-4f8d-9d97-69021f0b9ce3",
+      "objectMasterGuid": "31572117-2fe3-4262-ba03-20a74c6b59ca",
+      "objectSequence": 1,
+      "attributes": {
+        "panelType": "structural"
+      },
+      "instances": [
+        {
+          "instanceName": "MainSidebar",
+          "objectInstanceGuid": "ab0cea28-8dae-4c4b-8ecd-f0df75c06508",
+          "objectMasterGuid": "f3b27810-4170-0a91-df14-2ced507cc8a3",
+          "objectSequence": 2,
+          "attributes": {
+            "description": "Starter application",
+            "headerLabel": "B1 Starter",
+            "menuId": "starterMainMenu"
+          },
+          "instances": []
+        }
+      ]
+    },
+    {
+      "instanceName": "b",
+      "objectInstanceGuid": "5be8486d-e6b1-42c5-bb6f-950f38d27e0e",
+      "objectMasterGuid": "31572117-2fe3-4262-ba03-20a74c6b59ca",
+      "objectSequence": 2,
+      "attributes": {
+        "panelType": "structural"
+      },
+      "instances": [
+        {
+          "instanceName": "SidebarScreenContainer",
+          "objectInstanceGuid": "5ee31ae9-4340-4cde-b017-b63dc01ed2f7",
+          "objectMasterGuid": "f3b27810-4170-0a91-df14-31ed8803ecf7",
+          "objectSequence": 3,
+          "attributes": {},
+          "instances": []
+        }
+      ]
+    }
+  ],
+  "links": [],
+  "tags": [
+    "436aa5b9-59b0-4f9a-a8df-762e0b08f939"
+  ],
+  "tenantId": null,
+  "validFrom": null,
+  "validUntil": null
+}

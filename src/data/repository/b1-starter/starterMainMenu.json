@@ -1,0 +1,70 @@
+{
+  "createdAt": "2026-11-17 11:24:37.457998",
+  "createdBy": "y5lt3P0fW0lVPg9uPLJH6QjoIU09Lw29",
+  "howToUse": "",
+  "label": "B1 Starter Main Menu",
+  "objectDescription": "B1 Starter main menu: Home and Admin.",
+  "objectMasterGuid": "5918ed79-08b2-42ea-a071-084e0509bfb6",
+  "objectName": "starterMainMenu",
+  "objectTypeGuid": "697af4f7-4f36-46a9-aef0-16088ab1c4c4",
+  "owner": "y5lt3P0fW0lVPg9uPLJH6QjoIU09Lw29",
+  "productGuid": "d27f5bd1-f1e6-4f76-9bb7-8fc8d02b27c2",
+  "status": "Active",
+  "templateObject": false,
+  "attributes": {
+    "label": "B1 Starter",
+    "smallImage": "i-lucide-rocket"
+  },
+  "instances": [
+    {
+      "instanceName": "Home",
+      "objectInstanceGuid": "b0ac038f-8df2-4ac6-9d71-7f1ec8d2dd1a",
+      "objectMasterGuid": "8c740703-547f-442f-a006-39fc99e22673",
+      "objectSequence": 1,
+      "pageGuid": "",
+      "attributes": {
+        "actionParameter": "starterHomeScreen",
+        "actionType": "Launch",
+        "label": "Home",
+        "smallImage": "i-lucide-house"
+      },
+      "instances": []
+    },
+    {
+      "instanceName": "Admin",
+      "layoutPosition": "",
+      "objectInstanceGuid": "0aa59248-5960-42e3-9198-3e2562552641",
+      "objectMasterGuid": "0ac5604b-870c-4d6e-8876-f0b9b3bab0d7",
+      "objectSequence": 2,
+      "pageGuid": "",
+      "attributes": {
+        "icon": "i-fa6-solid-users-gear",
+        "label": "Admin"
+      },
+      "instances": [
+        {
+          "instanceName": "Users",
+          "layoutPosition": "",
+          "objectInstanceGuid": "aadaa4b0-b4c3-4162-961d-935670a3827e",
+          "objectMasterGuid": "8c740703-547f-442f-a006-39fc99e22673",
+          "objectSequence": 1,
+          "pageGuid": "",
+          "attributes": {
+            "actionParameter": "usersSearch",
+            "actionType": "Launch",
+            "label": "Users",
+            "smallImage": "i-fa6-solid-users"
+          },
+          "instances": []
+        }
+      ]
+    }
+  ],
+  "links": [],
+  "tags": [
+    "436aa5b9-59b0-4f9a-a8df-762e0b08f939"
+  ],
+  "tenantId": null,
+  "validFrom": null,
+  "validUntil": null
+}
