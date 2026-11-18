@@ -26,6 +26,10 @@ on:
       - 'src/app-server-ts/package.json'
       - 'yarn.lock'
       - '.github/workflows/data-check.yml'
+      # The actions the check runs on, so a change that breaks one fails here and
+      # not on the next pull request that touches blueprint data.
+      - '.github/actions/b1-secrets/**'
+      - '.github/actions/setup-node/**'
   workflow_dispatch:
 
 permissions:
@@ -36,40 +40,52 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  # Installing the CLI needs the package registry, and its credentials come from
-  # the secret store through two Actions secrets. A repository that has not been
-  # provisioned yet gets a notice here instead of a red check on every pull
-  # request. A step `if:` cannot read the `secrets` context, hence a job.
-  preflight:
-    runs-on: ubuntu-latest
-    outputs:
-      ready: ${{ steps.check.outputs.ready }}
-    env:
-      AUTH_URL: ${{ secrets.AUTH_URL }}
-      B1_ORG_API_KEY: ${{ secrets.B1_ORG_API_KEY }}
-    steps:
-      - name: Check the credentials this run needs
-        id: check
-        run: |
-          if [[ -n "${AUTH_URL}" && -n "${B1_ORG_API_KEY}" ]]; then
-            echo "ready=true" >> "${GITHUB_OUTPUT}"
-          else
-            echo "::notice title=Data check skipped::AUTH_URL and B1_ORG_API_KEY are not set for this repository, so the CLI cannot be installed."
-            echo "ready=false" >> "${GITHUB_OUTPUT}"
-          fi
-
   check:
-    needs: preflight
-    if: needs.preflight.outputs.ready == 'true'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
+    env:
+      # Whether this run has the two Actions secrets the CLI install needs, not
+      # their values: a step `if:` cannot read the `secrets` context, a job's env can.
+      CREDENTIALS: ${{ secrets.AUTH_URL != '' && secrets.B1_ORG_API_KEY != '' && 'present' || 'missing' }}
     steps:
       # Depth 2 for HEAD^1, the merge commit's first parent: exactly what this pull
       # request was merged with, even in a re-run after the base branch has moved.
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 2
 
+      # Without the credentials the CLI cannot be installed, and GitHub counts a job
+      # whose steps were skipped as passed, required or not. A repository that has
+      # not been provisioned yet gets a notice, not a red check on every pull
+      # request. But GitHub withholds Actions secrets from a pull request opened
+      # from a fork and from a run Dependabot starts, so such a run cannot tell
+      # whether the repository has them: a pull request like that which changes
+      # blueprint data fails, because nothing checked it. See node_modules/@buildone/swat-cli/knowledge/blueprint_dsl/data-check.md.
+      - name: Decide whether the check can run
+        id: gate
+        env:
+          WITHHELD: ${{ github.event_name == 'pull_request' && (github.event.pull_request.head.repo.full_name != github.repository || github.actor == 'dependabot[bot]' || github.event.pull_request.user.login == 'dependabot[bot]') }}
+        run: |
+          if [[ "${CREDENTIALS}" == "present" ]]; then
+            echo "run=true" >> "${GITHUB_OUTPUT}"
+            exit 0
+          fi
+          echo "run=false" >> "${GITHUB_OUTPUT}"
+          if [[ "${WITHHELD}" != "true" ]]; then
+            echo "::notice title=Data check skipped::AUTH_URL and B1_ORG_API_KEY are not set for this repository, so the CLI cannot be installed."
+            exit 0
+          fi
+          changed=$(git diff --name-only HEAD^1 HEAD -- src/data .b1/migrations.json .build/migrations.json)
+          # A framework update changes what the blueprint data resolves against.
+          framework=$(git diff HEAD^1 HEAD -- package.json src/app-server-ts/package.json yarn.lock | grep -E '^[-+].*@buildone/' || true)
+          if [[ -z "${changed}" && -z "${framework}" ]]; then
+            echo "::notice title=Data check skipped::GitHub gives this pull request no Actions secrets (it comes from a fork, or from Dependabot), and it changes neither blueprint data nor the framework version."
+            exit 0
+          fi
+          echo "::error title=Data check could not run::This pull request changes blueprint data or the framework version, but GitHub gives it no Actions secrets (it comes from a fork, or from Dependabot), so the CLI cannot be installed and nothing checked it. Run 'yarn b1 check-data --base <base branch>' on a checkout of it, or push the branch to this repository."
+          exit 1
+
       - name: Fetch this repository's secrets
+        if: steps.gate.outputs.run == 'true'
         uses: ./.github/actions/b1-secrets
         with:
           auth-url: ${{ secrets.AUTH_URL }}
@@ -77,6 +93,7 @@ jobs:
           require: B1_ACCESS_KEY_ID B1_SECRET_ACCESS_KEY
 
       - uses: ./.github/actions/setup-node
+        if: steps.gate.outputs.run == 'true'
         with:
           aws-access-key-id: ${{ env.B1_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ env.B1_SECRET_ACCESS_KEY }}
@@ -85,6 +102,7 @@ jobs:
           focus-workspaces: app app-server-ts data
 
       - name: Check that the blueprint data imports cleanly
+        if: steps.gate.outputs.run == 'true'
         env:
           WORKSPACE_ROOT: ${{ github.workspace }}
           SCOPE: ${{ github.event_name == 'pull_request' && '--base HEAD^1' || '--all' }}

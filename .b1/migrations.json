@@ -120,6 +120,9 @@
     "B1-1609-git-ssh-transport-in-image",
     "B1-1612-checks-read-only-the-secret-store",
     "B1-1611-openhands-token-key-value",
-    "B1-1607-fold-module-tags-into-app-tags"
+    "B1-1607-fold-module-tags-into-app-tags",
+    "B1-1610-full-installs-save-yarn-cache",
+    "B1-1601-checks-fail-when-they-cannot-run",
+    "B1-1614-native-file-check-follows-symlinks"
   ]
 }
