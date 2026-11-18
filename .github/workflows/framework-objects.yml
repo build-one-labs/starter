@@ -27,6 +27,7 @@ on:
       - '.github/workflows/framework-objects.yml'
       # The actions the check runs on, so a change that breaks one fails here and
       # not on the next pull request that touches blueprint data.
+      - '.github/actions/b1-check-gate/**'
       - '.github/actions/b1-secrets/**'
       - '.github/actions/setup-node/**'
   workflow_dispatch:
@@ -41,10 +42,6 @@ concurrency:
 jobs:
   check:
     runs-on: ubuntu-24.04
-    env:
-      # Whether this run has the two Actions secrets the CLI install needs, not
-      # their values: a step `if:` cannot read the `secrets` context, a job's env can.
-      CREDENTIALS: ${{ secrets.AUTH_URL != '' && secrets.B1_ORG_API_KEY != '' && 'present' || 'missing' }}
     steps:
       # Depth 2 for HEAD^1, the merge commit's first parent: exactly what this pull
       # request was merged with, even in a re-run after the base branch has moved.
@@ -53,33 +50,20 @@ jobs:
           fetch-depth: 2
 
       # Without the credentials the CLI cannot be installed, and GitHub counts a job
-      # whose steps were skipped as passed, required or not. A repository that has
-      # not been provisioned yet gets a notice, not a red check on every pull
-      # request. But GitHub withholds Actions secrets from a pull request opened
-      # from a fork and from a run Dependabot starts, so such a run cannot tell
-      # whether the repository has them: a pull request like that which changes
-      # blueprint data fails, because nothing checked it. See node_modules/@buildone/swat-cli/knowledge/blueprint_dsl/framework-objects.md.
+      # whose steps were skipped as passed. The gate gives an unprovisioned repository a
+      # notice, and fails a pull request from a fork or Dependabot (which GitHub gives no
+      # Actions secrets) that changes blueprint data, because nothing checked it. See
+      # node_modules/@buildone/swat-cli/knowledge/blueprint_dsl/framework-objects.md.
       - name: Decide whether the check can run
         id: gate
-        env:
-          WITHHELD: ${{ github.event_name == 'pull_request' && (github.event.pull_request.head.repo.full_name != github.repository || github.actor == 'dependabot[bot]' || github.event.pull_request.user.login == 'dependabot[bot]') }}
-        run: |
-          if [[ "${CREDENTIALS}" == "present" ]]; then
-            echo "run=true" >> "${GITHUB_OUTPUT}"
-            exit 0
-          fi
-          echo "run=false" >> "${GITHUB_OUTPUT}"
-          if [[ "${WITHHELD}" != "true" ]]; then
-            echo "::notice title=Framework objects skipped::AUTH_URL and B1_ORG_API_KEY are not set for this repository, so the CLI cannot be installed."
-            exit 0
-          fi
-          changed=$(git diff --name-only HEAD^1 HEAD -- src/data/repository)
-          if [[ -z "${changed}" ]]; then
-            echo "::notice title=Framework objects skipped::GitHub gives this pull request no Actions secrets (it comes from a fork, or from Dependabot), and it changes no blueprint data."
-            exit 0
-          fi
-          echo "::error title=Framework objects could not run::This pull request changes blueprint data, but GitHub gives it no Actions secrets (it comes from a fork, or from Dependabot), so the CLI cannot be installed and nothing checked it. Run 'yarn b1 check-framework-objects --base <base branch>' on a checkout of it, or push the branch to this repository."
-          exit 1
+        uses: ./.github/actions/b1-check-gate
+        with:
+          title: Framework objects
+          # Whether this run has the two secrets, not their values.
+          credentials: ${{ secrets.AUTH_URL != '' && secrets.B1_ORG_API_KEY != '' && 'present' || 'missing' }}
+          paths: src/data/repository
+          subject: blueprint data
+          command: yarn b1 check-framework-objects --base <base branch>
 
       - name: Fetch this repository's secrets
         if: steps.gate.outputs.run == 'true'
