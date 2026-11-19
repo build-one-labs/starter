@@ -126,6 +126,7 @@
     "B1-1614-native-file-check-follows-symlinks",
     "B1-1645-shared-check-gate",
     "B1-1604-login-page-from-any-shipped-version",
-    "B1-1652-e2e-test-user-names"
+    "B1-1652-e2e-test-user-names",
+    "B1-1253-secrets-rule"
   ]
 }

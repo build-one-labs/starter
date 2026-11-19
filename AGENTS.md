@@ -28,6 +28,13 @@ carries the rules that are expensive to get wrong, and defers the rest.
 - When you do create one, state which of the two applies, and why, in the conversation and in the pull request description, so a reviewer can check it. "Writing the Vue was quicker" is not a reason. App help pages built from the `Help*` kit (`help-screens.md`) are native components by design and need no further justification.
 - `CLAUDE.md` carries this rule word for word; change both together.
 
+### Credentials live in the secret store
+
+- A credential (an API key, a token, a password, a client secret) never goes into the repository, a blueprint attribute, an application setting or a tracked `.env`: it is a **secret in the auth server's store**, and the app reads it at runtime with `SecretResolver` (`await secrets.resolve('hubspot-api-key')`), as the signed-in user unless it belongs to the deployment itself.
+- When a feature needs one, follow `node_modules/@buildone/swat-cli/knowledge/architecture_info/secrets.md` → "Adding a secret": name it lowercase with dashes, vendor first (`hubspot-api-key`); store it at **organization** level unless it acts as one person; read it in code; document it with the feature. Ask the user for the value and the level. Never invent, commit or print a value, and check that nothing is stored under the name before writing one.
+- The stack passes the app server no credential, so do not add one to it. Any credential can be overridden by an environment variable of its name that reaches the app server; add one only on purpose, in a stack overlay of the repository's own. Values only workspace tooling needs (scripts, the coding agent's MCP servers) arrive in the workspace's environment from the same store; read those from `process.env` there, never in the app.
+- `CLAUDE.md` carries this rule word for word; change both together.
+
 ### Temporary files
 
 - Store temporary files (scratch scripts, intermediate results, downloads, generated output that does not belong in the project) in the workspace `tmp/` directory at the repository root, e.g. `/workspaces/<repo-name>/tmp` — for the customer repo `sass-marketplace` that is `/workspaces/sass-marketplace/tmp`.
