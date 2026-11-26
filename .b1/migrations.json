@@ -131,6 +131,7 @@
     "B1-1688-starter-audit-fixes",
     "B1-1639-connector-workflow",
     "B1-1560-app-scoped-names",
-    "B1-1560-e2e-screen-app"
+    "B1-1560-e2e-screen-app",
+    "B1-1710-yarn-4-19-0"
   ]
 }

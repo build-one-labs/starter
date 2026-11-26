@@ -2,7 +2,7 @@
 # Manual changes might be lost - proceed with caution!
 
 __metadata:
-  version: 8
+  version: 10
   cacheKey: 10c0
 
 "@alloc/quick-lru@npm:^5.2.0":
@@ -1140,11 +1140,11 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@buildone/app-server-tslib@npm:24.3.0-VG.535":
-  version: 24.3.0-VG.535
-  resolution: "@buildone/app-server-tslib@npm:24.3.0-VG.535"
+"@buildone/app-server-tslib@npm:24.3.0-VG.536":
+  version: 24.3.0-VG.536
+  resolution: "@buildone/app-server-tslib@npm:24.3.0-VG.536"
   dependencies:
-    "@buildone/swat-cli": "npm:24.3.0-VG.535"
+    "@buildone/swat-cli": "npm:24.3.0-VG.536"
     "@modelcontextprotocol/ext-apps": "npm:^1.7.5"
     "@modelcontextprotocol/sdk": "npm:^1.32.2"
     "@nestjs/platform-socket.io": "npm:^11.2.1"
@@ -1152,7 +1152,6 @@ __metadata:
     agentmail: "npm:^0.5.20"
     ajv: "npm:^8.17.1"
     archiver: "npm:^7.0.1"
-    better-auth: "npm:1.7.27"
     change-case: "npm:^4.1.2"
     check-disk-space: "npm:^3.4.0"
     class-validator: "npm:^0.14.1"
@@ -1179,6 +1178,7 @@ __metadata:
     "@nestjs/platform-express": ^11.2.1
     "@nestjs/terminus": ^11.1.1
     axios: ^1.21.1
+    better-auth: 1.7.27
     change-case: ^4.1.2
     drizzle-orm: ^0.45.2
     memory-cache: ^0.2.0
@@ -1186,17 +1186,17 @@ __metadata:
     pg: ^8.23.0
     reflect-metadata: ^0.2.2
     rxjs: ^7.8.2
-  checksum: 10c0/3e245c1169a2d2be86a7a26b76a1b04cfdee1795b5cca7c109aa8f9da5e63cd1a5a8e809a2ddd0116e8fa24c58035080b8e01f151513663064b53b150d9e2682
+  checksum: 10c0/4a55a630e95d6314c3fd35233297ac9caab4db6482604c2a5babd2af43e420b4c62778fe55e11a4391e39a7522f9062d8188b2b623ecf30be3adde824f00bac7
   languageName: node
   linkType: hard
 
-"@buildone/swat-cli@npm:24.3.0-VG.535":
-  version: 24.3.0-VG.535
-  resolution: "@buildone/swat-cli@npm:24.3.0-VG.535"
+"@buildone/swat-cli@npm:24.3.0-VG.536":
+  version: 24.3.0-VG.536
+  resolution: "@buildone/swat-cli@npm:24.3.0-VG.536"
   dependencies:
     "@anthropic-ai/claude-agent-sdk": "npm:0.3.220"
     "@anthropic-ai/sdk": "npm:^0.122.0"
-    "@buildone/app-server-tslib": "npm:24.3.0-VG.535"
+    "@buildone/app-server-tslib": "npm:24.3.0-VG.536"
     "@modelcontextprotocol/sdk": "npm:^1.32.2"
     d3-force: "npm:3.0.0"
     js-yaml: "npm:^4.3.2"
@@ -1210,27 +1210,27 @@ __metadata:
   bin:
     b1: bin/build-one.mjs
     build-one: bin/build-one.mjs
-  checksum: 10c0/756e56535d316b211abf075066adc95f25bbfd9c0329da1a7f1b970bb54ae9c4cb61186cb839a52f58c99849d335728f716eee7eecab7d69ce8e09550a890822
+  checksum: 10c0/45b114e93faac8493adf427ecb305236f60471bc0238caf77424732b910df5f62eb1b8185469d13fbd5d07885ec8f0fc73bb63489919afa8df6fb22eedd61123
   languageName: node
   linkType: hard
 
-"@buildone/swat-data@npm:24.3.0-VG.535":
-  version: 24.3.0-VG.535
-  resolution: "@buildone/swat-data@npm:24.3.0-VG.535"
-  checksum: 10c0/8abe5080a82be2ed8e06e8b4a9b5853ae3944dfb78f22ca60e12ab6f33636ef333f7f8535802d329548dd007e22f951b217f8b1a6e4cedf2a3d97e09732700a1
+"@buildone/swat-data@npm:24.3.0-VG.536":
+  version: 24.3.0-VG.536
+  resolution: "@buildone/swat-data@npm:24.3.0-VG.536"
+  checksum: 10c0/1bd4ae1eea9f363c3b6babd2d2826fdebaf4eaf67743ad3b190eeffc9814d50d83aff57afcc681b0b8019f2273cbdda770f2af7a450a289bdf6806c5e8da054c
   languageName: node
   linkType: hard
 
-"@buildone/swat-vscode@npm:24.3.0-VG.535":
-  version: 24.3.0-VG.535
-  resolution: "@buildone/swat-vscode@npm:24.3.0-VG.535"
-  checksum: 10c0/e11c98a0b66f2f07fadff98af09c7ecc1e6e4a8e177716f8e7d74700ee78820c4b2c74471b194e05689e98a50b6cf3a0a62d32aef72c70671eac3c9f7c5694ca
+"@buildone/swat-vscode@npm:24.3.0-VG.536":
+  version: 24.3.0-VG.536
+  resolution: "@buildone/swat-vscode@npm:24.3.0-VG.536"
+  checksum: 10c0/0efd44fbdb1548f2b60e9afe4fde2fc0af4496245282aba0116b0fd976597dfeaa5948fc8c376579294e30054d77ad3868b340a35e43c012a201c41bbfda6daf
   languageName: node
   linkType: hard
 
-"@buildone/web-framework-layer@npm:24.3.0-VG.535":
-  version: 24.3.0-VG.535
-  resolution: "@buildone/web-framework-layer@npm:24.3.0-VG.535"
+"@buildone/web-framework-layer@npm:24.3.0-VG.536":
+  version: 24.3.0-VG.536
+  resolution: "@buildone/web-framework-layer@npm:24.3.0-VG.536"
   dependencies:
     "@dagrejs/dagre": "npm:^1.1.8"
     "@egjs/hammerjs": "npm:^2.0.17"
@@ -1317,7 +1317,7 @@ __metadata:
     pinia: ^3.0.4
     vue: ^3.5.46
     vue-router: ^5.5.1
-  checksum: 10c0/a71bf30477811235f44723a4203f227ad0d437e4076d7da9039b3f3d44214ad9f24853a52279052599d9d2f2a73e62f04dde0521ed44ec40c9babf3bc2826e65
+  checksum: 10c0/255fbc3ae20862e75f227ce9137e76e9b201979a1e48727a24ba1e01d78046577d9d2bb1ec55b1546a1de8877fe7350d9862b5e3df8040f52fec60f607de7a61
   languageName: node
   linkType: hard
 
@@ -10429,8 +10429,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "app-server-ts@workspace:src/app-server-ts"
   dependencies:
-    "@buildone/app-server-tslib": "npm:24.3.0-VG.535"
-    "@buildone/swat-data": "npm:24.3.0-VG.535"
+    "@buildone/app-server-tslib": "npm:24.3.0-VG.536"
+    "@buildone/swat-data": "npm:24.3.0-VG.536"
     "@nestjs/axios": "npm:^4.0.1"
     "@nestjs/cli": "npm:^11.0.0"
     "@nestjs/common": "npm:^11.2.1"
@@ -10455,6 +10455,7 @@ __metadata:
     "@typescript-eslint/eslint-plugin": "npm:^8.21.0"
     "@typescript-eslint/parser": "npm:^8.21.0"
     axios: "npm:^1.21.1"
+    better-auth: "npm:1.7.27"
     change-case: "npm:^4.1.2"
     class-transformer: "npm:^0.5.1"
     class-validator: "npm:^0.14.1"
@@ -10491,8 +10492,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "app@workspace:."
   dependencies:
-    "@buildone/swat-cli": "npm:24.3.0-VG.535"
-    "@buildone/swat-vscode": "npm:24.3.0-VG.535"
+    "@buildone/swat-cli": "npm:24.3.0-VG.536"
+    "@buildone/swat-vscode": "npm:24.3.0-VG.536"
     "@eslint/js": "npm:^9.14.0"
     eslint: "npm:^9.19.0"
     eslint-config-prettier: "npm:^10.0.1"
@@ -12480,7 +12481,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "data@workspace:src/data"
   dependencies:
-    "@buildone/swat-data": "npm:24.3.0-VG.535"
+    "@buildone/swat-data": "npm:24.3.0-VG.536"
   languageName: unknown
   linkType: soft
 
@@ -21180,40 +21181,40 @@ __metadata:
 
 "resolve@patch:resolve@npm%3A^1.10.0#optional!builtin<compat/resolve>, resolve@patch:resolve@npm%3A^1.22.1#optional!builtin<compat/resolve>":
   version: 1.22.8
-  resolution: "resolve@patch:resolve@npm%3A1.22.8#optional!builtin<compat/resolve>::version=1.22.8&hash=c3c19d"
+  resolution: "resolve@patch:resolve@npm%3A1.22.8#optional!builtin<compat/resolve>::version=1.22.8&hash=9bd1a5"
   dependencies:
     is-core-module: "npm:^2.13.0"
     path-parse: "npm:^1.0.7"
     supports-preserve-symlinks-flag: "npm:^1.0.0"
   bin:
     resolve: bin/resolve
-  checksum: 10c0/0446f024439cd2e50c6c8fa8ba77eaa8370b4180f401a96abf3d1ebc770ac51c1955e12764cde449fde3fff480a61f84388e3505ecdbab778f4bef5f8212c729
+  checksum: 10c0/4bc6de64a713422234e0e773bff296767d77d6e545b98042ff90a796d356f2b131853f4fa1d54e2c415aa6efa6dc2eed5b3f501f63164f834619fda900e33b8e
   languageName: node
   linkType: hard
 
 "resolve@patch:resolve@npm%3A^1.20.0#optional!builtin<compat/resolve>":
   version: 1.22.10
-  resolution: "resolve@patch:resolve@npm%3A1.22.10#optional!builtin<compat/resolve>::version=1.22.10&hash=c3c19d"
+  resolution: "resolve@patch:resolve@npm%3A1.22.10#optional!builtin<compat/resolve>::version=1.22.10&hash=9bd1a5"
   dependencies:
     is-core-module: "npm:^2.16.0"
     path-parse: "npm:^1.0.7"
     supports-preserve-symlinks-flag: "npm:^1.0.0"
   bin:
     resolve: bin/resolve
-  checksum: 10c0/52a4e505bbfc7925ac8f4cd91fd8c4e096b6a89728b9f46861d3b405ac9a1ccf4dcbf8befb4e89a2e11370dacd0160918163885cbc669369590f2f31f4c58939
+  checksum: 10c0/da5c4a85971e6eeb821805d117092321c6c257a6e1e45382c0b7ef41368a7e98690e01a08bac88b111443410a49e2fb17d1802ac5c51c8fc5532d77bef9f4be9
   languageName: node
   linkType: hard
 
 "resolve@patch:resolve@npm%3A^1.22.4#optional!builtin<compat/resolve>":
   version: 1.22.11
-  resolution: "resolve@patch:resolve@npm%3A1.22.11#optional!builtin<compat/resolve>::version=1.22.11&hash=c3c19d"
+  resolution: "resolve@patch:resolve@npm%3A1.22.11#optional!builtin<compat/resolve>::version=1.22.11&hash=9bd1a5"
   dependencies:
     is-core-module: "npm:^2.16.1"
     path-parse: "npm:^1.0.7"
     supports-preserve-symlinks-flag: "npm:^1.0.0"
   bin:
     resolve: bin/resolve
-  checksum: 10c0/ee5b182f2e37cb1165465e58c6abc797fec0a80b5ba3231607beb4677db0c9291ac010c47cf092b6daa2b7f518d69a0e21888e7e2b633f68d501a874212a8c63
+  checksum: 10c0/55f7a298977b1aacf6dbec6dcfc81100ba98675bced193b57d3ac58ced65acc40c3a38927853cea86b7f75edb3c20e1f099a09d48b0d8ceccc25d466993eec47
   languageName: node
   linkType: hard
 
@@ -23741,21 +23742,21 @@ __metadata:
 
 "typescript@patch:typescript@npm%3A5.9.3#optional!builtin<compat/typescript>":
   version: 5.9.3
-  resolution: "typescript@patch:typescript@npm%3A5.9.3#optional!builtin<compat/typescript>::version=5.9.3&hash=5adc0c"
+  resolution: "typescript@patch:typescript@npm%3A5.9.3#optional!builtin<compat/typescript>::version=5.9.3&hash=5786d5"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 10c0/6f7e53bf0d9702350deeb6f35e08b69cbc8b958c33e0ec77bdc0ad6a6c8e280f3959dcbfde6f5b0848bece57810696489deaaa53d75de3578ff255d168c1efbd
+  checksum: 10c0/ad09fdf7a756814dce65bc60c1657b40d44451346858eea230e10f2e95a289d9183b6e32e5c11e95acc0ccc214b4f36289dcad4bf1886b0adb84d711d336a430
   languageName: node
   linkType: hard
 
 "typescript@patch:typescript@npm%3A^5.7.3#optional!builtin<compat/typescript>":
   version: 5.9.2
-  resolution: "typescript@patch:typescript@npm%3A5.9.2#optional!builtin<compat/typescript>::version=5.9.2&hash=5adc0c"
+  resolution: "typescript@patch:typescript@npm%3A5.9.2#optional!builtin<compat/typescript>::version=5.9.2&hash=5786d5"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 10c0/66fc07779427a7c3fa97da0cf2e62595eaff2cea4594d45497d294bfa7cb514d164f0b6ce7a5121652cf44c0822af74e29ee579c771c405e002d1f23cf06bfde
+  checksum: 10c0/34d2a8e23eb8e0d1875072064d5e1d9c102e0bdce56a10a25c0b917b8aa9001a9cf5c225df12497e99da107dc379360bc138163c66b55b95f5b105b50578067e
   languageName: node
   linkType: hard
 
@@ -25291,7 +25292,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "web-app@workspace:src/web-app"
   dependencies:
-    "@buildone/web-framework-layer": "npm:24.3.0-VG.535"
+    "@buildone/web-framework-layer": "npm:24.3.0-VG.536"
     "@nuxt/eslint": "npm:^1.3.0"
     "@nuxt/ui": "npm:^4.10.0"
     "@pinia/nuxt": "npm:^0.11.3"
