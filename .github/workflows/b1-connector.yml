@@ -1,0 +1,194 @@
+name: B1 Connector
+run-name: B1 Connector — ${{ inputs.action }} ${{ inputs.connector }}
+
+# WHAT THIS IS
+# A connector — Business Central, Salesforce, … — reaches this repository as a
+# package reference, the way Build.One itself does: one exact-pinned dependency
+# of src/app-server-ts, `@buildone/connector-<key>`. No connector source is
+# copied here. The app server finds its connectors and their blueprint objects
+# from that dependency, and `b1 update` keeps them current with the framework.
+#
+# This workflow adds (or removes) that one line and hands back a pull request,
+# because a change to what the application runs is reviewed like any other.
+#
+# WHO STARTS IT
+# An administrator, from the app's Connectors screen (Administration →
+# Connectors → Add to repository), which starts this workflow with the
+# connector they picked. It can be started by hand here as well, and
+# `b1 connector add <key>` does the same in a workspace.
+#
+# WHAT IT NEEDS
+# What B1 Update needs: the AUTH_URL and B1_ORG_API_KEY Actions secrets — the
+# package registry credentials are fetched with them — and "Allow GitHub
+# Actions to create and approve pull requests" under Settings → Actions →
+# General. The pull request is published by `b1 publish-update`, exactly as an
+# update's is.
+
+on:
+  workflow_dispatch:
+    inputs:
+      connector:
+        description: 'Connector key, e.g. business-central (the package is @buildone/connector-<key>).'
+        required: true
+      action:
+        description: 'add or remove'
+        type: choice
+        options: [add, remove]
+        default: add
+      version:
+        description: 'Version to add. Empty takes the newest release that runs on the installed Build.One.'
+        required: false
+        default: ''
+      checks:
+        description: 'Workflows to start against the new branch once the pull request is open. Empty starts none.'
+        required: false
+        default: 'build.yml'
+
+permissions:
+  contents: write # push the branch
+  pull-requests: write # open the pull request
+  actions: write # start the checks against it
+  id-token: write # prove this run to Build.One's token service
+
+# One change to the connector list at a time: two runs would both rewrite
+# package.json and yarn.lock.
+concurrency:
+  group: b1-connector-${{ github.repository }}
+  cancel-in-progress: false
+
+jobs:
+  connector:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    env:
+      WORKSPACE_ROOT: ${{ github.workspace }}
+      # Read as environment, never interpolated into a `run:` script: an
+      # expression is substituted before bash sees the line, so a value
+      # containing shell syntax would run as shell. They are validated below
+      # too, because the key becomes a branch name and a package name.
+      INPUT_CONNECTOR: ${{ inputs.connector }}
+      INPUT_ACTION: ${{ inputs.action }}
+      INPUT_VERSION: ${{ inputs.version }}
+      INPUT_CHECKS: ${{ inputs.checks }}
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      AUTH_URL: ${{ secrets.AUTH_URL }}
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Fetch this repository's secrets
+        uses: ./.github/actions/b1-secrets
+        with:
+          auth-url: ${{ secrets.AUTH_URL }}
+          api-key: ${{ secrets.B1_ORG_API_KEY }}
+          require: B1_ACCESS_KEY_ID B1_SECRET_ACCESS_KEY
+
+      - uses: ./.github/actions/setup-node
+        with:
+          aws-access-key-id: ${{ env.B1_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ env.B1_SECRET_ACCESS_KEY }}
+          focus-workspaces: app app-server-ts web-app data
+
+      - name: Put the workspace binaries on PATH
+        run: echo "${GITHUB_WORKSPACE}/node_modules/.bin" >> "${GITHUB_PATH}"
+
+      - name: Make sure the package registry stays authorised
+        run: |
+          set -euo pipefail
+          if [[ -n "${CODEARTIFACT_AUTH_TOKEN:-}" ]]; then
+            echo "Already authorised by setup-node."
+            exit 0
+          fi
+          token=$(aws codeartifact get-authorization-token \
+            --domain buildone --domain-owner 653306034207 \
+            --region eu-central-1 --query authorizationToken --output text)
+          echo "::add-mask::${token}"
+          echo "CODEARTIFACT_AUTH_TOKEN=${token}" >> "${GITHUB_ENV}"
+
+      - name: Check what was asked for
+        id: target
+        run: |
+          set -euo pipefail
+          if [[ ! "${INPUT_CONNECTOR}" =~ ^[a-z0-9]+(-[a-z0-9]+)*$ ]]; then
+            echo "::error title=B1 connector::'${INPUT_CONNECTOR}' is not a connector key."
+            exit 1
+          fi
+          if [[ "${INPUT_ACTION}" != "add" && "${INPUT_ACTION}" != "remove" ]]; then
+            echo "::error title=B1 connector::'${INPUT_ACTION}' is not an action: add or remove."
+            exit 1
+          fi
+          if [[ -n "${INPUT_VERSION}" && ! "${INPUT_VERSION}" =~ ^[A-Za-z0-9][A-Za-z0-9._+-]*$ ]]; then
+            echo "::error title=B1 connector::'${INPUT_VERSION}' is not a version string."
+            exit 1
+          fi
+          if ! b1 connector --help > /dev/null 2>&1; then
+            echo "::error title=B1 connector::This Build.One release predates connector packages. Update first (B1 Update)."
+            exit 1
+          fi
+          branch="b1-connector/${INPUT_ACTION}-${INPUT_CONNECTOR}"
+          # An open pull request is work in progress; a branch without one is
+          # what a merged or closed pull request left behind, and would block
+          # every later add or update of this connector. Remove it.
+          if git ls-remote --exit-code --heads origin "${branch}" >/dev/null 2>&1; then
+            open=$(gh pr list --head "${branch}" --state open --json number --jq 'length')
+            if [[ "${open}" != "0" ]]; then
+              echo "::error title=B1 connector::A pull request from ${branch} is already open. Merge or close it first."
+              exit 1
+            fi
+            git push origin --delete "${branch}"
+          fi
+          echo "branch=${branch}" >> "${GITHUB_OUTPUT}"
+
+      - name: Change the connector reference
+        id: change
+        env:
+          BRANCH: ${{ steps.target.outputs.branch }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          set -euo pipefail
+          git switch -c "${BRANCH}"
+          spec="${INPUT_CONNECTOR}"
+          [[ "${INPUT_ACTION}" == "add" && -n "${INPUT_VERSION}" ]] && spec="${spec}@${INPUT_VERSION}"
+          intro="${RUNNER_TEMP}/b1-connector-intro.md"
+          b1 connector "${INPUT_ACTION}" "${spec}" --intro-file "${intro}" --run-url "${RUN_URL}"
+          echo "intro=${intro}" >> "${GITHUB_OUTPUT}"
+          # The version that was pinned, for the pull request's title.
+          version=$(jq -r --arg name "@buildone/connector-${INPUT_CONNECTOR}" '.dependencies[$name] // empty' src/app-server-ts/package.json)
+          echo "version=${version}" >> "${GITHUB_OUTPUT}"
+
+      - name: Publish the change
+        id: publish
+        env:
+          BRANCH: ${{ steps.target.outputs.branch }}
+          BASE: ${{ github.ref_name }}
+          INTRO: ${{ steps.change.outputs.intro }}
+          VERSION: ${{ steps.change.outputs.version }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          B1_ORG_API_KEY: ${{ secrets.B1_ORG_API_KEY }}
+        run: |
+          set -euo pipefail
+          if [[ "${INPUT_ACTION}" == "add" ]]; then
+            title="chore: add the ${INPUT_CONNECTOR} connector ${VERSION}"
+          else
+            title="chore: remove the ${INPUT_CONNECTOR} connector"
+          fi
+          b1 publish-update --version "${VERSION:-removed}" --branch "${BRANCH}" --base "${BASE}" \
+            --run-url "${RUN_URL}" --checks "${INPUT_CHECKS}" --title "${title}" --intro-file "${INTRO}"
+
+      - name: Summarise
+        if: always()
+        env:
+          PR_URL: ${{ steps.publish.outputs.url }}
+          CHANGED: ${{ steps.publish.outputs.changed }}
+          VERSION: ${{ steps.change.outputs.version }}
+        run: |
+          {
+            echo "### B1 Connector"
+            echo ""
+            if [[ -n "${PR_URL}" ]]; then
+              echo "${INPUT_ACTION} \`${INPUT_CONNECTOR}\`${VERSION:+ \`${VERSION}\`}: ${PR_URL}"
+            elif [[ "${CHANGED}" == "false" ]]; then
+              echo "\`${INPUT_CONNECTOR}\` needed no change in this repository. No pull request opened."
+            else
+              echo "${INPUT_ACTION} \`${INPUT_CONNECTOR}\` did not finish. The log above says where it stopped."
+            fi
+          } >> "${GITHUB_STEP_SUMMARY}"

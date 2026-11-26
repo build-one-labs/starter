@@ -15,7 +15,7 @@
     "colorScheme": "light",
     "logoLarge": "/b1-logo.png",
     "logoSmall": "/b1-logo.png",
-    "mainLayoutScreen": "taskbarMainLayout"
+    "mainLayoutScreen": "b1-core:taskbarMainLayout"
   },
   "instances": [
     {
