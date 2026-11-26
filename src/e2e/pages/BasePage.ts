@@ -1,5 +1,32 @@
 import type { Page, Response } from '@playwright/test';
 
+let defaultScreenApp: string | undefined;
+
+/**
+ * Names the app whose screens the page objects open, unless one names another (B1-1560). A bare
+ * screen name in a URL means a screen of the app that is open, so a suite whose screens live in more
+ * than one app sets this once, in its fixtures; one whose screens all live in its own app does not
+ * need it.
+ */
+export function setDefaultScreenApp(app: string | undefined): void {
+  defaultScreenApp = app;
+}
+
+/**
+ * A screen route whose screen name carries its app: `/screens/Orders` → `/screens/crm:Orders`. The
+ * open app stays what it was (the deployment's default, or `?app=`), so the screen shows in it the
+ * way it always did. A name that already carries an app, other paths, and every path when no app is
+ * given or set, come back as they are.
+ */
+export function withScreenApp(path: string, app: string | undefined = defaultScreenApp): string {
+  const prefix = '/screens/';
+  if (!app || !path.startsWith(prefix)) return path;
+  const end = path.search(/[?#]/);
+  const name = path.slice(prefix.length, end < 0 ? undefined : end);
+  if (!name || decodeURIComponent(name).includes(':')) return path;
+  return `${prefix}${app}:${name}${end < 0 ? '' : path.slice(end)}`;
+}
+
 /**
  * Base class for all page objects.
  *
@@ -9,9 +36,14 @@ import type { Page, Response } from '@playwright/test';
 export abstract class BasePage {
   constructor(protected readonly page: Page) {}
 
-  /** Navigate to a path relative to the configured `baseURL`. */
+  /** The app this page's screens belong to; a page object of another app's screen overrides it. */
+  protected get screenApp(): string | undefined {
+    return defaultScreenApp;
+  }
+
+  /** Navigate to a path relative to the configured `baseURL`; a screen route names {@link screenApp}. */
   async goto(path = '/'): Promise<Response | null> {
-    return this.page.goto(path);
+    return this.page.goto(withScreenApp(path, this.screenApp));
   }
 
   /**

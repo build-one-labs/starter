@@ -19,6 +19,9 @@
     "productName": "b1-starter",
     "systemOwned": false,
     "vendor": "",
-    "tenantId": null
+    "tenantId": null,
+    "dependencies": [
+      "c7d5255f-a650-4dbe-9ef4-6dec82317503"
+    ]
   }
 ]
